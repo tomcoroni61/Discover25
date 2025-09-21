@@ -1,0 +1,112 @@
+<h1> First Steps </h1>
+<br>
+
+
+
+<h2> Switch between views </h2>
+Swipe <br>
+across the tab bar <br>
+click <i>nav</i> at the top, for a <b>dialog box</b>, or click <b>?</b> on bottom.
+<br> <br>
+The current learning verse remains.
+<br> <br>
+<br> <br>
+
+
+
+<h2> Home </h2>
+<p>
+Here you can select a verse and then <i>go</i> to a learning method. <br>
+<br>
+
+</p>
+<!-- <br> <p></p> <a href=''> </a> <h1> </h1> <i> </i> <b></b> <h2> </h2> -->
+
+<p>
+The Speak button is TTS, and Opt switches to the system settings for it. <br>
+<br>
+The search button searches in the verse field (e.g., John 3) and in the verse text field. <br>
+
+</p>
+<h3> Memorization Verse </h3>
+<p>
+The memory verse can be activated for learning: <br>
+Current verse with <i>button</i> <br>
+--> to <b>"Memorization Verse"</b> -with- <i>button</i> --> to current verse. <br>
+</p>
+<br> <br>
+<br> <br>
+<!-- <br> <p></p> <a href=''> </a> <h1> </h1> <i> </i> <b></b> <h2> </h2> -->
+
+
+
+Learning Method
+<h2> Word Click </h2>
+<p>
+It's clear that you can click on the word. <br>
+Also included is the option of setting <i>Speech to Text</i> to "easy to recognize"
+</p>
+<br> <br>
+<br> <br>
+
+
+Learning Method
+<h2> Word Mixing</h2><br>
+<p>
+Click on the word, then click again on the space where it should go. <br>
+(If correct, it <i>jumps</i> to the correct place) <br>
+</p>
+<br> <br>
+<br> <br>
+
+
+Learning Method
+<h2> Letters</h2><br>
+<p>
+Click on the blue or orange letter fields. <br>
+Below you can see the moves, e.g., 5 | 20 <br>
+5 moves by users of at least 20. <br>
+</p>
+<!-- <br> <p></p> <a href=''> </a> <h1> </h1> <i> </i> <b></b> <h2> </h2> Translated-->
+
+<br> <br>
+<br> <br>
+
+
+<h2> Speaking </h2><br>
+<p>
+Here you can learn by heart. <br>
+Requires TTS text to speech and speech recognition. <br>
+<br>
+Part of the verse text can also be learned by tapping the word (from-to). <br>
+<br>
+All this with many setting options.
+</p>
+<br>
+<br> <br>
+
+
+Page
+<h2> Discover </h2><br>
+<p>
+Above, there is a random verse that can be set. <br>
+via "Opt"<br>
+There you can also search for words in the Bible, which are then saved as a list.<br>
+With the JSON list format, the same verse can be displayed multiple times. <br>
+With others, only once. Here, the "list" remembers each verse viewed.<br><br>
+The list can be displayed individually via <b>Word List</b>. With a memory function.
+</p>
+<br>
+<p>
+</p>
+<!-- <br> <p></p> <a href=''> </a> <h1> </h1> <i> </i> <b></b> <h2> </h2> -->
+
+<br> <br><br>
+<br> <br>
+Page
+<h2> Edit </h2>
+<p>
+If you enjoy learning, you can edit and create your verse lists here,
+and share them with others via share. <br>
+The app can also receive text or "verse files." via share<br>
+</p>
