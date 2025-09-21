@@ -1,0 +1,37 @@
+<resources>
+    <string-array name="bible_versions_names">
+        <item>Menge-Bibel (DE)</item>
+        <item>Elberfelder Bibel, 1871 (DE)</item>
+        <item>Schlachter 1951 (DE)</item>
+        <item>Schlachter 2000 (DE)</item>
+        <item>Luther (1912) (DE)</item>
+        <item>Hoffnung für Alle, 2015 (DE)</item>
+        <item>New King James Version, 1982 (ENG)</item>
+        <item>New International Version (ENG)</item>
+        <item>New American Standard Bible (ENG)</item>
+        <item>Literal Standard Version (ENG)</item>
+        <item>Revised Standard Version (ENG)</item>
+        <item>Young\'s Literal Translation (1898) (ENG)</item>
+        <item>The Legacy Standard Bible (ENG)</item>
+        <item>World English Bible (ENG)</item>
+        <item>English Standard Version 2001, 2016 (ENG)</item>
+
+    </string-array>
+    <string-array name="bible_versions_values">
+        <item>MB</item>
+        <item>ELB</item>
+        <item>SCH</item>
+        <item>S00</item>
+        <item>LUT</item>
+        <item>HFA</item>
+        <item>NKJV</item>
+        <item>NIV</item>
+        <item>NASB</item>
+        <item>LSV</item>
+        <item>RSV</item>
+        <item>YLT</item>
+        <item>LSB</item>
+        <item>WEB</item>
+        <item>ESV</item>
+    </string-array>
+</resources>

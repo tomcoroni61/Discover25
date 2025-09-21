@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:f="http://schemas.android.com/apk/res-auto"
+    android:padding="-5dp"
+    android:minWidth="10dp"
+    android:gravity="center|center_horizontal|center_vertical"
+    android:textSize="18sp"
+    f:layout_newLine="false"
+    android:layout_gravity="center" />
+
+    <!--android:layout_marginBottom="5dp"
+    android:layout_marginTop="15dp"
+        android:padding="5dp"
+    android:textStyle="bold"
+    xmlns:f="http://schemas.android.com/tools"
+    -->

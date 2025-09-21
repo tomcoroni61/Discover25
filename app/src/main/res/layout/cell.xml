@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+    <TextView
+        android:id="@+id/grid_itemletter"
+        android:layout_width="36sp"
+        android:layout_height="34dp"
+        android:layout_weight="1"
+        android:background="@drawable/richtigplaz"
+        android:gravity="center"
+        android:text=""
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+</LinearLayout>
+
+
+<!--
+ <TextView
+android:layout_width="60sp"
+    android:textSize="15sp"
+    android:layout_height="wrap_content"
+    android:id="@+id/grid_itemlabel"
+    android:layout_weight="0.8"
+    android:gravity="center_horizontal"
+    android:text="Letter" />
+-->

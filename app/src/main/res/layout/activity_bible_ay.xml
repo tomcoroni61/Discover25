@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:text="@string/exit"
+            android:id="@+id/btn_randObst"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:layout_marginEnd="9dp"
+            android:background="@drawable/btn_dyn_back"
+            android:onClick="btnExitClick"
+            />
+
+        <Button
+            android:id="@+id/btn_prevChapter"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/btn_randObst"
+            android:background="@drawable/btn_dyn_back"
+            android:onClick="btnPrevClick"
+            android:text="@string/prevData" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/btn_prevChapter"
+            android:layout_toStartOf="@id/btn_nextChapter"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvVersion"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:layout_margin="3dp"
+                android:textIsSelectable="true"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tvBooknameChap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="4dp"
+
+                android:text="John 3"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_nextChapter"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="11dp"
+            android:background="@drawable/btn_dyn_back"
+            android:onClick="btnNextClick"
+            android:text="@string/nextData" />
+
+    </RelativeLayout>
+    <ScrollView
+        android:id="@+id/svChapText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tvCChapter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:ems="11"
+            android:textSize="20sp"
+            android:gravity="start|top"
+            android:textIsSelectable="true"
+            />
+    </ScrollView>
+
+</LinearLayout>
+
+

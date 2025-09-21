@@ -1,0 +1,111 @@
+<PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+<!--
+app:title="@string/preference_category_bible_version_title"
+-->
+    <PreferenceCategory
+        app:title="@string/random_vers"
+        app:key="bible_version_category"
+        app:iconSpaceReserved="false"
+        >
+        <ListPreference
+            app:key="bible_version"
+            app:title="@string/preference_listPreference_bible_version_title"
+            app:summary="%s"
+            app:defaultValue="@string/preference_listPreference_bible_version_default_value"
+            app:entries="@array/bible_versions_names"
+            app:entryValues="@array/bible_versions_values"
+            app:iconSpaceReserved="true"
+            app:singleLineTitle="false"
+            />
+
+        <ListPreference
+            app:key="rand_range"
+            app:defaultValue="nt"
+            app:entries="@array/rand_where_entries"
+            app:entryValues="@array/rand_where_value"
+            app:title="Select Random Range"
+            app:summary="%s"
+            app:useSimpleSummaryProvider="false" />
+
+        <SwitchPreferenceCompat
+            app:key="one_book_only"
+            app:title="one book only" />
+
+        <EditTextPreference
+            app:allowDividerBelow="true"
+            app:dependency="one_book_only"
+            app:key="rand_bookname"
+            app:title="Book Name (short)"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        app:allowDividerAbove="true"
+        app:iconSpaceReserved="false"
+        app:title="@string/verslist">
+
+        <ListPreference
+            app:key="search_bible_version"
+            app:title="@string/preference_listPreference_bible_version_title"
+            app:summary="%s"
+            app:defaultValue="@string/preference_listPreference_bible_version_default_value"
+            app:entries="@array/bible_versions_names"
+            app:entryValues="@array/bible_versions_values"
+            app:iconSpaceReserved="true"
+            app:singleLineTitle="false"
+            />
+
+        <ListPreference
+            app:key="search_range"
+            app:defaultValue="nt"
+            app:entries="@array/search_where_entries"
+            app:entryValues="@array/search_where_value"
+            app:title="Select Search Range"
+            app:summary="%s"
+            app:useSimpleSummaryProvider="false" />
+
+        <SwitchPreferenceCompat
+            app:key="match_case"
+            app:title="match case" />
+
+        <SwitchPreferenceCompat
+            app:key="match_whole"
+            app:title="match whole word" />
+
+        <EditTextPreference
+            app:key="search_word"
+            app:title="search word"
+            app:useSimpleSummaryProvider="true" />
+
+
+        <!--
+        app:singleLineTitle="true"
+            android:singleLine="true"
+            android:windowBackground="#F8F4A1"
+            android:colorBackground="#F8F4A1"
+app:dependency="search_word"..ne..
+<trust.jesus.discover.preference.SettingsSearch
+            app:key="search_time"
+            app:title="search time"
+            android:layout="@layout/prefi_search_row"
+            />
+        -->
+
+        <trust.jesus.discover.preference.SettingsSearch
+            app:key="search_time"
+            app:title="search time"
+            android:layout="@layout/prefi_search_row"
+            />
+        <SwitchPreferenceCompat
+            app:key="use_jsonList"
+            app:title="json list" />
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

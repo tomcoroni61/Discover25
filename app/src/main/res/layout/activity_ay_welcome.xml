@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:background="#57B35B">
+
+    <TextView
+        android:id="@+id/wtvwell"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+
+        android:text="@string/welcome"
+        android:textSize="26sp" />
+
+    <ScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/sbtsimpleHelp"
+        android:layout_below="@+id/wtvwell"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="5dp"
+        android:fillViewport="true">
+
+        <TextView
+            android:id="@+id/HtmlView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:linksClickable="true"
+            android:textColorLink="?attr/selectableItemBackground"
+            android:textIsSelectable="true"
+            android:textSize="16sp" />
+
+    </ScrollView>
+<!--android:textColorLink="#1E88E5"
+-->
+    <trust.jesus.discover.little.ShButton
+        android:id="@+id/sbtExi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/scroll"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/btn_dyn_back"
+        android:onClick="wExitClick"
+        android:text="@string/returni"
+        android:textSize="12sp"
+        app:hideTime="1600" />
+
+    <trust.jesus.discover.little.ShButton
+        android:id="@+id/sbtsimpleHelp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="8dp"
+        android:layout_toEndOf="@+id/sbtExi"
+        android:background="@drawable/btn_dyn_back"
+        android:onClick="wEineFueClick"
+        android:text="@string/introduction"
+        android:textSize="12sp"
+        app:hideTime="1600" />
+    <trust.jesus.discover.little.ShButton
+        android:id="@+id/sbtThanks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="8dp"
+        android:layout_toEndOf="@+id/sbtsimpleHelp"
+        android:background="@drawable/btn_dyn_back"
+        android:onClick="wThanksClick"
+        android:text="@string/thank_you"
+        android:textSize="12sp"
+        app:hideTime="1600" />
+
+</RelativeLayout>

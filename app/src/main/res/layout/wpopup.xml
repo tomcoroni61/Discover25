@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/rlMain"
+    android:layout_marginBottom="1dp"
+    android:background="#031133"
+    >
+
+
+    <TextView
+        android:id="@+id/tv_calc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_above="@+id/ldatas"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="2dp"
+        android:textColor="#FFC107"
+        android:textSize="20sp" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/ldatas"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="23dp"
+        android:layout_marginBottom="2dp"
+        >
+    <TextView
+        android:id="@+id/tv_popup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textColor="#FFC107"
+        android:textSize="18sp" />
+    </androidx.core.widget.NestedScrollView>
+
+<!-- @drawable/wpop_bg
+
+
+
+android:layout_below="@+id/tvTop"
+android:layout_alignParentTop="true"
+        android:layout_above="@+id/tvVersVersion"
+android:layout_above="@+id/acflowLayout"
+android:background="#031133"
+-->
+    <RelativeLayout
+        android:id="@+id/ldatas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/acflowLayout"
+        android:orientation="horizontal">
+
+        <trust.jesus.discover.little.ShTextView
+            android:id="@+id/tvprevData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:gravity="center_horizontal"
+            android:text="@string/prevData"
+            android:textColor="#FFC107"
+            android:textSize="22sp" />
+
+        <trust.jesus.discover.little.ShTextView
+            android:id="@+id/tvVersVersion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center_horizontal"
+            android:textColor="#FFC107"
+            android:textSize="17sp" />
+
+        <trust.jesus.discover.little.ShTextView
+            android:id="@+id/tvnextData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="15dp"
+            android:gravity="center_horizontal"
+            android:text="@string/nextData"
+            android:textColor="#FFC107"
+            android:textSize="22sp" />
+    </RelativeLayout>
+    <org.apmem.tools.layouts.FlowLayout
+        android:id="@+id/acflowLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="15dp"
+        android:gravity="top"
+        android:layout_marginBottom="30dp"
+
+        android:orientation="horizontal"
+        > <!--
+        android:gravity="bottom"btn_dyn_back
+        android:paddingBottom="22dp" .. ok Bottom space
+            android:layout_below="@+id/tv_calc" -->
+        <ImageButton
+            android:id="@+id/pwCopy"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+
+            android:background="@drawable/popspbtn"
+            android:contentDescription="@android:string/copy"
+            android:src="@drawable/clip_copy_24" />
+        <Button
+            android:text="@string/bible"
+            android:id="@+id/pwBible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:textAllCaps="false"
+            android:textColor="#FFC107"
+            android:background="@drawable/popbtn"
+            />
+
+        <Button
+            android:id="@+id/pwMain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:background="@drawable/popbtn"
+            android:text="@string/start"
+            android:textAllCaps="false"
+            android:textColor="#FFC107" />
+
+        <trust.jesus.discover.little.ShButton
+            android:id="@+id/pwspeakclck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:background="@drawable/popspbtn"
+            android:text="@string/speak"
+            android:textColor="#FFC107"
+            android:textSize="17sp" />
+
+<!--
+            android:background="@drawable/popspbtn"
+
+-->
+        <trust.jesus.discover.little.ShButton
+            android:text="@string/opt"
+            android:id="@+id/pwspeakOptclck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textColor="#FFC107"
+            android:textSize="17sp"
+            android:background="@drawable/popspbtn"
+            />
+
+        <Button
+            android:text="@string/word_click"
+            android:id="@+id/pwwordclck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:textAllCaps="false"
+            android:layout_margin="1dp"
+            android:textColor="#FFC107"
+            android:background="@drawable/popbtn"
+            />
+
+        <Button
+            android:text="@string/word_mix"
+            android:id="@+id/pwwordmix"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:textAllCaps="false"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textColor="#FFC107"
+            android:background="@drawable/popbtn"
+            android:visibility="visible" />
+
+        <Button
+            android:text="@string/edit"
+            android:id="@+id/pwEditclk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:textAllCaps="false"
+            android:textColor="#FFC107"
+            android:background="@drawable/popbtn"
+            />
+        <Button
+            android:text="@string/recite"
+            android:id="@+id/pwsaylck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:textAllCaps="false"
+            android:textColor="#FFC107"
+            android:background="@drawable/popbtn"
+            />
+        <Button
+            android:text="@string/letters"
+            android:id="@+id/pwletters"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:textAllCaps="false"
+            android:textColor="#FFC107"
+            android:background="@drawable/popbtn"
+            />
+        <Button
+            android:text="@string/discover"
+            android:id="@+id/pwDiscover"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:layout_margin="1dp"
+            android:textColor="#FFC107"
+            android:background="@drawable/popbtn"
+            />
+        <Button
+            android:text="@string/again"
+            android:id="@+id/pwretry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:textColor="#FFC107"
+            android:background="@drawable/popbtn"
+            />
+        <Button
+            android:text="@string/new_vers"
+            android:id="@+id/pwnewVers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:textColor="#FFC107"
+            android:background="@drawable/popbtn"
+            />
+
+    </org.apmem.tools.layouts.FlowLayout>
+
+
+</RelativeLayout>

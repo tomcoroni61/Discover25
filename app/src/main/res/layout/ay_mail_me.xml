@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    tools:context=".actis.Reportus"
+    android:id="@+id/main"
+    android:layout_marginTop="40dp"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/edMessage"
+        android:layout_width="match_parent"
+        android:layout_height="306dp"
+        android:ems="10"
+        android:gravity="start|top"
+        android:textIsSelectable="true" />
+
+    <Button
+        android:text="@string/send_me_email"
+        android:id="@+id/btSendMa"
+        android:layout_width="wrap_content"
+        android:layout_marginStart="69dp"
+        android:layout_below="@+id/edMessage"
+        android:layout_height="wrap_content"
+        android:onClick="adSendMailClick"
+        />
+
+    <Button
+        android:text="@string/exit"
+        android:layout_width="120dp"
+        android:layout_toEndOf="@id/btSendMa"
+        android:layout_marginStart="19dp"
+        android:onClick="adSendExitClick"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/edMessage"
+        />
+</RelativeLayout>

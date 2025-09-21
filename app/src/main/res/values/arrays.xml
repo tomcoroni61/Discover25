@@ -1,0 +1,33 @@
+<resources>
+    <!-- Random Bereich Setting -->
+    <string-array name="rand_where_entries">
+        <item>all</item>
+        <item>old Testament</item>
+        <item>New Testament</item>
+        <item>Gospels</item>
+    </string-array>
+
+    <string-array name="rand_where_value">
+        <item>all</item>
+        <item>ot</item>
+        <item>nt</item>
+        <item>g</item>
+    </string-array>
+
+    <!-- Reply Preference -->
+
+    <!-- Random Bereich Setting -->
+    <string-array name="search_where_entries">
+        <item>all</item>
+        <item>old Testament</item>
+        <item>New Testament</item>
+    </string-array>
+
+    <string-array name="search_where_value">
+        <item>all</item>
+        <item>ot</item>
+        <item>nt</item>
+    </string-array>
+
+
+</resources>

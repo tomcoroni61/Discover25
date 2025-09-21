@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+
+    <!--- This is the background
+    <solid android:color="?attr/sysbar_colour" />
+    <solid android:color="#3C8341" />
+    color 112312 -->
+    <solid android:color="?attr/sysbar_colour" />
+
+</shape>
