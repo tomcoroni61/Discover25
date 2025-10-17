@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.CheckBox
 import android.widget.ListView
-import androidx.compose.ui.graphics.Color
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import com.google.android.material.sidesheet.SideSheetDialog
@@ -71,9 +70,9 @@ class HomeFrag: BaseFragment(), View.OnClickListener {
     }
 
     private fun setFields() {
-        if (bshowText) binding.matvVersText.text = gc.lernItem.Text
+        if (bshowText) binding.matvVersText.text = gc.lernItem.text
         else binding.matvVersText.text = ""
-
+        //gc.log("setFields: ${gc.lernItem.text}")
         binding.headerTextView.text = gc.lernItem.vers
         gc.setVersTitel(gc.lernItem.vers)
         //binding.matvVersTop.setText(gc.LernItem.Vers)
@@ -82,7 +81,7 @@ class HomeFrag: BaseFragment(), View.OnClickListener {
 
 
     fun matxtClick() {
-        gc.globDlg().showPopupWin(gc.lernItem.Text)
+        gc.globDlg().showPopupWin(gc.lernItem.text)
     }
 
     fun mattsSettingsClick() {
@@ -105,7 +104,7 @@ class HomeFrag: BaseFragment(), View.OnClickListener {
 
 
     fun maspeackClick() {
-        gc.ttSgl()?.speak(gc.lernItem.Text)
+        gc.ttSgl()?.speak(gc.lernItem.text)
     }
 
     fun maSpeakRecClick() {

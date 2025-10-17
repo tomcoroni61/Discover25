@@ -145,11 +145,9 @@ class CsvList() {
         getLernData(gc.lernDataIdx)
     }
 
-    fun getLernData(idx: Int): CsvData {
-        copyData(dataList[idx], gc.lernItem)
-        //ne gc.LernItem = dataList[idx]
-        gc.lernDataIdx = idx
-        return gc.lernItem
+    fun getLernData(idx: Int) {
+        gc.lernItem.setLernData(idx, dataList[idx])
+
     }
 
     fun doDataIdx(minus: Boolean, aIdx: Int): Int {
@@ -197,11 +195,9 @@ class CsvList() {
             }
             //gc.Logl("idx cnt: $idx", false)
             val data = dataList[idx]
-            copyData(data, gc.lernItem)
+            gc.lernItem.setLernData(idx, data)
 
-            //gc.LernItem = dataList[idx]
-            gc.lernDataIdx = idx
-            str = gc.lernItem.Text
+            str = gc.lernItem.text
             val cdata = CsvData()
             copyData(data, cdata)
             gc.versHistory.addVers(cdata)

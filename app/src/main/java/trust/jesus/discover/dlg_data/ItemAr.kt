@@ -15,7 +15,6 @@ import kotlin.Char
 import kotlin.CharArray
 import kotlin.Exception
 import kotlin.Int
-import kotlin.checkNotNull
 
 import trust.jesus.discover.fragis.LettersFrag
 import trust.jesus.discover.little.Celli
@@ -83,11 +82,12 @@ class ItemAr(context: Context, gridView: GridView, activity: LettersFrag) :
         var nachCell: Celli?
         try {
             while (moves > 0 && loopcnt > 0) {
-                chrashCnt++
+                chrashCnt++; loopcnt--
                 if (loopcnt < 222) cix = -3 else cix = -1
                 cix = getRandomCellIdx(139, cix)
                 vonCell = getItem(cix) //getRandomCell(9, -1);
-                checkNotNull(vonCell)
+                if (vonCell == null) continue
+                //Log.d(LOG_TAG, "got .. Random idx: " + cix  )
                 cix = getRandomCellIdx(146, vonCell.position)
                 //Log.d(LOG_TAG, "got .. Random idx: " + cix  );
                 nachCell = getItem(cix) //getRandomCell(19, vonCell.position);
@@ -105,13 +105,13 @@ class ItemAr(context: Context, gridView: GridView, activity: LettersFrag) :
                     //MischLetters = MischLetters + nachCell.CharOk + vonCell.CharOk;
                     // Log.d(LOG_TAG, "moved: " + vonCell.position + " nach: " + nachCell.position);
                 }
-                loopcnt--
+
             }
             //Toast.makeText(getContext(), "moved: "+movecnt, Toast.LENGTH_LONG).show();
             //Log.d(LOG_TAG, "moved: " + movecnt);
         } catch (e: Exception) {
             //e.printStackTrace();
-            gc.Logl("Crash: " + e.message + chrashCnt, true)
+            gc.Logl("ItemArCrash: " + e.message + chrashCnt, true)
             // Toast.makeText(getContext(), "Crash: "+e.getMessage()  + chrashCnt, Toast.LENGTH_LONG).show();
         }
     }
@@ -119,19 +119,19 @@ class ItemAr(context: Context, gridView: GridView, activity: LettersFrag) :
     private fun getRandomCellIdx(tries: Int, ignore: Int): Int {
         var tries = tries
         var max = count
-        var Idx: Int
+        var idx: Int
         var retidx = -1
         // Log.d(LOG_TAG, "Item Count: " + max); MischLetters
         if (max < 11) return -1
         if (ignore == -3 && max > 22) max = 5
         var cel: Celli?
         while (tries > 0 && retidx == -1) {
-            Idx = random.nextInt(max - 1)
+            idx = random.nextInt(max - 1)
             //Log.d(LOG_TAG, "Random idx: " + Idx  );
-            if (ignore > -1 && ignore == Idx) break
-            cel = getItem(Idx)
+            if (ignore > -1 && ignore == idx) break
+            cel = getItem(idx)
             //Log.d(LOG_TAG, "idx: " + Idx + "  null: "+ (cel==null) );
-            if (canMove(cel)) retidx = Idx
+            if (canMove(cel)) retidx = idx
             tries--
         }
         if (retidx == -1) for (i in idxRand..<max - 1) {

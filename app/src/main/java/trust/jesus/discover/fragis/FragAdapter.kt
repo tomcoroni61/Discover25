@@ -44,7 +44,7 @@ class FragAdapter (fragmentActivity: FragmentActivity) : FragmentStateAdapter(fr
         //gc.curFragment = position
         val ret: Fragment = when (position) {
             home -> HomeFrag()
-            1 -> ClickWfrag()
+            clickw -> ClickWfrag()
             2 -> WordFrag()
             3 -> LettersFrag()
             speech -> SpeechFrag()
@@ -121,11 +121,15 @@ class FragAdapter (fragmentActivity: FragmentActivity) : FragmentStateAdapter(fr
         tfnList.add(h)
 
     }
+    //von doMenuImg()
     fun doBottomSheet(position: Int) {
         for (h in tfnList) {
             if (h.viewPagerPos == position) {
                 when (position) {
                     home ->         (h.fragment as HomeFrag).doThemeSheet()
+                    clickw ->       (h.fragment as ClickWfrag).doButtonSheet()
+                    //words ->        (h.fragment as WordFrag).doButtonSheet()
+                    //letters ->      (h.fragment as LettersFrag).doButtonSheet()
                     //speech ->      (h.fragment as SpeechFrag).doButtonSheet()
                     discover ->     (h.fragment as EntdeckeFrag).doButtonSheet()
                 }
@@ -155,7 +159,7 @@ class FragAdapter (fragmentActivity: FragmentActivity) : FragmentStateAdapter(fr
         for (h in tfnList) {
             if (h.viewPagerPos == pagePos) {
                 when (pagePos) {
-                    home , discover ->     kein = false
+                    home, clickw, discover ->     kein = false
                 }
             }
         }

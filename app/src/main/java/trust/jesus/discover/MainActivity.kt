@@ -1,6 +1,8 @@
 package trust.jesus.discover
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -8,7 +10,6 @@ import android.util.TypedValue
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
@@ -43,14 +44,19 @@ class MainActivity : AppCompatActivity() {
     var viewPager: ViewPager2? = null
     var sectionsPagerAdapter: FragAdapter? = null
 
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES) MODE_NIGHT_FOLLOW_SYSTEM MODE_NIGHT_NO
         // geht zu res/values/ (night) themes.xml
         setAppTheme()
         super.onCreate(savedInstanceState)
-        // Standardmäßig macht enableEdgeToEdge() die Systemleisten transparent.
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        // or lock it to landscape
+        // setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setAppTheme(false, true)
+        // Standardmäßig macht enableEdgeToEdge() die Systemleisten transparent.
         enableEdgeToEdge()
         setContentView(binding.root)
         //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -101,7 +107,8 @@ class MainActivity : AppCompatActivity() {
         gc.mainActivity = this
         //gc.log("MainActivity onCreate")
         handleReceiveShare()
-        gc.lernItem.Text = gc.csvList()!!.getRandomText()
+        if (gc.lernItem.text.length < 9)
+            gc.csvList()!!.getRandomText()
         //gc.log("MainActivity onCreate  222")
     }
     fun doPageCount() {
@@ -118,7 +125,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private var displayName: String? = null
-    private var imageUri: Uri? = null
 
     private fun handleReceiveShare() {
         val intent = getIntent()
@@ -189,11 +195,11 @@ class MainActivity : AppCompatActivity() {
 
 
     fun btnSpeekClick(view: View) {//muß view: View!!
-        gc.ttSgl()?.speak(gc.lernItem.Text)
+        gc.ttSgl()?.speak(gc.lernItem.text)
     }
 
     fun btnMainDlgClick(view: View) {//muß view: View!!
-        gc.globDlg().showPopupWin( gc.lernItem.Text)
+        gc.globDlg().showPopupWin( gc.lernItem.text)
     }
 
     fun setBibleTheme(activity: BibleAy, setColors: Boolean = false) {

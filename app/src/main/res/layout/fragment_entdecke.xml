@@ -37,7 +37,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/tvVerstext"
+        android:layout_above="@id/tvverscnt"
         android:layout_below="@+id/btnBible"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="32dp">
@@ -53,6 +53,17 @@
 
     </ScrollView>
 
+    <TextView
+        android:id="@+id/tvverscnt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/llseekbar"
+        android:textSize="18sp"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="5dp"
+
+        />
+
     <LinearLayout
         android:id="@+id/llseekbar"
         android:layout_width="match_parent"
@@ -62,7 +73,7 @@
         android:visibility="invisible">
 
         <trust.jesus.discover.little.ShButton
-            android:id="@+id/btn_seek_rund"
+            android:id="@+id/btnseekrund"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="9dp"
@@ -70,15 +81,13 @@
             android:text="@string/seek_rand" />
 
 
-        <TextView
-            android:id="@+id/tvverscnt"
+        <trust.jesus.discover.little.ShButton
+            android:id="@+id/btnseekplay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginBottom="5dp"
-
-            />
-
+            android:layout_marginStart="9dp"
+            android:background="@drawable/btn_dyn_back"
+            android:text="@string/speak_and" />
 
 
     </LinearLayout>
@@ -118,7 +127,7 @@
         />
 
     <TextView
-        android:id="@+id/tvagain"
+        android:id="@+id/tvMischen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -134,7 +143,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@+id/tvagain"
+        android:layout_toEndOf="@+id/tvMischen"
         android:layout_marginStart="15dp"
 
         app:drawableStartCompat="@drawable/refresh_tv"

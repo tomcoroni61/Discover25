@@ -52,15 +52,16 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
         binding.etvTxtShow.setOnClickListener(this)
         binding.btnRandObst.setOnClickListener(this)
         binding.btnBible.setOnClickListener(this)
-        binding.btnSeekRund.setOnClickListener(this)
+        binding.btnseekplay.setOnClickListener(this)
         binding.tvVerstext.setOnClickListener(this)
-        binding.tvagain.setOnClickListener(this)
+        binding.tvMischen.setOnClickListener(this)
+        binding.btnseekrund.setOnClickListener(this)
 
         showMixed = gc.appVals().valueReadBool("btn.splitTrack", false)
         txtSize = gc.appVals().valueReadInt("txt.size", 18)
         checkVerslist()
 
-        textToFlowlayout(gc.lernItem.Text, showMixed)
+        textToFlowlayout(gc.lernItem.text, showMixed)
         return rootView
     }
 
@@ -68,7 +69,7 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
         super.onResume()
         checkVerslist()
         //gc.Logl("onResume  " + (paramSearch!= null), false)
-        textToFlowlayout(gc.lernItem.Text, showMixed)
+        textToFlowlayout(gc.lernItem.text, showMixed)
     }
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -220,7 +221,7 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
             val v: View = binding.flowLayout.getChildAt(i)
             v.setBackgroundResource(R.drawable.richtigplaz)
         }
-        binding.tvVerstext.text = gc.lernItem.Text
+        binding.tvVerstext.text = gc.lernItem.text
         binding.ayheaderTextView.text = gc.lernItem.vers
 
         // gc.showPopupWin(this.binding.root, gc.LernItem.Text, { this.mischViews() })
@@ -301,7 +302,7 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
     fun btnRandomversClick() {
         PreferenceManager.getDefaultSharedPreferences(requireContext())
         val range = getRandRange(requireContext())
-        val verse =  gc.parseBook()?.randomBookAndChapter(range )
+        val verse =  gc.bBlparseBook()?.randomBookAndChapter(range )
         binding.tvVerstext.text = "wait"
         binding.ayheaderTextView.text = "??"
         val version = getVersion( requireContext() )
@@ -321,23 +322,28 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
                             var vers = 1
                             if (verses?.size!! > 1)  vers = random.nextInt(verses.size)
                             val txt = verses[vers]?.text
-                            gc.lernItem.Chapter = gc.bolls()?.versArrayToChaptertext(verses)
+
+                            gc.lernItem.setBollsSearchResult(gc.bolls()?.versArrayToChaptertext(verses).toString(),
+                                txt.toString(), version,vers+1, bookNum.toInt(), chapter.toInt())
+                            gc.lernItem.addToHistory()
+                            /*gc.lernItem.chapter = gc.bolls()?.versArrayToChaptertext(verses).toString()
                             if (txt != null) {
-                                gc.lernItem.Text = txt
+                                gc.lernItem.text = txt
                             }
                             gc.lernItem.vers =
-                                gc.parseBook()!!.versShortName(bookNum.toInt(), chapter.toInt(), vers+1)
+                                gc.bBlparseBook()!!.versShortName(bookNum.toInt(), chapter.toInt(), vers+1)
                             gc.lernItem.translation = version
-                            gc.lernItem.NumVers = vers
-                            gc.lernItem.NumBook = bookNum.toInt()
-                            gc.lernItem.NumChapter = chapter.toInt()
+                            gc.lernItem.partText = "ne"
+                            gc.lernItem.numVers = vers
+                            gc.lernItem.numBook = bookNum.toInt()
+                            gc.lernItem.numChapter = chapter.toInt()
                             //gc.log("fetche: " + gc.lernItem.NumVers)
                             val cdata = CsvData()
                             gc.csvList()?.copyData(gc.lernItem, cdata)
-                            gc.versHistory.addVers(cdata)
+                            gc.versHistory.addVers(cdata) */
                             gc.setVersTitel(gc.lernItem.vers)
                             binding.tvVerstext.text = ""
-                            textToFlowlayout(gc.lernItem.Text, showMixed)
+                            textToFlowlayout(gc.lernItem.text, showMixed)
                             //mischViews()
                         }
                     }
@@ -359,11 +365,11 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
     fun tvSpeackClick() {
         // gc.ttSgl()?.setLanguageAndVoice(Locale.UK, 0)//GERMAN
 
-        gc.ttSgl()?.speak(gc.lernItem.Text)
+        gc.ttSgl()?.speak(gc.lernItem.text)
     }
 
     fun txtClick() {
-        gc.globDlg().showPopupWin(gc.lernItem.Text)
+        gc.globDlg().showPopupWin(gc.lernItem.text)
     }
 
 
@@ -380,11 +386,11 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
         binding.llseekbar.visibility = View.VISIBLE
         if (gc.sharedPrefs.getBoolean("use_jsonList", true)) {
             val stat =  gc.jsonList()!!.getSuchwort() +
-                    " Vc: " + gc.jsonList()!!.entries() + " done " + gc.jsonList()!!.getProzentReaded() + "% "
+                    "   Vc: " + gc.jsonList()!!.entries() + " done " + gc.jsonList()!!.getProzentReaded() + "% "
             binding.tvverscnt.text = stat
         } else {
             val stat =  gc.seekList().getSuchwort() +
-                    " Vc: " + gc.seekList().entries() + " done " + gc.seekList().getProzentReaded() + "% "
+                    "   Vc: " + gc.seekList().entries() + " done " + gc.seekList().getProzentReaded() + "% "
             binding.tvverscnt.text = stat
         }
 
@@ -392,40 +398,31 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
 
     private fun btnrandseekClick() {
         if (gc.sharedPrefs.getBoolean("use_jsonList", true)) {
-            val jvers = gc.jsonList()!!.getRandomVers()
-            if (jvers == null) return
-            gc.lernItem.vers =
-                gc.parseBook()!!.versShortName(jvers.book, jvers.chapter, jvers.verse)
-            gc.lernItem.translation = jvers.translation
-            gc.lernItem.NumVers = jvers.verse
-            gc.lernItem.NumBook = jvers.book
-            gc.lernItem.NumChapter = jvers.chapter
-            gc.lernItem.Text = jvers.text
+            val jvers = gc.jsonList()?.getRandomVers()
+            gc.lernItem.setBollsSrVers(jvers)
+
 
         }  else {
             if (gc.seekList().entries() < 2) return
 
             val vers = gc.seekList().getRandomVers()
-            gc.lernItem.vers =
-                gc.parseBook()!!.versShortName(vers!!.numBook, vers.numChapter, vers.numVers)
-            gc.lernItem.translation = vers.translation
-            gc.lernItem.NumVers = vers.numVers
-            gc.lernItem.NumBook = vers.numBook
-            gc.lernItem.NumChapter = vers.numChapter
-            gc.lernItem.Text = vers.text
+            gc.lernItem.setSeekVers(vers)
             //gc.log("fetche: " + gc.LernItem.VersNum)
             binding.tvVerstext.text = ""
             binding.ayheaderTextView.text = ""
 
         }
-        gc.lernItem.Chapter = ""
-        val cdata = CsvData()
-        gc.csvList()?.copyData(gc.lernItem, cdata)
-        gc.versHistory.addVers(cdata)
+        gc.lernItem.chapter = ""
+        gc.lernItem.addToHistory()
         gc.setVersTitel(gc.lernItem.vers)
         checkVerslist()
-        textToFlowlayout(gc.lernItem.Text, showMixed)
+        textToFlowlayout(gc.lernItem.text, showMixed)
         //mischViews()
+    }
+
+    fun btnrandseekAndSpeakClick() {
+        btnrandseekClick()
+        tvSpeackClick()
     }
 
     fun doButtonSheet() {
@@ -460,19 +457,20 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
         dialog.setContentView(view)
         dialog.show()
     }
-    fun mischViews() {textToFlowlayout(gc.lernItem.Text, true)}
+    fun mischViews() {textToFlowlayout(gc.lernItem.text, true)}
     override fun onClick(p0: View?) {
         when (p0?.id) {
             R.id.btn_randomvers ->  btnRandomversClick()
             R.id.ayheaderTextView -> btnRandomversClick()
-            R.id.tvagain -> mischViews()
+            R.id.tvMischen -> mischViews()
             R.id.tvMoves -> doButtonSheet()
             R.id.etvTxtShow -> txtClick()
 
             R.id.btn_randObst -> btnrandObstClick()
             R.id.btnBible -> btnBibleClick()
             R.id.wtvSpeak -> tvSpeackClick()
-            R.id.btn_seek_rund -> btnrandseekClick()
+            R.id.btnseekrund -> btnrandseekClick()
+            R.id.btnseekplay -> btnrandseekAndSpeakClick()
             R.id.tvVerstext -> txtClick()
 
         }

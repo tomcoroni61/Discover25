@@ -40,23 +40,26 @@ class BibleAy : AppCompatActivity() {
             //systemBars.bottom - systemBars.top
             insets
         }
+        //gc.log("BibleAy onCreate")
+        //gc.checkLernItemForBolls()
+        booknum = gc.lernItem.numBook
+        chapter = gc.lernItem.numChapter
 
-        booknum = gc.lernItem.NumBook
-        chapter = gc.lernItem.NumChapter
-
-        binding.tvCChapter.text = gc.lernItem.Chapter
-        if (gc.lernItem.Chapter!!.isEmpty())
+        binding.tvCChapter.text = gc.lernItem.chapter
+        if (gc.lernItem.chapter.length < 9) {
+            intent!!.putExtra("startVers", gc.lernItem.numVers)
             fetchBibleChapter(gc.lernItem.translation, booknum.toString(), chapter.toString())
+        }
             else
             setVersCaps(true)
     }
 
     private fun setVersCaps(markVers: Boolean = false) {
         binding.tvVersion.text = gc.bolls()?.bibelVersionShortToLong(gc.lernItem.translation)
-        val txt = gc.parseBook()?.bookNameCapital( booknum) + "  " + chapter
+        val txt = gc.bBlparseBook()?.bookNameCapital( booknum) + "  " + chapter
         binding.tvBooknameChap.text = txt
-        if (!markVers || gc.lernItem.NumVers < 4) return //"\n"+
-        val searchVers = "\n"+gc.lernItem.NumVers.toString() + " "
+        if (!markVers || gc.lernItem.numVers < 4) return //"\n"+
+        val searchVers = "\n"+gc.lernItem.numVers.toString() + " "
         val idx = binding.tvCChapter.text.indexOf(searchVers)
         //gc.log("search: $searchVers, idx: $idx")
         if (idx < 3) return
@@ -137,7 +140,7 @@ class BibleAy : AppCompatActivity() {
                             val verses = result.getOrNull()  //verses?.forEach { verse ->
 
                             binding.tvVersion.text = gc.lernItem.translation
-                            binding.tvBooknameChap.text = gc.parseBook()?.bookNameCapital( gc.lernItem.NumBook)
+                            binding.tvBooknameChap.text = gc.bBlparseBook()?.bookNameCapital( gc.lernItem.numBook)
                             binding.tvCChapter.text = gc.bolls()?.versArrayToChaptertext(verses)
 
                             val intent = getIntent()

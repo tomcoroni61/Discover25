@@ -5,11 +5,16 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.FOCUS_DOWN
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.core.view.size
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import trust.jesus.discover.R
 import trust.jesus.discover.databinding.FragmentClickWfragBinding
+import trust.jesus.discover.databinding.SheetWordclkBinding
 import trust.jesus.discover.little.recognio.RecognitionCallback
 import trust.jesus.discover.little.recognio.RecognitionStatus
 import trust.jesus.discover.little.recognio.SpToTx
@@ -38,14 +43,16 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
         binding.ycbtspeakObt.setOnClickListener(this)
         binding.ybtspeak.setOnClickListener(this)
         binding.actxTextView.setOnClickListener(this)
-        binding.tvagain.setOnClickListener(this)
+        binding.tvMischen.setOnClickListener(this)
         binding.acheaderTextView.setOnClickListener(this)
         binding.ybtrecord.setOnClickListener (this)
 
 
         binding.progressBar.visibility = View.INVISIBLE
         binding.progressBar.max = 10
-
+        xIgnoreWords = gc.appVals().valueReadInt("ClkWords_NextWords", 2)
+        xAutoNext = gc.appVals().valueReadInt("ClkWords_xAutoNext", 5)
+        allowpartWord = gc.appVals().valueReadBool("ClkWords_partWord", true)
         //recognitionManager.createRecognizer()
         loadText()
 
@@ -103,12 +110,19 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
     }
 
     fun doPopUpTxtClick() {
-        gc.globDlg().showPopupWin(gc.lernItem.Text)
+        gc.globDlg().showPopupWin(gc.lernItem.text)
         //gc.showPopupWin(this.binding.actvText, , { this.loadText() })
     }
 
     fun tvSpeackClick() {
-        gc.ttSgl()!!.speak(gc.lernItem.Text)
+        if (wordidx > 4) {
+            val startIndex = wordidx - 4
+            var cnt = startIndex + 8
+            if (cnt > wordlist.size) cnt = wordlist.size
+            val txt = wordlist.subList(startIndex, cnt).joinToString(separator = " ")
+            gc.ttSgl()?.speak(txt.lowercase())
+        } else
+            gc.ttSgl()!!.speak(gc.lernItem.text)
     }
 
     fun ycbtttsSettingsClick() {
@@ -118,11 +132,11 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
     fun ycbtdoSpeakClick() {
         var tvTxt = binding.actvText.text.toString()
         if (tvTxt.length < 5) return
-        val spTxt = gc.lernItem.Text
+        val spTxt = gc.lernItem.text
         if (wordidx > wordlist.size-1) return
         val aWord = wordlist[wordidx - 1] //toUpperCase(Locale.GERMANY).
         val wLen = aWord.length
-        val pos = spTxt.uppercase(Locale.GERMANY).indexOf(aWord, tvTxt.length - wLen - 2)
+        val pos = spTxt.uppercase(Locale.getDefault()).indexOf(aWord, tvTxt.length - wLen - 2)
         //gc.Logl(tvTxt.length()-wLen-2 + " "+aWord+ "|"+pos + " "+spTxt.toUpperCase(Locale.GERMANY), true);
         if (pos < 5) return
         tvTxt = spTxt.substring(0, pos + wLen)
@@ -136,13 +150,13 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
         if (curVers == gc.lernItem.vers) return
         curVers = gc.lernItem.vers
         gc.setVersTitel(curVers)
-        var text = gc.lernItem.Text
+        var text = gc.lernItem.text
         if (gc.lernItem.partText.length>9)
             text = gc.lernItem.partText
         binding.actvText.text = ""
         wordlist.clear()
         clickCnt = 0
-        curText = gc.lernItem.Text
+        curText = gc.lernItem.text
         wordidx = -1
         binding.acheaderTextView.text = gc.lernItem.vers
         //binding.vers.setText(gc.LernItem.Vers)
@@ -220,6 +234,7 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
     private fun checkWort(aWord: String): Boolean {
         val guwo = wordlist[wordidx]
         if (guwo == aWord) {
+            xAutoNextCount = 0
             var ct = binding.actvText.text.toString()
             ct = "$ct$guwo "
             binding.actvText.text = ct
@@ -231,33 +246,56 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
                 stopRecognition()
                 //doPopUpTxtClick()
             }
+            binding.svRejected.fullScroll( FOCUS_DOWN)
         } else {
             return false
         }
         return true
     }
     private fun recoCheckWort(aWord: String) {
-        if (wordlist[wordidx].indexOf(aWord)==0) {
-            checkWort(wordlist[wordidx])
-            return
-        }
+        if (aWord.isEmpty()) return
         if (wordlist[wordidx] == aWord) {
             checkWort(aWord)
             return
         }
-        if (wordidx < wordlist.size - 1) {
-            if (wordlist[wordidx+1] == aWord) {
-                checkWort(wordlist[wordidx] )
+        if (allowpartWord ) {
+            val word = wordlist[wordidx]
+            if (aWord.indexOf(word) >0|| word.indexOf(aWord)>0) {
+                checkWort(wordlist[wordidx])
+                val txt =  " $aWord <--> $word\n"
+                //binding.tvGucks.text = txt
                 return
             }
         }
-        if (wordidx < wordlist.size - 2) {
-            if (wordlist[wordidx+2] == aWord) {
-                checkWort(wordlist[wordidx] )
-                return
+
+        if (xIgnoreWords > 0) {
+            var cnt = 1
+            while (cnt <= xIgnoreWords && wordidx + cnt < wordlist.size) {
+                if (wordlist[wordidx + cnt] == aWord) {
+                    checkWort(wordlist[wordidx])
+                    return
+                }
+                cnt++
             }
         }
+        //Color.parseColor("#521B87")
+        var txt =  "xAutoNextCount $xAutoNextCount  $aWord \n  xAutoNext $xAutoNext\n"
+        //binding.tvGucks.text = txt
+        if (xAutoNext == 0) return
+        xAutoNextCount++
+        if (xAutoNextCount > xAutoNext) {
+            xAutoNextCount = 0
+            checkWort(wordlist[wordidx])
+            txt =  "xAutoNext  $aWord xAutoNext\n"
+            //binding.tvGucks.text = txt
+            return
+        }
+
     }
+    private var xIgnoreWords = 0
+    private var xAutoNext = 0
+    private var xAutoNextCount = 0
+    private var allowpartWord = true
     fun doNewVersClick() {
         gc.csvList()?.getRandomText()
         loadText()
@@ -307,6 +345,7 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
         }
     }
     override fun onPartialResults(results: List<String>) {
+        if (!allowpartWord) return
         val text = results.joinToString(separator = "\n")
         binding.textView.text = text
         checkMatch(results)
@@ -326,8 +365,60 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
         //Log.i("Recognition","onError: $errorMessage")
         // gc.Logl(errorMessage, false)
        binding.tvStatus.text = errorMessage
+        if (errorCode == recognitionManager.errSpeachTimeout) {
+            stopRecognition()
+        }
     }
 
+    private lateinit var dlgBinding: SheetWordclkBinding
+    fun doButtonSheet() {//binding = FragHomeBinding.inflate(layoutInflater)
+        val dialog = BottomSheetDialog(requireContext())
+        val inflater = LayoutInflater.from(requireContext())
+        dlgBinding = SheetWordclkBinding.inflate(inflater)
+        dialog.setContentView(dlgBinding.root)
+        var ari = arrayOf("0","1", "2", "3", "4", "5")
+        var adapter = ArrayAdapter(requireContext(),
+            android.R.layout.simple_spinner_dropdown_item,ari
+        )
+        dlgBinding.srIgnoreWords.adapter = adapter
+        dlgBinding.srIgnoreWords.setSelection(xIgnoreWords)
+        dlgBinding.srIgnoreWords.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                if (xIgnoreWords != position)
+                    gc.appVals().valueWriteInt("ClkWords_NextWords", position)
+                //if (xIgnoreWords != position) dialog.dismiss()
+
+                xIgnoreWords = position
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {  }
+        }
+
+        ari = arrayOf("0","1", "2", "3", "4", "5", "6", "7", "8", "9")
+        adapter = ArrayAdapter(requireContext(),
+            android.R.layout.simple_spinner_dropdown_item,ari
+        )
+        dlgBinding.srAutoNext.adapter = adapter
+        dlgBinding.srAutoNext.setSelection(xAutoNext)
+        dlgBinding.srAutoNext.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                if (xAutoNext != position)
+                    gc.appVals().valueWriteInt("ClkWords_xAutoNext", position)
+                //if (xIgnoreWords != position) dialog.dismiss()
+
+                xAutoNext = position
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {  }
+        }
+
+
+        dlgBinding.partWordSwitch.isChecked = allowpartWord
+        dlgBinding.partWordSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (allowpartWord != isChecked)
+                gc.appVals().valueWriteBool("ClkWords_partWord", isChecked)
+            allowpartWord = isChecked
+        }
+        dialog.show()
+    }
 
     override fun onClick(p0: View?) {
         when (p0?.id) {
@@ -335,7 +426,7 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
             R.id.ycbtspeakObt -> ycbtttsSettingsClick()
             R.id.actxTextView -> doPopUpTxtClick()
             R.id.ybtspeak -> ycbtdoSpeakClick()
-            R.id.tvagain -> doAgainClick()
+            R.id.tvMischen -> doAgainClick()
             R.id.acheaderTextView -> doNewVersClick()
             R.id.ybtrecord -> doRecordClick()
 

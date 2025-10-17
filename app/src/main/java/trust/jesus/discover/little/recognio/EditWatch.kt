@@ -7,7 +7,6 @@ import android.text.TextWatcher
 import android.view.View
 import trust.jesus.discover.R
 import trust.jesus.discover.fragis.SpeechFrag
-import kotlin.math.abs
 
 class EditWatch(speechFrag: SpeechFrag): View.OnClickListener {
     private val mSpeechFrag=speechFrag
@@ -28,7 +27,8 @@ class EditWatch(speechFrag: SpeechFrag): View.OnClickListener {
             //Toast.makeText(this.requireContext(), mSpeechFrag.getString(R.string.please_enter_some_text), Toast.LENGTH_SHORT)                    .show()
             return
         }
-        mSpeechFrag.speechReco.buildWordList()
+        mSpeechFrag.speechReco?.buildWordList()
+        mSpeechFrag.speechReco?.doLearnLevel()
         doReset(true)
     }
 
@@ -95,7 +95,7 @@ class EditWatch(speechFrag: SpeechFrag): View.OnClickListener {
                 throw Exception("too many Errors")
             // doReset()
             crashcnt = 2
-            val line = mSpeechFrag.speechReco.suerByList(text).uppercase().trim()
+            val line = mSpeechFrag.speechReco!!.suerByList(text).uppercase().trim()
             val list = line.split(' ')
             crashcnt = 100
             val lasthelpersCnt = helpersCnt
@@ -140,19 +140,19 @@ class EditWatch(speechFrag: SpeechFrag): View.OnClickListener {
         }
         return list2.isEmpty() || list1.isEmpty()
     }
-    fun endCheck() {
+    fun endCheck(moveFocus: Boolean) {
         val text = binding.keypadText.text.toString()
-        val line = mSpeechFrag.speechReco.suerByList(text).uppercase().trim()
-        val list = line.split(' ').toMutableList()
+        val line = mSpeechFrag.speechReco!!.suerByList(text)?.uppercase()?.trim()
+        val list = line?.split(' ')?.toMutableList()
         wordlist.clear()
-        wordlist.addAll(mSpeechFrag.speechReco.wordlist)
+        wordlist.addAll(mSpeechFrag.speechReco!!.wordlist)
         val wordcnt = wordlist.size
 
         var cnt = wordcnt
-        while (cnt > 0 && listCheck(list, wordlist)) cnt--
+        while (cnt > 0 && listCheck(list!!, wordlist)) cnt--
 
         var txt = ""
-        if (list.size > 0) txt = "not found: " + list.joinToString(", ") + "\n"
+        if (list!!.size > 0) txt = "not found: " + list.joinToString(", ") + "\n"
         if (wordlist.size > 0) txt += "not used: " + wordlist.joinToString(", ")
 
         helpersCnt = list.size + wordlist.size
@@ -162,36 +162,34 @@ class EditWatch(speechFrag: SpeechFrag): View.OnClickListener {
             //helpersCnt += abs(ediCnt - wordlist.size)
         val level = 100 - (helpersCnt * 100 / wordcnt)
         txt = "accuracy $level% err=${helpersCnt}  " +
-                getEndDoneText(level)
+               mSpeechFrag.speechReco!!.getEndDoneText(level)
     //}
         binding.tvkeyreciNextWord.text = txt
-        txt = binding.keypadText.text.toString() + "\n" + mSpeechFrag.getString(R.string.okay_verry_nice)
+        txt = binding.keypadText.text.toString() + "\n" + txt
         //binding.keypadText.setText(txt)
-        binding.tvAllPartText.append(mSpeechFrag.getString(R.string.okay_verry_nice)+"\n"+txt)
+        binding.tvAllPartText.append("\n"+txt)
+        if (moveFocus) {
+            binding.cbKeyRecoAutoCheck.requestFocus()
+            binding.cbKeyRecoAutoCheck.isChecked = false
+        }
     }
+
     private fun doFoundWords() {
         val txt = binding.tvkeyreci.text as String + wordlist[wordidx] + " "
         binding.tvkeyreci.text = txt
         //binding.tvDedacText.text = txt
         wordidx++
-        if (ttsvals.nextWords < 1) return
+        if (ttsvals.showNextWords < 1) return
         var words = ""
         var cnt = wordidx
         var nw = 0
-        while (cnt < wordlist.size && nw < ttsvals.nextWords ) {
+        while (cnt < wordlist.size && nw < ttsvals.showNextWords ) {
             words += wordlist[cnt] + " "
             cnt++
             nw++
         }
         binding.tvkeyreciNextWord.text = words
 
-    }
-    private fun getEndDoneText(level: Int): String {
-        var txt = mSpeechFrag.getString(R.string.bad)
-        if (level==100) txt = mSpeechFrag.getString(R.string.okay_verry_nice) else
-        if (level >= 90) txt = mSpeechFrag.getString(R.string.okay_nice) else
-        if (level >= 60) txt = mSpeechFrag.getString(R.string.nice)
-        return txt
     }
     private fun checkWort(aWord: String): Boolean {
         if ( wordidx >= wordlist.size) wordidx = wordlist.size-1
@@ -202,7 +200,7 @@ class EditWatch(speechFrag: SpeechFrag): View.OnClickListener {
                 doFoundWords() //erhöht wordidx
             else {//all okay
                 wordidx=9999+wordlist.size
-                endCheck()
+                endCheck(true)
 
             }
         } else {
@@ -264,7 +262,7 @@ class EditWatch(speechFrag: SpeechFrag): View.OnClickListener {
         }
         binding.tvkeyreci.text = ""
         wordlist.clear()
-        wordlist.addAll(mSpeechFrag.speechReco.wordlist)
+        wordlist.addAll(mSpeechFrag.speechReco!!.wordlist)
         wordidx = 0
         okiPos = 0
     }
@@ -292,7 +290,7 @@ class EditWatch(speechFrag: SpeechFrag): View.OnClickListener {
         when (p0?.id) {
             R.id.cbKeyRecoAutoCheck -> startWatch()
             R.id.keypadClear -> doEmptyClick()
-            R.id.keypadCheck -> endCheck()
+            R.id.keypadCheck -> endCheck(false)
         }
     }
 }

@@ -2,26 +2,32 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="trust.jesus.discover.fragis.ClickWfrag"
     >
+    <!-- Vertical Orientation set
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="trust.jesus.discover.fragis.ClickWfrag"
 
+    -->
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_marginBottom="2dp"
-        android:layout_marginTop="5dp"
+        android:layout_height="match_parent"
         android:layout_above="@+id/wtvSpeak"
-        android:layout_height="match_parent">
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="2dp"
+        android:paddingBottom="2dp">
 
         <org.apmem.tools.layouts.FlowLayout
+            android:id="@+id/flowLayout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
-            android:id="@+id/flowLayout"
-            android:orientation="horizontal"> <!-- Vertical Orientation set -->
+            android:layout_marginBottom="1dp"
+            android:orientation="horizontal"
+            android:paddingBottom="52dp">
+            <!-- Vertical Orientation set -->
 
         </org.apmem.tools.layouts.FlowLayout>
 
@@ -33,9 +39,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
-        android:layout_marginBottom="5dp"
-        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
+        android:layout_above="@+id/etvTxtShow"
         android:layout_alignParentStart="true"
+        android:textSize="18sp"
+        />
+
+    <TextView
+        android:text=""
+        android:id="@+id/ayheaderTextView"
+        android:layout_marginBottom="9dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/etvTxtShow"
+        app:drawableStartCompat="@drawable/refresh_tv"
+        app:drawableEndCompat="@drawable/refresh_tv"
+        android:layout_toEndOf="@+id/wtvSpeak"
+        android:layout_marginStart="15dp"
         android:textSize="18sp"
         />
 
@@ -44,36 +64,31 @@
         android:id="@+id/etvTxtShow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="6dp"
         android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@+id/wtvSpeak"
         />
 
     <TextView
-        android:id="@+id/tvagain"
+        android:text="@string/shuffle"
+        android:id="@+id/tvMischen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_toEndOf="@+id/etvTxtShow"
-        android:layout_marginStart="5dp"
+        android:layout_marginStart="25dp"
         app:drawableEndCompat="@drawable/refresh_tv"
-        android:layout_marginBottom="5dp" />
+        android:layout_marginBottom="1dp" />
+
 
     <TextView
-        android:text=""
-        android:id="@+id/ayheaderTextView"
-        android:layout_marginBottom="5dp"
+        android:id="@+id/tvrepeat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        app:drawableStartCompat="@drawable/refresh_tv"
-        app:drawableEndCompat="@drawable/refresh_tv"
-        android:layout_toEndOf="@+id/tvagain"
-        android:layout_marginStart="15dp"
-        android:layout_centerInParent="true"
-        android:textSize="18sp"
-        />
-
+        android:layout_marginStart="35dp"
+        android:layout_marginBottom="6dp"
+        android:layout_toEndOf="@+id/tvMischen"
+        android:text="@string/again" />
 
 </RelativeLayout>

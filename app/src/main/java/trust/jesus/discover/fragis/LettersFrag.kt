@@ -50,7 +50,7 @@ class LettersFrag: BaseFragment(), View.OnClickListener {
         val ht = " Done " + adapter?.usermoves + " <> " + adapter?.movecnt
         //tvHeader.setText(csvData.Vers)
         binding.tvMoves.text = ht
-        gc.globDlg().showPopupWin(gc.lernItem.Text)
+        gc.globDlg().showPopupWin(gc.lernItem.text)
         //gc.showPopupWin(binding.basiGridView, csvData.Text, { newText(true) })
     }
 
@@ -59,23 +59,23 @@ class LettersFrag: BaseFragment(), View.OnClickListener {
         gc.setVersTitel(curVers)
         if (curVers == gc.lernItem.vers) return
         curVers = gc.lernItem.vers
-        gc.setVersTitel(curVers)
         newText(true)
     }
     fun newText(nurMisch: Boolean) {
         var nurMisch = nurMisch
         var crashcnt = 0
         try {
-            if (nurMisch && gc.lernItem.Text.length < 22) nurMisch = false
+            if (nurMisch && gc.lernItem.text.length < 22) nurMisch = false
             var str: String
             crashcnt = 1
             if (nurMisch)
-                str = gc.lernItem.Text
+                str = gc.lernItem.text
                     else str = gc.csvList()!!.getRandomText() // "Es ist aber der Glaube eine feste Zuversicht dessen, was man hofft, und ein Nichtzweifeln an dem, was man nicht sieht.";
 
             if (gc.lernItem.partText.length>9)
                 str = gc.lernItem.partText
             str = gc.formatTextUpper(str)
+            gc.setVersTitel(gc.lernItem.vers)
             binding.basiGridView.adapter = null
             if (adapter != null) {
                 adapter!!.clearme()
@@ -102,7 +102,7 @@ class LettersFrag: BaseFragment(), View.OnClickListener {
 
 
     fun letxtClick() {
-        gc.globDlg().showPopupWin(gc.lernItem.Text)
+        gc.globDlg().showPopupWin(gc.lernItem.text)
         //gc.showPopupWin(binding.basiGridView, gc.LernItem.Text, { newText(true) })
     }
 
@@ -112,7 +112,7 @@ class LettersFrag: BaseFragment(), View.OnClickListener {
     }
 
     fun speackClick() {
-        gc.ttSgl()!!.speak(gc.lernItem.Text)
+        gc.ttSgl()!!.speak(gc.lernItem.text)
     }
     override fun onClick(p0: View?) {
         when (p0?.id) {

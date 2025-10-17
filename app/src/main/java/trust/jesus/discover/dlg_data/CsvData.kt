@@ -7,7 +7,7 @@ class CsvData {
     var partText: String = ""
     var Res2: String? = null
 
-    var Chapter: String? = null
+    var Chapter = ""
     var Text: String = "null"
     var NumVers: Int = 0
     var NumBook: Int = 1

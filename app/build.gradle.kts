@@ -13,7 +13,7 @@ android {
         minSdk = 28
         targetSdk = 36
         versionCode = 2
-        versionName = "2.0"
+        versionName = "V2 10.25"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -22,13 +22,16 @@ android {
         release {
             //isMinifyEnabled = true
             //isShrinkResources = true
+            //neversionNameSuffix = "-MyNiceDebugModeName"
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
         }
         debug {
-            isMinifyEnabled = false
+            //isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -57,7 +60,7 @@ code optimierung:
 https://developer.android.com/topic/performance/app-optimization/enable-app-optimization?hl=de
             isMinifyEnabled = true  bei true unter 4MB aber crash
             isShrinkResources = true
-mit Anpassung geht bei 5MB
+mit Anpassung geht bei 6.2MB statt 25.8MB 09.25 auf Vivo geht
 
     implementation(libs.layouts)  //!!!!!!! =FlowLayout  !!!!!!!!!!!
     implementation(libs.gson)

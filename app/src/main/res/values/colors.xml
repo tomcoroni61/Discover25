@@ -83,13 +83,13 @@
     <color name="green_box_background">#26C831</color>
     <color name="green_tab_selected">#52041E</color>
 
-    <!-- ocher theme -->
+    <!-- ocher theme E6DC70-->
     <color name="ocher_background">#978016</color>
     <color name="ocher_action_bar">#FDD835</color>
-    <color name="ocher_key_normal">#22367E</color>
+    <color name="ocher_key_normal">#AD9251</color>
     <color name="ocher_key_pressed">#989B43</color>
     <color name="ocher_box_background">#B6B260</color>
-    <color name="ocher_tab_selected">#040D52</color>
+    <color name="ocher_tab_selected">#E6DC70</color>
 
     <!-- yellow theme -->
     <color name="yellow_background">#ECF00C</color>

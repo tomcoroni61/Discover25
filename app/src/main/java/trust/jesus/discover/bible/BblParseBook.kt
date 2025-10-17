@@ -7,7 +7,7 @@ import kotlin.random.nextInt
 
 class BblParseBook {
 //most from https://github.com/nehemiaharchives/bbl
-    private val gc: Globus = Globus.getAppContext() as Globus
+    //private val gc: Globus = Globus.getAppContext() as Globus
     data class BookChapterFilter(
         val book: Int? = null,
         val startChapter: Int? = null,
@@ -225,74 +225,74 @@ class BblParseBook {
         arrayOf("revelation", "rev", "re", "the revelation"),
     )
 
-    fun bookNumber(bookName: String) = when (bookName) {
-        "genesis", "gen", "ge", "gn" -> 1
-        "exodus", "ex", "exod", "exo" -> 2
-        "leviticus", "lev", "le", "lv" -> 3
-        "numbers", "num", "nu", "nm", "nb" -> 4
-        "deuteronomy", "deut", "de", "dt" -> 5
+    fun bookNumber(bookName: String) = when (bookName.lowercase()) {
+        "genesis", "gen", "ge", "gn", "1mo" -> 1
+        "exodus", "ex", "exod", "exo", "2mo" -> 2
+        "leviticus", "lev", "le", "lv", "3mo" -> 3
+        "numbers", "num", "nu", "nm", "nb", "4mo" -> 4
+        "deuteronomy", "deut", "de", "dt", "5mo" -> 5
         "joshua", "josh", "jos", "jsh" -> 6
-        "judges", "judg", "jdg", "jg", "jdgs" -> 7
-        "ruth", "rth", "ru" -> 8
+        "judges", "judg", "jdg", "jg", "jdgs", "ri", "richter" -> 7
+        "ruth", "rth", "ru", "rut" -> 8
         "1st samuel", "1 sam", "1sam", "1sm", "1sa", "1s", "1 samuel", "1samuel", "1st sam", "first samuel", "first sam" -> 9
         "2nd samuel", "2 sam", "2sam", "2sm", "2sa", "2s", "2 samuel", "2ndsam", "2nd sam", "second samuel", "second sam" -> 10
-        "1st kings", "1kings", "1 kings", "1kgs", "1 kgs", "1ki", "1k", "1stkgs", "first kings", "first kgs" -> 11
-        "2nd kings", "2kings", "2 kings", "2kgs", "2 kgs", "2ki", "2k", "2ndkgs", "second kings", "second kgs" -> 12
-        "1st chronicles", "1chronicles", "1 chronicles", "1chr", "1 chr", "1ch", "1stchr", "1st chr", "first chronicles", "first chr" -> 13
-        "2nd chronicles", "2chronicles", "2 chronicles", "2chr", "2 chr", "2ch", "2ndchr", "2nd chr", "second chronicles", "second chr" -> 14
-        "ezra", "ezr", "ez" -> 15
+        "1kön", "1st kings", "1kings", "1 kings", "1kgs", "1 kgs", "1 ki", "1k", "1stkgs", "first kings", "first kgs", "1kö", "1 kö" -> 11
+        "2kön", "2nd kings", "2kings", "2 kings", "2kgs", "2 kgs", "2 ki", "2k", "2ndkgs", "second kings", "second kgs", "2kö", "2 kö" -> 12
+        "1st chronicles", "1chronicles", "1 chronicles", "1chr", "1 chr", "1 ch", "1stchr", "1st chr", "first chronicles", "first chr" -> 13
+        "2nd chronicles", "2chronicles", "2 chronicles", "2chr", "2 chr", "2 ch", "2ndchr", "2nd chr", "second chronicles", "second chr" -> 14
+        "ezra", "ezr", "ez", "esra", "esr" -> 15
         "nehemiah", "neh", "ne" -> 16
         "esther", "est", "esth", "es" -> 17
-        "job", "jb" -> 18
+        "job", "jb", "hiob" -> 18
         "psalms", "ps", "psalm", "pslm", "psa", "psm", "pss" -> 19
-        "proverbs", "prov", "pro", "prv", "pr" -> 20
-        "ecclesiastes", "eccles", "eccle", "ecc", "ec", "qoh" -> 21
-        "song of solomon", "song", "song of songs", "sos", "so", "canticle of canticles", "canticles", "cant" -> 22
-        "isaiah", "isa", "is" -> 23
+        "proverbs", "prov", "pro", "prv", "pr", "spr", "sprüche" -> 20
+        "ecclesiastes", "eccles", "eccle", "ecc", "ec", "qoh", "pre", "pred", "prediger" -> 21
+        "hohe lied", "hld", "lied", "song of solomon", "song", "song of songs", "sos", "so", "canticle of canticles", "canticles", "cant" -> 22
+        "isaiah", "isa", "is", "jes", "jesa" -> 23
         "jeremiah", "jer", "je", "jr" -> 24
-        "lamentations", "lam", "la" -> 25
-        "ezekiel", "ezek", "eze", "ezk" -> 26
+        "lamentations", "lam", "la", "kla", "klgl" -> 25
+        "ezekiel", "ezek", "eze", "ezk", "hes" -> 26
         "daniel", "dan", "da", "dn" -> 27
         "hosea", "hos", "ho" -> 28
         "joel", "jl" -> 29
         "amos", "am" -> 30
-        "obadiah", "obad", "ob" -> 31
+        "obadiah", "obad", "ob", "obd" -> 31
         "jonah", "jnh", "jon" -> 32
-        "micah", "mic", "mc" -> 33
+        "micah", "mic", "mc", "mi" -> 33
         "nahum", "nah", "na" -> 34
         "habakkuk", "hab", "hb" -> 35
-        "zephaniah", "zeph", "zep", "zp" -> 36
+        "zephaniah", "zeph", "zep", "zp", "zef" -> 36
         "haggai", "hag", "hg" -> 37
-        "zechariah", "zech", "zec", "zc" -> 38
+        "zechariah", "zech", "zec", "zc", "sach" -> 38
         "malachi", "mal", "ml" -> 39
-        "matthew", "matt", "mt" -> 40
+        "matthew", "matt", "mt", "mat" -> 40
         "mark", "mrk", "mar", "mk", "mr" -> 41
         "luke", "luk", "lk" -> 42
         "john", "joh", "jhn", "jn" -> 43
         "acts", "act", "ac", "apg" -> 44
         "romans", "rom", "ro", "rm", "röm" -> 45
-        "1 corinthians", "1corinthians", "1 cor", "1cor", "1 co", "1co", "1st corinthians", "first corinthians" -> 46
-        "2 corinthians", "2corinthians", "2 cor", "2cor", "2 co", "2co", "2nd corinthians", "second corinthians" -> 47
+        "1 corinthians", "1corinthians", "1 cor", "1cor", "1kor", "1 co", "1co", "1st corinthians", "first corinthians" -> 46
+        "2 corinthians", "2corinthians", "2 cor", "2cor", "2kor", "2 co", "2co", "2nd corinthians", "second corinthians" -> 47
         "galatians", "gal", "ga" -> 48
         "ephesians", "eph", "ephes" -> 49
         "philippians", "phil", "php", "pp" -> 50
-        "colossians", "col", "co" -> 51
+        "colossians", "col", "co", "ko", "kol" -> 51
         "1 thessalonians", "1thessalonians", "1 thess", "1thess", "1 thes", "1thes", "1 th", "1th", "1st thessalonians", "1st thess", "first thessalonians", "first thess" -> 52
         "2 thessalonians", "2thessalonians", "2 thess", "2thess", "2 thes", "2thes", "2 th", "2th", "2nd thessalonians", "2nd thess", "second thessalonians", "second thess" -> 53
         "1 timothy", "1timothy", "1 tim", "1tim", "1 ti", "1ti", "1st timothy", "1st tim", "first timothy", "first tim" -> 54
         "2 timothy", "2timothy", "2 tim", "2tim", "2 ti", "2ti", "2nd timothy", "2nd tim", "second timothy", "second tim" -> 55
         "titus", "tit", "ti" -> 56
-        "philemon", "philem", "phm", "pm" -> 57
-        "hebrews", "heb" -> 58
-        "james", "jas", "jm" -> 59
+        "philemon", "philem", "phm", "pm", "phlm" -> 57
+        "hebrews", "heb", "hebr" -> 58
+        "james", "jas", "jm", "jak" -> 59
         "1 peter", "1peter", "1 pet", "1pet", "1 pe", "1pe", "1 pt", "1pt", "1p", "1st peter", "first peter" -> 60
         "2 peter", "2peter", "2 pet", "2pet", "2 pe", "2pe", "2 pt", "2pt", "2p", "2nd peter", "second peter" -> 61
-        "1 john", "1 joh", "1john", "1 jhn", "1jhn", "1 jn", "1jn", "1j", "1st john", "first john" -> 62
-        "2 john", "2 joh", "2john", "2 jhn", "2jhn", "2 jn", "2jn", "2j", "2nd john", "second john" -> 63
-        "3 john", "3 joh", "3john", "3 jhn", "3jhn", "3 jn", "3jn", "3j", "3rd  john", "third john" -> 64
+        "1 john", "1 joh", "1joh", "1john", "1 jhn", "1jhn", "1 jn", "1jn", "1j", "1st john", "first john" -> 62
+        "2 john", "2 joh", "2joh", "2john", "2 jhn", "2jhn", "2 jn", "2jn", "2j", "2nd john", "second john" -> 63
+        "3 john", "3 joh", "3joh", "3john", "3 jhn", "3jhn", "3 jn", "3jn", "3j", "3rd  john", "third john" -> 64
         "jude", "jud", "jd" -> 65
-        "revelation", "rev", "re", "the revelation" -> 66
-        else -> 19 //throw Exception("book '$bookName' not found in the list of book names")
+        "revelation", "rev", "re", "the revelation", "offb" -> 66
+        else -> 0 //throw Exception("book '$bookName' not found in the list of book names")
     }
 
     val numberToName = mapOf(
@@ -385,7 +385,7 @@ class BblParseBook {
         18 to "job",
         19 to "psalms",
         20 to "prov",
-        21 to "eccl",
+        21 to "ecc",
         22 to "song",
         23 to "isa",
         24 to "jer",
@@ -436,9 +436,9 @@ class BblParseBook {
     fun bookName(bookNumber: Int) = numberToName[bookNumber]
 
     data class VersePointer(
-        val book: Int = 0,
-        val chapter: Int = 0,
-        var startVerse: Int? = null,
+        var book: Int = 0,
+        var chapter: Int = 0,
+        var startVerse:Int = 0,
         val endVerse: Int? = null
     )
 
@@ -474,7 +474,7 @@ class BblParseBook {
 
         val chapterNumber = chapterVerseSplit[0].toInt()
 
-        val startVerse = if (chapterVerseSplit.size == 2) chapterVerseSplit[1].split("-")[0].toInt() else null
+        val startVerse = if (chapterVerseSplit.size == 2) chapterVerseSplit[1].split("-")[0].toInt() else 0
 
         val endVerse =
             if (chapterVerseSplit.size == 2 && chapterVerse.contains("-")) chapterVerseSplit[1].split("-")[1].toInt() else null

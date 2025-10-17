@@ -48,14 +48,13 @@ class GlobDlgs {
         val vtext = gc.lernItem.vers + " " + gc.lernItem.translation
         tvVersVersion?.text = vtext
         tvVersVersion?.setOnClickListener { view1: View? ->
-            val vers = gc.versHistory.currentVers()
-            if (vers != null) {
-                val vtext = vers.vers + " " + vers.translation
+            if (gc.lernItem.setCurHistory()) {
+                val vtext = gc.lernItem.vers + " " + gc.lernItem.translation
                 tvVersVersion.text = vtext
-                gc.csvList()!!.copyData(vers, gc.lernItem)
-                textView.text = vers.Text
+                textView.text = gc.lernItem.text
                 if (pw.height<screenHeight-222) pw.height += 10
             }
+
         }
         var tvData = popupView.findViewById<TextView?>(R.id.tvprevData)
         tvData!!.setOnClickListener { view1: View? ->
@@ -115,7 +114,7 @@ class GlobDlgs {
          */
         bt = popupView.findViewById<Button>(R.id.pwBible)
         bt.setOnClickListener { view1: View? ->
-            gc.lernItem.Chapter = ""
+            gc.lernItem.chapter = ""
             gc.activityStart(null, BibleAy::class.java)
             pw.dismiss()
         }

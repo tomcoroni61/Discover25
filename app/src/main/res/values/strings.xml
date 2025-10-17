@@ -152,5 +152,16 @@
     <string name="nice">nice</string>
     <string name="default_light_theme">Light</string>
     <string name="default_night_theme">Night</string>
+    <string name="allow_part_reco">use part recognition</string>
+    <string name="do_speak_now">Do speak now !!</string>
+    <string name="go_on_after">go on after</string>
+    <string name="check_next">check next</string>
+    <string name="speech_commands">Speech Commands</string>
+    <string name="next_word">next word</string>
+    <string name="speak_and">+ speak</string>
+    <string name="retry_word">retry</string>
+    <string name="keep_screen_on">keep screen on</string>
+    <string name="shuffle">shuffle</string>
+    <string name="difficulty">difficulty</string>
 
 </resources>

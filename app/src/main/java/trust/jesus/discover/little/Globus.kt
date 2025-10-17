@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Point
 import android.os.Build
 import android.util.Log
 import android.view.Gravity
@@ -48,7 +47,7 @@ class Globus: Application() {
     //public lateinit var sharedPrefs: SharedPreferences is line 135
 
     //Achtung classen mit gc=... immer über fun xxx
-    fun parseBook(): BblParseBook? {
+    fun bBlparseBook(): BblParseBook? {
         if (mBblParseBook == null) mBblParseBook = BblParseBook()
         return mBblParseBook
     }
@@ -134,8 +133,8 @@ class Globus: Application() {
     @JvmField
     val versHistory = VersHistory()
 
-    @JvmField
-    val lernItem = CsvData() //must val!!
+    //lazy ging "halb", dann doch crash
+    val lernItem = GlobVers() //10.25 klasse.. : GlobVers by lazy { GlobVers() }
     var lernDataIdx = 0
 
     fun setVersTitel(versTitel: String?) {
@@ -148,7 +147,7 @@ class Globus: Application() {
     var mainActivity: MainActivity? = null
     var sdf: SimpleDateFormat = SimpleDateFormat(
         "EE dd-MM-yyyy HH:mm:ss",
-        Locale.GERMANY
+        Locale.getDefault()
     ) //sdf.format .. Ok for till today, but +1hour ab tomorrow ne,ne genau Sommerzeit erwischt.. Anzeige nur diesen Tag 'falsch'
 
     lateinit var sharedPrefs: SharedPreferences
@@ -190,7 +189,7 @@ class Globus: Application() {
     fun toast(msg: String?) {
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
     }
-    fun CrashLog(msg: String, curLineNum: Int) {
+    fun crashLog(msg: String, curLineNum: Int) {
         Logl(msg, false)
         SLH()!!.insertLine(
             FixStuff.Filenames.log, "at Line " +
@@ -242,7 +241,8 @@ class Globus: Application() {
                 else -> sz.append(' ')
             }
         }
-        str = sz.toString().replace(" {2}".toRegex(), " ")
+        str = sz.toString()
+        while (str.indexOf("  ") >= 0) str=str.replace("  ", " ")
         return str
     }
 
@@ -308,98 +308,14 @@ class Globus: Application() {
             Pair(displayMetrics.widthPixels, displayMetrics.heightPixels)
         }
     }
-  /*  @JvmOverloads
-    fun showPopupWin(v: View?, txt: String?, askDlgOkEve: AskDlgOkEve? = null) {
-        val wid = this.popUpWidth
-        if (wid == 0) return
-        val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val popupView = inflater.inflate(R.layout.wpopup, null)
-        popupView.measure(
-            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+
+    fun doKeepScreenOn(keepOn: Boolean) {
+        if (keepOn) mainActivity!!.window.addFlags(
+            android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+        ) else mainActivity!!.window.clearFlags(
+            android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
         )
-        val pw = PopupWindow(
-            popupView, wid,  //MATCH_PARENT geht
-            RelativeLayout.LayoutParams.WRAP_CONTENT, true
-        )
-        //final PopupWindow pup = new PopupWindow(pupLayout, android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-// android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-        val textView = popupView.findViewById<TextView?>(R.id.tv_popup)
-        if (textView == null) return
-        textView.text = txt
-
-        var bt = popupView.findViewById<Button>(R.id.pwspeakOptclck)
-        bt.setOnClickListener(View.OnClickListener { view1: View? ->
-            // Toast.makeText(this, " clicked", Toast.LENGTH_LONG).show();
-            pw.dismiss()
-            ttSgl()?.andoSetttings()
-            //activityStart(mainActi, AyWords::class.java)
-        })
-
-        //textView.setOnClickListener(view1 -> { keine wirkung pw.setHeight
-        bt = popupView.findViewById<Button>(R.id.pwwordmix)
-        if (curFragment.indexOf("AyWords") > 0) bt.setVisibility(View.INVISIBLE)
-        bt.setOnClickListener(View.OnClickListener { view1: View? ->
-            // Toast.makeText(this, " clicked", Toast.LENGTH_LONG).show();
-            pw.dismiss()
-            mainActivity!!.viewPager!!.setCurrentItem(2, true)
-        })
-
-        bt = popupView.findViewById<Button>(R.id.pwwordclck)
-        if (curFragment.indexOf("AyClickW") > 0) bt.setVisibility(View.INVISIBLE)
-        bt.setOnClickListener(View.OnClickListener { view1: View? ->
-            // Toast.makeText(this, " clicked", Toast.LENGTH_LONG).show();
-            pw.dismiss()
-            mainActivity!!.viewPager!!.setCurrentItem(3, true)
-        })
-
-        bt = popupView.findViewById<Button>(R.id.pwMain)
-        if (curFragment.indexOf("MainActivity") > 0) bt.setVisibility(View.INVISIBLE)
-        bt.setOnClickListener(View.OnClickListener { view1: View? ->
-            // Toast.makeText(this, " clicked", Toast.LENGTH_LONG).show();
-            pw.dismiss()
-            //activityStart(mainActi, MainActivity::class.java)
-        })
-
-        bt = popupView.findViewById<Button>(R.id.pwspeakclck)
-        bt.setOnClickListener(View.OnClickListener { view1: View? ->
-            ttSgl()?.speak(txt.toString())
-        })
-
-        bt = popupView.findViewById<Button>(R.id.pwworkclck)
-        if (curFragment.indexOf("AyEntries") > 0) bt.setVisibility(View.INVISIBLE)
-        bt.setOnClickListener(View.OnClickListener { view1: View? ->
-            pw.dismiss()
-            //activityStart(mainActi, AyEntries::class.java)
-        })
-
-        bt = popupView.findViewById<Button>(R.id.pwsaylck)
-        if (curFragment.indexOf("AySpeech") > 0) bt.setVisibility(View.INVISIBLE)
-        bt.setOnClickListener(View.OnClickListener { view1: View? ->
-            pw.dismiss()
-            mainActivity!!.viewPager!!.setCurrentItem(1, true)
-        })
-
-        bt = popupView.findViewById<Button>(R.id.pwletters)
-        if (curFragment.indexOf("AyLetters") > 0) bt.setVisibility(View.INVISIBLE)
-        bt.setOnClickListener(View.OnClickListener { view1: View? ->
-            pw.dismiss()
-            //activityStart(mainActi, AyLetters::class.java)
-        })
-
-        bt = popupView.findViewById<Button>(R.id.pwretry)
-        if (askDlgOkEve == null) bt.setVisibility(View.INVISIBLE) else bt.setOnClickListener(View.OnClickListener { view1: View? ->
-            pw.dismiss()
-            askDlgOkEve.onOkClick()
-        })
-
-        pw.setAnimationStyle(android.R.anim.fade_in)
-        val relativeLayout = popupView.findViewById<RelativeLayout>(R.id.rlpop)
-        val hei: Int = getHeight(relativeLayout, wid) + 20
-        pw.setHeight(hei) //+ (pw.getWidth()/4)
-        pw.showAtLocation(v, Gravity.CENTER, 0, 0)
     }
-*/
     fun activityStart(context: Context?, cls: Class<*>?) {
         try {
 
@@ -446,10 +362,10 @@ class Globus: Application() {
                 intent.putExtra("ErrMsg", sw.toString()) //or..Intent.EXTRA_TEXT
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 startActivity(intent)
-                CrashLog("ex: " + e!!.message, 286)
+                crashLog("ex: " + e!!.message, 286)
             } catch (ex: Exception) {
                 // ex.printStackTrace();
-                CrashLog("ex: " + ex.message, 295)
+                crashLog("ex: " + ex.message, 295)
             } finally {
                 if (oldHandler != null) oldHandler!!.uncaughtException(t!!, e!!)
                 else exitProcess(1)

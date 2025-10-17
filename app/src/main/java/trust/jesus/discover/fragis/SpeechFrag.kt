@@ -25,9 +25,10 @@ import trust.jesus.discover.R
 import trust.jesus.discover.databinding.FragmentSpeechBinding
 import trust.jesus.discover.dlg_data.SuErItem
 import trust.jesus.discover.little.recognio.EditWatch
-import trust.jesus.discover.little.recognio.SpeechReco
+import trust.jesus.discover.little.recognio.Erkenne
 import trust.jesus.discover.little.recognio.SuerAdapter
 import trust.jesus.discover.little.recognio.Ttsvals
+import java.util.Locale
 
 
 class SpeechFrag : BaseFragment(), View.OnClickListener {
@@ -35,7 +36,6 @@ class SpeechFrag : BaseFragment(), View.OnClickListener {
     lateinit var binding: FragmentSpeechBinding // RecognitionCallback
     //private var ttsvals: Ttsvals? = null
     val ttsvals: Ttsvals by lazy { Ttsvals(this) }
-    val speechReco: SpeechReco  by lazy { SpeechReco(this) }
     var sueradapter: SuerAdapter? = null
     private var itemClickidx = -1
     private var itemNormalColor = Color.MAGENTA //Black
@@ -49,30 +49,52 @@ class SpeechFrag : BaseFragment(), View.OnClickListener {
         // Inflate the layout for this fragment
         binding.ybtspeakObt.setOnClickListener(this)
         binding.sbtSpeak.setOnClickListener(this)
-        binding.teilText.setOnClickListener(this)
-        binding.cbautoHideTex.setOnClickListener(this)
+        //binding.teilText.setOnClickListener(this)
+        //binding.cbautoHideTex.setOnClickListener(this)
         binding.sbtprevdat.setOnClickListener(this)
         binding.sbtrandidat.setOnClickListener(this)
         binding.sbtnextdat.setOnClickListener(this)
         binding.sbtSearch.setOnClickListener(this)
-        binding.ybtrecord.setOnClickListener(this)
         binding.cbPartWord.setOnClickListener(this)
+        binding.cbPartReco.setOnClickListener(this)
         // keypadCheck btsrAdd btsrDelete btsrUp btsrDown
         binding.btsrAdd.setOnClickListener(this)
         binding.btsrDelete.setOnClickListener(this)
         binding.btsrUp.setOnClickListener(this)
         binding.btsrDown.setOnClickListener(this)
         binding.btnRecoObst.setOnClickListener(this)
+        binding.cbKeepScreenOn.setOnClickListener(this)
 
-        val ari = arrayOf("0","1", "2", "3", "4", "5")
-        val adapter = ArrayAdapter(requireContext(),
+
+        doListAdapters()
+        readUserVals()
+        handleItemClick()
+
+        doEdiWatch()
+        doSpeechReco()
+
+        setFields()
+        return binding.root
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        //gc.toast("onResumre")
+        setFields()
+    }
+
+    private fun doListAdapters() {
+
+        var ari = arrayOf("0","1", "2", "3", "4", "5")
+        var adapter = ArrayAdapter(requireContext(),
             android.R.layout.simple_spinner_dropdown_item,ari
         )
         binding.srNextWords.adapter = adapter
         binding.srNextWords.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 gc.appVals().valueWriteInt("srNextWords", position)
-                ttsvals.nextWords = position
+                ttsvals.showNextWords = position
             }
             override fun onNothingSelected(parent: AdapterView<*>) {  }
         }
@@ -86,10 +108,41 @@ class SpeechFrag : BaseFragment(), View.OnClickListener {
             override fun onNothingSelected(parent: AdapterView<*>) {  }
         }
 
+        ari = arrayOf("super easy","1", "2", "3", "4", "5", "6", "7", "8", "9", "hardest")
+        adapter = ArrayAdapter(requireContext(),
+            android.R.layout.simple_spinner_dropdown_item,ari
+        )
+        binding.srdifficultyLevel.adapter = adapter
+        binding.srdifficultyLevel.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                if (ttsvals.difficultyLevel != position)
+                    gc.appVals().valueWriteInt("SpeechFrag_difficultyLevel", position)
+
+                ttsvals.difficultyLevel = position
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {  }
+        }
+
+        ari = arrayOf("0","1", "2", "3", "4", "5", "6", "7", "8", "9")
+        adapter = ArrayAdapter(requireContext(),
+            android.R.layout.simple_spinner_dropdown_item,ari
+        )
+        binding.srAutoNext.adapter = adapter
+        binding.srAutoNext.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                if (ttsvals.xAutoNext != position)
+                    gc.appVals().valueWriteInt("SpeechFrag_xAutoNext", position)
+                //if (xIgnoreWords != position) dialog.dismiss()
+
+                ttsvals.xAutoNext = position
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {  }
+        }
+
+        //gc.toast("onCreateView....")
         sueradapter = SuerAdapter(requireContext()) //sbtSpeakAndWordInc  binding.ed_SearchR
         binding.lvSeekReplace.adapter = sueradapter
 
-        handleItemClick()
         binding.lvSeekReplace.onItemClickListener =
             OnItemClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
                 itemClickidx = position
@@ -116,30 +169,89 @@ class SpeechFrag : BaseFragment(), View.OnClickListener {
             sueradapter!!.notifyDataSetChanged()
         }
 
-        readUserVals()
-        doEdiWatch()
-
-        setFields()
-        return binding.root
     }
-
-
-    override fun onResume() {
-        super.onResume()
-        setFields()
-    }
-
     private fun readUserVals() {
-        ttsvals.nextWords = gc.appVals().valueReadInt("srNextWords", 0)
-        binding.srNextWords.setSelection(ttsvals.nextWords)
+        ttsvals.showNextWords = gc.appVals().valueReadInt("srNextWords", 0)
+        binding.srNextWords.setSelection(ttsvals.showNextWords)
         ttsvals.ignoreWords = gc.appVals().valueReadInt("srIgnoreWords", 0)
         binding.srIgnoreWords.setSelection(ttsvals.ignoreWords)
-        binding.cbautoHideTex.isChecked = ttsvals.getUserCheckboxVal(binding.cbautoHideTex)
-        binding.teilText.isChecked = ttsvals.getUserCheckboxVal(binding.teilText)
-        binding.cbPartWord.isChecked = ttsvals.getUserCheckboxVal(binding.cbPartWord)
+        ttsvals.xAutoNext = gc.appVals().valueReadInt("SpeechFrag_xAutoNext", 0)
+        binding.srAutoNext.setSelection(ttsvals.xAutoNext)
+        ttsvals.difficultyLevel = gc.appVals().valueReadInt("SpeechFrag_difficultyLevel", 0)
+        binding.srdifficultyLevel.setSelection(ttsvals.difficultyLevel)
+
+
+        //checkboxes:
+        ttsvals.usePartWord = ttsvals.readAndSetCheckboxVal(binding.cbPartWord)
+        ttsvals.usePartReco = ttsvals.readAndSetCheckboxVal(binding.cbPartReco)
+        ttsvals.keepScreenOn = ttsvals.readAndSetCheckboxVal(binding.cbKeepScreenOn)
+
+
         ttsvals.waitTime = gc.appVals().valueReadInt("srWaitTime", ttsvals.waitTime)
         binding.edWait.setText(ttsvals.waitTime.toString())
+        ttsvals.goOnWord = gc.appVals().valueReadString("goOnWord", "further").toString().uppercase( Locale.getDefault())
+        binding.edComWeiter.setText(ttsvals.goOnWord)
+        ttsvals.retryWord = gc.appVals().valueReadString("retryWord", "retry").toString().uppercase( Locale.getDefault())
+        binding.edComRetrey.setText(ttsvals.retryWord)
+        ttsvals.doSpeakWord = gc.appVals().valueReadString("doSpeakWord", "speak").toString().uppercase( Locale.getDefault())
+        binding.edComdoSpeak.setText(ttsvals.doSpeakWord)
+
     }
+
+    var speechReco: Erkenne? = null  //by lazy { SpeechReco(this) }SpeechReco
+
+    private fun doSpeechReco() {
+        speechReco = Erkenne(this)
+        binding.ybtrecord.setOnClickListener(speechReco)
+        binding.tvVersIdx.setOnClickListener(speechReco)
+        binding.btReciteAgain.setOnClickListener(speechReco)
+        binding.btReciteWeiter.setOnClickListener(speechReco)
+
+        binding.edComWeiter.doOnTextChanged { text, start, before, count ->
+            if (count > 0) {
+                ttsvals.goOnWord = text.toString().uppercase( Locale.getDefault())
+                gc.appVals().valueWriteString("goOnWord", ttsvals.goOnWord)
+            }
+        }
+
+        binding.edComRetrey.doOnTextChanged { text, start, before, count ->
+            if (count > 0) {
+                ttsvals.retryWord = text.toString().uppercase( Locale.getDefault())
+                gc.appVals().valueWriteString("retryWord", ttsvals.retryWord)
+            }
+        }
+
+        binding.edComdoSpeak.doOnTextChanged { text, start, before, count ->
+            if (count > 0) {
+                ttsvals.doSpeakWord = text.toString().uppercase( Locale.getDefault())
+                gc.appVals().valueWriteString("doSpeakWord", ttsvals.doSpeakWord)
+            }
+        }
+    }
+
+    fun asttsSettingsClick() {
+        gc.ttSgl()!!.andoSetttings()
+
+        /* binding.cscroliDedac.fullScroll( FOCUS_DOWN)  //scrollTo(0, binding.flDedacText.height+11) binding.cscroliDedac.scrollBy(0, textView.height)  //scrollTo(0, binding.flDedacText.height+11)
+        // binding.cscroliDedac.scrollBy(0, 44) binding.svMain.
+        binding.progressBar.visibility = View.GONE //must Gone, not INVISIBLE may stay invisible
+        binding.cscroliDedac.visibility = View.GONE //must Gone, not INVISIBLE may stay invisible
+//binding.cscroliFlow.visibility = View.INVISIBLE
+        //binding.cscroliFlow.layoutParams.height =  1452
+        //binding.cscroliDedac.visibility = View.VISIBLE
+        //gc.toast("ttsSettings")
+        //setFields()
+        //binding.cscroliDedac.fullScroll(FOCUS_DOWN)
+        //getFragmentManager()?.beginTransaction()?.detach(this)?.attach(this)?.commit()
+    //this.requireParentFragment().in */
+    }
+    private fun speakClick() {
+        if (speechReco?.doSpeack() == true) return
+        //speechReco ?: {}
+        ttsvals.doSpeak = true
+        startSpeak()
+    }
+
 
     private var editWatch: EditWatch? = null
     private fun doEdiWatch() {
@@ -147,7 +259,7 @@ class SpeechFrag : BaseFragment(), View.OnClickListener {
         binding.cbKeyRecoAutoCheck.setOnClickListener(editWatch)
         binding.keypadClear.setOnClickListener(editWatch)
         binding.keypadCheck.setOnClickListener(editWatch)
-        //binding.keypadText.addTextChangedListener(editWatch!!.textWatcher)
+        //binding.keypadText.addTextChangedListener(editWatch!!.textWatcher) doLearnLevel()
         binding.keypadText.doOnTextChanged { text, start, before, count ->
             editWatch!!.handleTextChanged()
         }
@@ -191,10 +303,10 @@ class SpeechFrag : BaseFragment(), View.OnClickListener {
     }
 
     private var newLB = 0
-    private fun setFields() {
+    fun setFields() {
         binding.asfLText.removeAllViews()
         gc.setVersTitel(gc.lernItem.vers)
-        val txt = gc.lernItem.Text
+        val txt = gc.lernItem.text
         var wort = ""
         var now = ""
         newLB = 0
@@ -263,12 +375,6 @@ class SpeechFrag : BaseFragment(), View.OnClickListener {
         } else textView.background = null
     }
 
-    fun asttsSettingsClick() {
-        gc.ttSgl()!!.andoSetttings()
-    }
-
-
-
 
 
     fun getSpeakText() {
@@ -317,7 +423,7 @@ class SpeechFrag : BaseFragment(), View.OnClickListener {
         }
         // binding.teilText.setChecked(!curTTS_SpeakText.isEmpty());
         if (ttsvals.curTTS_SpeakText.isEmpty()) ttsvals.curTTS_SpeakText =
-            gc.lernItem.Text else gc.lernItem.partText = ttsvals.curTTS_SpeakText //for later use
+            gc.lernItem.text else gc.lernItem.partText = ttsvals.curTTS_SpeakText //for later use
 
         //gc.Logl(curTTS_SpeakText, false);
         ttsvals.toSpeakLen = ttsvals.curTTS_SpeakText.length
@@ -335,16 +441,6 @@ class SpeechFrag : BaseFragment(), View.OnClickListener {
         }
         return true
     }
-    private fun speakClick() {
-        ttsvals.doSpeak = true
-        startSpeak()
-    }
-
-    private fun cbPartWordClick(p0: View?) {
-        ttsvals.setUserCheckboxVal(p0 as CheckBox)
-        ttsvals.usePartWord = ttsvals.getUserCheckboxVal(binding.cbPartWord)
-    }
-
 
     fun btDownClick(view: View?) {
         val Clickitem: SuErItem? = sueradapter!!.getItem(itemClickidx)
@@ -476,10 +572,10 @@ class SpeechFrag : BaseFragment(), View.OnClickListener {
             R.id.sbtrandidat -> btnRandiClick()
             R.id.sbtnextdat -> sbtNextDataClick()
             R.id.sbtSearch -> sbtSearchClick()
-            R.id.ybtrecord -> speechReco.doRecordClick()
-            R.id.cbPartWord -> cbPartWordClick(p0)
-            //for checkboxes
-            R.id.cbautoHideTex, R.id.teilText -> ttsvals.setUserCheckboxVal(p0 as CheckBox)//maautoHideClick()
+
+            R.id.cbPartWord ->      ttsvals.usePartWord = ttsvals.writeAndGetCheckboxVal(p0 as CheckBox)
+            R.id.cbPartReco ->      ttsvals.usePartReco = ttsvals.writeAndGetCheckboxVal(p0 as CheckBox)
+            R.id.cbKeepScreenOn ->  ttsvals.keepScreenOn =ttsvals.writeAndGetCheckboxVal(p0 as CheckBox)
 
             R.id.btsrAdd -> btAddClick(p0)
             R.id.btsrDelete -> btDeleteClick(p0)

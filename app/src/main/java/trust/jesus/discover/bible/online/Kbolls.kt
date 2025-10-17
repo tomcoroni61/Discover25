@@ -188,33 +188,6 @@ https://bolls.life/v2/find/MB?search=Gnade&match_case=false&match_whole=true&lim
         }
         return  ChapterVerses //BollsVers( pk, vers, text )
     }
-    fun bibelVersionShort(VersionName: String) = when (VersionName) {
-        //bolls all en 38!
-        "New King James Version, 1982" -> "NKJV"
-        "New International Version, 1984" -> "NIV"
-        "New American Standard Bible (1995)" -> "NASB"
-        "Literal Standard Version" -> "LSV"
-        "Revised Standard Version (1952)" -> "RSV"
-        "Young's Literal Translation (1898)" -> "YLT"
-        "The Legacy Standard Bible" -> "LSB"
-        "World English Bible" -> "WEB"
-        "The Complete Jewish Bible (1998)" -> "CJB"
-        "The Scriptures 2009" -> "TS2009"
-        "English version of the Septuagint Bible, 1851" -> "LXXE"
-        "Tree of Life Version" -> "TLV"
-        "Geneva Bible (1599)" -> "GNV"
-        "Douay Rheims Bible" -> "DRB"
-        "Amplified Bible, 2015" -> "AMP"
-        "The Holy Bible, Berean Standard Bible" -> "BSB"
-        "King James Version 1769 with Apocrypha and Strong's Numbers" -> "KJV"
-        "Menge-Bibel" -> "MB"
-        "Elberfelder Bibel, 1871" -> "ELB"
-        "Schlachter (1951)" -> "SCH"
-        "Schlachter 2000" -> "S00"
-        "Luther (1912)" -> "LUT"
-        "Hoffnung für Alle, 2015" -> "HFA"
-        else -> "HFA" //throw Exception("Bibelversion '$VersionName' not found in list")
-    }
 
     // https://bolls.life/api/#Search
     fun fetchBibleSearch(version: String, suchWort: String): Flow< Result <Array<BollsSR?>?> > = flow {
@@ -334,7 +307,50 @@ bible gateway
             emit(Result.failure(Error("Error fetching Bible verses from the API")))
         }
     }
-    fun bibelVersionShortToLong(VersionName: String) = when (VersionName) {
+
+    fun getNearBollsVersion(versionName: String): String {
+        if (hasBibleVersionShortName(versionName)) return versionName
+        val ari = arrayOf(arrayOf("ELBERFELDER ELB 1905 ELB1905", "ELB"),
+            arrayOf("SCHLAchter 1951 SCH", "SCH"),            arrayOf("SCHLAchter 2000 S00", "S00"),
+            arrayOf("Luther 1912 LUT", "LUT"),              arrayOf("Hoffnung für Alle 2015 HFA", "HFA"),
+            arrayOf("Menge-Bibel MB", "MB"),                arrayOf("GerGruenewald Sch51", "SCH"),
+            arrayOf("GNB", "HFA")
+
+        )
+        for (item in ari) {
+            if (versionName.contains(item[0], true)) return item[1]
+        }
+        return "HFA"
+    }
+    fun bibelVersionShort(versionName: String) = when (versionName) {
+        //bolls all en 38!
+        "New King James Version, 1982" -> "NKJV"
+        "New International Version, 1984" -> "NIV"
+        "New American Standard Bible (1995)" -> "NASB"
+        "Literal Standard Version" -> "LSV"
+        "Revised Standard Version (1952)" -> "RSV"
+        "Young's Literal Translation (1898)" -> "YLT"
+        "The Legacy Standard Bible" -> "LSB"
+        "World English Bible" -> "WEB"
+        "The Complete Jewish Bible (1998)" -> "CJB"
+        "The Scriptures 2009" -> "TS2009"
+        "English version of the Septuagint Bible, 1851" -> "LXXE"
+        "Tree of Life Version" -> "TLV"
+        "Geneva Bible (1599)" -> "GNV"
+        "Douay Rheims Bible" -> "DRB"
+        "Amplified Bible, 2015" -> "AMP"
+        "The Holy Bible, Berean Standard Bible" -> "BSB"
+        "King James Version 1769 with Apocrypha and Strong's Numbers" -> "KJV"
+        "Menge-Bibel" -> "MB"
+        "Elberfelder Bibel, 1871" -> "ELB"
+        "Schlachter (1951)" -> "SCH"
+        "Schlachter 2000" -> "S00"
+        "Luther (1912)" -> "LUT"
+        "Hoffnung für Alle, 2015" -> "HFA"
+        else -> "HFA" //throw Exception("Bibelversion '$VersionName' not found in list")
+    }
+
+    fun bibelVersionShortToLong(versionName: String) = when (versionName) {
         //bolls all en 38!
         "NKJV" -> "New King James Version, 1982"
         "NIV" -> "New International Version, 1984"
@@ -361,14 +377,19 @@ bible gateway
         else -> "Hoffnung für Alle, 2015" //throw Exception("Bibelversion '$VersionName' not found in list")
     }
 
-    fun bibelVersionLang(VersionName: String) = when (VersionName) {
+    fun bibelVersionLang(versionName: String) = when (versionName) {
     //bolls all en 38!
     "NKJV", "NIV", "NASB", "LSV", "RSV", "YLT", "LSB", "WEB", "CJB" -> "EN"
     "TS2009", "LXXE", "TLV", "GNV", "DRB", "AMP", "BSB", "KJV" -> "EN"
     "ELB", "SCH", "MB", "S00", "LUT", "HFA" -> "DE"
     else -> "DE" // throw Exception("Bibelversion '$VersionName' not found in list")
 }
-
+    fun hasBibleVersionShortName(versionName: String) = when (versionName) {
+        //bolls all en 38!
+        "NKJV", "NIV", "NASB", "LSV", "RSV", "YLT", "LSB", "WEB", "CJB",
+        "TS2009", "LXXE", "TLV", "GNV", "DRB", "AMP", "BSB", "KJV", "ELB", "SCH", "MB", "S00", "LUT", "HFA" -> true
+        else -> false
+    }
     //@RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
     fun hasInternet(): Boolean {
         val connectivityManager = gc.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

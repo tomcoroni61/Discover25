@@ -209,7 +209,7 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
 
     fun btnAddLearnItemClick() {
         gc.lernItem.bereich = ""
-        versDataToListAndFields(gc.lernItem)
+        versDataToListAndFields(gc.lernItem.tocsvData())
         backUpAndSave("addLearn")
     }
     private fun ybtChangeDataClick() {
@@ -228,7 +228,7 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
     fun ybtSearchClick() {
         val idx = gc.csvList()!!.findText(binding.yedSearchTxt.text.toString(), curDataidx + 1)
         if (idx < 0) return
-        gc.csvList()!!.copyData(gc.csvList()!!.getLernData(idx), curDataItem)
+        gc.csvList()!!.copyData(gc.csvList()!!.dataList[idx], curDataItem)
         curDataidx = idx
         setFields()
     }
@@ -386,7 +386,7 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
             val bs = binding.yedBibelstelle.text.toString()
             crashcnt=2
             binding.sedVersTxt.setText(bvShort)
-            val bibelvers = gc.parseBook()!!.parse(bs)//binding.yedBibelstelle.text.toString()
+            val bibelvers = gc.bBlparseBook()!!.parse(bs)//binding.yedBibelstelle.text.toString()
             gc.Logl(bibelvers.toString(), false)
             fetchBibleVerse(bvShort, bibelvers.book.toString(),
                 bibelvers.chapter.toString(), bibelvers.startVerse.toString())
@@ -398,7 +398,7 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
 
     private fun ybttoLearnClick() {
         try {
-            gc.lernItem.Text = binding.sedVersTxt.text.toString()
+            gc.lernItem.text = binding.sedVersTxt.text.toString()
 
             gc.lernItem.vers = binding.yedBibelstelle.text.toString()
             gc.lernItem.translation = binding.yedTranslation.text.toString()
@@ -423,9 +423,9 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
             val bs = binding.yedBibelstelle.text.toString()
             crashcnt=2
             //binding.sedVersTxt.setText(bvShort)
-            val bibelvers = gc.parseBook()!!.parse(bs)//binding.yedBibelstelle.text.toString()
+            val bibelvers = gc.bBlparseBook()!!.parse(bs)//binding.yedBibelstelle.text.toString()
             gc.Logl(bibelvers.toString(), false)
-            gc.lernItem.NumVers = bibelvers.startVerse!!
+            gc.lernItem.numVers = bibelvers.startVerse!!
             fetchBibleChapter(bvShort, bibelvers.book.toString(),
                 bibelvers.chapter.toString())
         } catch (e: Exception) {
@@ -441,14 +441,14 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
                     .collect { result ->
                         if (result.isSuccess) {
                             val verses = result.getOrNull()  //verses?.forEach { verse ->
-                            gc.lernItem.Chapter = gc.bolls()?.versArrayToChaptertext(verses)
+                            gc.lernItem.chapter = gc.bolls()?.versArrayToChaptertext(verses).toString()
                             gc.lernItem.vers =
-                                gc.parseBook()!!.versShortName(bookNum.toInt(), chapter.toInt(), 1)
+                                gc.bBlparseBook()!!.versShortName(bookNum.toInt(), chapter.toInt(), 1)
                             gc.lernItem.translation = version
 
-                            gc.lernItem.NumBook = bookNum.toInt()
-                            gc.lernItem.NumChapter = chapter.toInt()
-                            gc.startBibleActivity(gc.lernItem.NumVers)
+                            gc.lernItem.numBook = bookNum.toInt()
+                            gc.lernItem.numChapter = chapter.toInt()
+                            gc.startBibleActivity(gc.lernItem.numVers)
                         }
                     }
             } catch (e: Exception) {
