@@ -45,7 +45,7 @@ class SpeechReco (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickLis
         //binding.rlSearchBar.layoutParams.height = 0
 
         //if (ttsvals.getUserCheckboxVal(binding.teilText))
-        binding.textViewi.visibility = View.VISIBLE
+        binding.textViewi.visibility = VISIBLE
         recognitionManager.startRecognition()
     }
 
@@ -333,12 +333,12 @@ class SpeechReco (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickLis
     }
 
     override fun onBeginningOfSpeech() {
-        binding.progressBar.visibility = View.VISIBLE
+        binding.progressBar.visibility = VISIBLE
     }
 
     override fun onReadyForSpeech(params: Bundle) {
         binding.tvStatus.text = mSpeechFrag.context?.getString(R.string.do_speak_now)
-        binding.progressBar.visibility = View.VISIBLE
+        binding.progressBar.visibility = VISIBLE
     }
 
     override fun onRmsChanged(rmsdB: Float) {

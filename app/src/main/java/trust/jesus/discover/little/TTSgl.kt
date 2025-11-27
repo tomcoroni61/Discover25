@@ -55,6 +55,10 @@ class TTSgl() {
         doreinit = true
     }
 
+    fun cleanSpeak(txt: String) {
+        if (txt.isEmpty()) return
+        speak(gc.doSpeaktext(txt))
+    }
     fun speak(txt: String) {
         if (doreinit) restart()
         if (txt.isEmpty()) return
@@ -71,14 +75,21 @@ class TTSgl() {
             gc.errReport(e, "TTSgl.speak", true)
         }
     }
-
+    fun stop() {
+        if (ttobj == null) return
+        if (ttobj!!.isSpeaking) ttobj!!.stop()
+    }
+    fun isSpeaking(): Boolean {
+        if (ttobj == null) return false
+        return ttobj!!.isSpeaking
+    }
     fun setLanguageAndVoice(locale: Locale, voice: Int) {
         //val desiredLocale: Locale? = Locale.US // Change to the desired language/locale
         if (doreinit) restart()
         ttobj!!.language = locale //if (voiceIdx > voiceList.size-1) voiceIdx = 0;
 
         val voices: MutableSet<Voice?> = ttobj!!.voices
-        val voiceList: MutableList<Voice?> = ArrayList<Voice?>(voices)
+        val voiceList: MutableList<Voice?> = ArrayList(voices)
         if (voiceList.isEmpty()) return
         var voiceIdx = voice
         if (voiceIdx > voiceList.size - 1) voiceIdx = 0

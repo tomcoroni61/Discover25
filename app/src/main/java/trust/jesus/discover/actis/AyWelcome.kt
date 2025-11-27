@@ -23,10 +23,12 @@ class AyWelcome : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         gc.mainActivity?.setWelcomeTheme(this)
         super.onCreate(savedInstanceState)
-
+        gc.log("AyWelcome onCreate")
         enableEdgeToEdge()
         binding = ActivityAyWelcomeBinding.inflate(layoutInflater)
+        gc.log("AyWelcome onCreate  2")
         setContentView(binding.root)
+        gc.log("AyWelcome onCreate  22")
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -37,13 +39,12 @@ class AyWelcome : AppCompatActivity() {
         val text: CharSequence = read(this, R.raw.welcome)
         binding.HtmlView.movementMethod = LinkMovementMethod.getInstance()
         binding.HtmlView.text = Html.fromHtml(text.toString(), Html.FROM_HTML_MODE_COMPACT)
-
+        gc.log("AyWelcome onCreate  222")
 
     }
 
     fun read(context: Context, resId: Int): CharSequence {
         val text = StringBuilder()
-
         try {
             BufferedReader(
                 InputStreamReader(

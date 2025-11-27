@@ -89,7 +89,9 @@ class WordFrag : BaseFragment(), View.OnClickListener {
             var cnt = startidx + 8
             if (cnt > okList.size) cnt = okList.size
             val txt = okList.subList(startidx, cnt).joinToString(separator = " ")
-            gc.ttSgl()?.speak(txt.lowercase())
+            if (txt.length < 5) gc.ttSgl()?.speak(gc.lernItem.text) else
+                gc.ttSgl()?.speak(txt.lowercase())
+
         } else
             gc.ttSgl()!!.speak(gc.lernItem.text)
     }
@@ -211,9 +213,10 @@ class WordFrag : BaseFragment(), View.OnClickListener {
     }
 
     private fun okCheck() {
+        if (okList.isEmpty()) return
         var okcnt = 0;  okiCount=0
-        val cnt: Int = binding.flowLayout.size
-        for (i in 0..<cnt) {
+        val allOkayCnt: Int = binding.flowLayout.size
+        for (i in 0..<allOkayCnt) {
             val v = binding.flowLayout.getChildAt(i) as TextView
             val txt = v.text.toString()
             if (txt == okList[i]) {
@@ -224,14 +227,17 @@ class WordFrag : BaseFragment(), View.OnClickListener {
                 v.setBackgroundResource(R.drawable.rounded_corner)
             }
         }
-        if (okcnt != cnt) {
+        if (okcnt != allOkayCnt) {
             return
         }
         //gc.Logl("Oki: "+okcnt+ " / "+Cnt, true);
-        for (i in 0..<cnt) {
+        // ..alles richtig ..
+        for (i in 0..<allOkayCnt) {
             val v: View = binding.flowLayout.getChildAt(i)
             v.setBackgroundResource(R.drawable.richtigplaz)
+            v.setOnClickListener(null)
         }
+        okList.clear()
         //gc.globDlg().showPopupWin(gc.lernItem.Text)
 
     }

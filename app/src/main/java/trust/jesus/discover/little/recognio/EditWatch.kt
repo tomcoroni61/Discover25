@@ -2,8 +2,6 @@ package trust.jesus.discover.little.recognio
 
 import android.os.Handler
 import android.os.Looper
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import trust.jesus.discover.R
 import trust.jesus.discover.fragis.SpeechFrag
@@ -11,14 +9,14 @@ import trust.jesus.discover.fragis.SpeechFrag
 class EditWatch(speechFrag: SpeechFrag): View.OnClickListener {
     private val mSpeechFrag=speechFrag
     private val binding=mSpeechFrag.binding
-    private val ttsvals=mSpeechFrag.ttsvals
+    private val ttsValues=mSpeechFrag.ttsvals
     val wordlist: MutableList<String> = ArrayList()
-    private val Timhandl = Handler(Looper.getMainLooper())
-    private var wordidx = 0
+    private val timerHandler = Handler(Looper.getMainLooper())
+    private var wordIndex = 0
     private var okiPos = 0
     private var ediCnt = 0
     private var helpersCnt = 0
-    private var keyWait = 0
+    private var xLevel = 0
 
     fun startWatch() {
         mSpeechFrag.getSpeakText()
@@ -28,14 +26,15 @@ class EditWatch(speechFrag: SpeechFrag): View.OnClickListener {
             return
         }
         mSpeechFrag.speechReco?.buildWordList()
-        mSpeechFrag.speechReco?.doLearnLevel()
         doReset(true)
+        mSpeechFrag.speechReco?.doLearnLevel()
+        xLevel = ttsValues.difficultyLevel
     }
 
     fun sameWord(word1: String, word2: String): Boolean {
         if (word1.isEmpty() || word2.isEmpty()) return false
         if (word1 == word2) return true //ttsvals.getUserCheckboxVal(binding.cbPartWord) sometimes wrong?
-        if ( !ttsvals.usePartWord ) return false
+        if ( !ttsValues.usePartWord ) return false
         if ( word1.indexOf(word2) > -1 ||  word2.indexOf(word1) > -1) {
             helpersCnt++
             binding.tvAllPartText.append("cbPartWord $word1 =? $word2  Errs = ${helpersCnt}\n")
@@ -46,29 +45,29 @@ class EditWatch(speechFrag: SpeechFrag): View.OnClickListener {
         return false
     }
     private fun recoKeyCheckWort(aWordi: String): Boolean {
-        if (aWordi.isEmpty() || wordidx >= wordlist.size) return false
+        if (aWordi.isEmpty() || wordIndex >= wordlist.size) return false
         val aWord = aWordi//suerByList(aWordi)
         //binding.tvAllPartText.append("recoCheckWort $aWord ?=? ${wordlist[wordidx]} \n")
-        if (sameWord(wordlist[wordidx], aWord)) {
+        if (sameWord(wordlist[wordIndex], aWord)) {
             textDone += aWordi
-            checkWort(wordlist[wordidx])
+            checkWort(wordlist[wordIndex])
             return true
         }
-        if (ttsvals.ignoreWords == 0) return false
+        if (ttsValues.ignoreWords == 0) return false
         //binding.tvAllPartText.append(aWord + " recow??\n")
         var cnt = 1
-        if (wordidx+cnt == wordlist.size) {
-            binding.tvAllPartText.append("ignoreWords last word  $aWord =? ${wordlist[wordidx]}  Errs = ${helpersCnt}\n")
-            wordidx++
-            checkWort(wordlist[wordidx-1])
+        if (wordIndex+cnt == wordlist.size) {
+            binding.tvAllPartText.append("ignoreWords last word  $aWord =? ${wordlist[wordIndex]}  Errs = ${helpersCnt}\n")
+            wordIndex++
+            checkWort(wordlist[wordIndex-1])
             helpersCnt++
-            wordidx=9999+wordlist.size
+            wordIndex=9999+wordlist.size
             return false
         }
-        while (cnt <= ttsvals.ignoreWords && wordidx+cnt < wordlist.size) {
-            if (sameWord(wordlist[wordidx+cnt], aWord)) {
-                binding.tvAllPartText.append("ignoreWords  $aWord =? ${wordlist[wordidx+cnt]}  Errs = ${helpersCnt}\n")
-                checkWort(wordlist[wordidx])
+        while (cnt <= ttsValues.ignoreWords && wordIndex+cnt < wordlist.size) {
+            if (sameWord(wordlist[wordIndex+cnt], aWord)) {
+                binding.tvAllPartText.append("ignoreWords  $aWord =? ${wordlist[wordIndex+cnt]}  Errs = ${helpersCnt}\n")
+                checkWort(wordlist[wordIndex])
                 textDone += aWord
                 helpersCnt++
                 return true
@@ -81,7 +80,7 @@ class EditWatch(speechFrag: SpeechFrag): View.OnClickListener {
     private var bussi = false
      fun checkText(text: String) {//= checkMatch by speechReco
          if (bussi) {
-             binding.tvAllPartText.append("\n\nwoidx $wordidx size: ${wordlist.size} bussi: \n$text \n\n")
+             binding.tvAllPartText.append("\n\nwoidx $wordIndex size: ${wordlist.size} bussi: \n$text \n\n")
              return
          }
          bussi = true
@@ -100,7 +99,7 @@ class EditWatch(speechFrag: SpeechFrag): View.OnClickListener {
             crashcnt = 100
             val lasthelpersCnt = helpersCnt
             ediCnt = list.size
-            binding.tvAllPartText.append("\n\n\ncheckText start errs: ${helpersCnt}\n wordIdx: $wordidx  size: ${wordlist.size} \n")
+            binding.tvAllPartText.append("\n\n\ncheckText start errs: ${helpersCnt}\n wordIdx: $wordIndex  size: ${wordlist.size} \n")
             binding.tvAllPartText.append("$line \n\n")
             for (ls in list) {
                 crashcnt ++
@@ -156,7 +155,7 @@ class EditWatch(speechFrag: SpeechFrag): View.OnClickListener {
         if (wordlist.size > 0) txt += "not used: " + wordlist.joinToString(", ")
 
         helpersCnt = list.size + wordlist.size
-        txt = ttsvals.curTTS_SpeakText + "\n" + txt
+        txt = ttsValues.curTTS_SpeakText + "\n" + txt
         binding.tvkeyreci.text = txt
         //if (helpersCnt > 0) {
             //helpersCnt += abs(ediCnt - wordlist.size)
@@ -175,31 +174,42 @@ class EditWatch(speechFrag: SpeechFrag): View.OnClickListener {
     }
 
     private fun doFoundWords() {
-        val txt = binding.tvkeyreci.text as String + wordlist[wordidx] + " "
+        if (wordIndex >= wordlist.size) return
+        val txt = binding.tvkeyreci.text as String + wordlist[wordIndex] + " "
         binding.tvkeyreci.text = txt
         //binding.tvDedacText.text = txt
-        wordidx++
-        if (ttsvals.showNextWords < 1) return
+        wordIndex++;    showNextCnt++
+        timerHandler.postDelayed(runDoShowNextWords, ttsValues.waitTime.toLong()*100)
+    }
+    private val runDoShowNextWords: Runnable = Runnable {
+        showNextCnt--
+        if (showNextCnt > 0) return@Runnable
+        showNextWords()
+        //timeTextChanged = 0L
+    }//Timhandl.postDelayed(runDoNextWord, ttsvals.waitTime.toLong()*100)
+    private var showNextCnt = 0
+    private fun showNextWords() {
+        if (ttsValues.showNextWords < 1) return
         var words = ""
-        var cnt = wordidx
+        var cnt = wordIndex
         var nw = 0
-        while (cnt < wordlist.size && nw < ttsvals.showNextWords ) {
+        while (cnt < wordlist.size && nw < ttsValues.showNextWords ) {
             words += wordlist[cnt] + " "
             cnt++
             nw++
         }
         binding.tvkeyreciNextWord.text = words
-
     }
+
     private fun checkWort(aWord: String): Boolean {
-        if ( wordidx >= wordlist.size) wordidx = wordlist.size-1
-        val guwo = wordlist[wordidx]
+        if ( wordIndex >= wordlist.size) wordIndex = wordlist.size-1
+        val guwo = wordlist[wordIndex]
         // binding.textView.text = aWord + " =? " + checkText
         if (guwo == aWord) {
-            if (wordidx < wordlist.size-1)
+            if (wordIndex < wordlist.size-1)
                 doFoundWords() //erhöht wordidx
             else {//all okay
-                wordidx=9999+wordlist.size
+                wordIndex=9999+wordlist.size;       showNextCnt=99
                 endCheck(true)
 
             }
@@ -208,34 +218,17 @@ class EditWatch(speechFrag: SpeechFrag): View.OnClickListener {
         }
         return true
     }
-    var textWatcher: TextWatcher = object : TextWatcher {
-        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-            // this function is called before text is edited
-        }
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-            // this function is called when text is edited
-            //toastMsg("text is edited and onTextChangedListener is called.")
-        }
-        override fun afterTextChanged(s: Editable) {
-            if (wordidx >= wordlist.size) return
-            if (keyWait == 0) Timhandl.postDelayed(runEditChange, 311)
-            keyWait++
-  //          if (wordidx==0 || wordidx < wordlist.size+1)
-                //doRecordedText(s.toString())
-//                checkText(s.toString())
-        }
-    }
     private var timeTextChanged = 0L
     fun handleTextChanged() {
-        if (timeTextChanged==0L) Timhandl.postDelayed(runEditChange, 100L)
+        if (timeTextChanged==0L) timerHandler.postDelayed(runEditChange, 100L)
         timeTextChanged = System.currentTimeMillis()
     }
     private var textDone = ""
     private fun doRecordedText(text: String) {
         if (text == textDone || text.isEmpty()) return
         textDone = text
-        if (wordidx > 1 && wordidx < wordlist.size) {
-            val pos = text.indexOf(wordlist[wordidx], okiPos, true)
+        if (wordIndex > 1 && wordIndex < wordlist.size) {
+            val pos = text.indexOf(wordlist[wordIndex], okiPos, true)
             if (pos > -1) {
                 okiPos = pos
 
@@ -252,18 +245,18 @@ class EditWatch(speechFrag: SpeechFrag): View.OnClickListener {
             binding.keypadText.setText("")
             binding.tvAllPartText.text = ""
             binding.tvkeyreciNextWord.text = ""
-            helpersCnt = 0
+            helpersCnt = 0;             showNextCnt = 0
             timeTextChanged = 0L
             textDone = ""
-            if (ttsvals.curTTS_SpeakText.length > 11) {
-                binding.tvkeyreciNextWord.text = ttsvals.curTTS_SpeakText.substring(0, 10)
+            if (ttsValues.curTTS_SpeakText.length > 11) {
+                binding.tvkeyreciNextWord.text = ttsValues.curTTS_SpeakText.substring(0, 10)
 
             }
         }
         binding.tvkeyreci.text = ""
         wordlist.clear()
         wordlist.addAll(mSpeechFrag.speechReco!!.wordlist)
-        wordidx = 0
+        wordIndex = 0
         okiPos = 0
     }
     fun doEmptyClick() {
@@ -272,16 +265,20 @@ class EditWatch(speechFrag: SpeechFrag): View.OnClickListener {
         binding.keypadText.setFocusable(true)
     }
     private val runEditChange: Runnable = object : Runnable {
-        //geht nur wenn handy eingeschalten ist.ttsvals.waitTime.toLong()*
-        override fun run() {
+        override fun run() {//Timhandl.postDelayed(runEditChange, 100)
             val timi = System.currentTimeMillis() - timeTextChanged
-            if (timi < ttsvals.waitTime.toLong() * 100L) {
-                Timhandl.postDelayed(runEditChange, 100)
+            if (timi < 300L) { //ttsvals.waitTime.toLong()*
+                timerHandler.postDelayed(runEditChange, 100)
                 return
             }
             timeTextChanged = 0L
-            if (wordidx >= wordlist.size) return
+            if (wordIndex >= wordlist.size) return
             doRecordedText(binding.keypadText.text.toString())
+
+            if (xLevel != ttsValues.difficultyLevel) {
+                mSpeechFrag.speechReco?.doLearnLevel()
+                xLevel = ttsValues.difficultyLevel
+            }
             //timeTextChanged = 0L
         }
     }

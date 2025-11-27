@@ -22,6 +22,9 @@ class GlobDlgs {
 
     val gc: Globus = Globus.Companion.getAppContext() as Globus
 
+    fun interface ResultListener {
+        fun onChosenString(result: String?)
+    }
     fun showPopupWin( txt: String?) {
         //val wid = gc.popUpWidth
         var (wid, screenHeight) = gc.getScreenDimensions()
@@ -88,15 +91,12 @@ class GlobDlgs {
 
         bt = popupView.findViewById(R.id.pwspeakclck)
         bt.setOnClickListener { view1: View? ->
-            gc.ttSgl()?.speak(txt.toString())
+            gc.ttSgl()?.speak(textView.text.toString() )
         }
 
         val bti = popupView.findViewById<ImageButton>(R.id.pwCopy)
         bti.setOnClickListener { view1: View? ->
-            val clipData = ClipData.newPlainText("text", txt.toString())
-            val clipboard: ClipboardManager? =
-                gc.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?
-            clipboard!!.setPrimaryClip(clipData)
+            gc.copyTextToClipboard(txt.toString())
             gc.toast("copy done")
         }
 
@@ -112,21 +112,21 @@ class GlobDlgs {
                 }
 
          */
-        bt = popupView.findViewById<Button>(R.id.pwBible)
+        bt = popupView.findViewById(R.id.pwBible)
         bt.setOnClickListener { view1: View? ->
-            gc.lernItem.chapter = ""
+            gc.lernItem.chapter.clear()
             gc.activityStart(null, BibleAy::class.java)
             pw.dismiss()
         }
 
-        bt = popupView.findViewById<Button>(R.id.pwMain)
+        bt = popupView.findViewById(R.id.pwMain)
         if (gc.curFragment_idx == 0) flowLayout.removeView(bt) else
             bt.setOnClickListener { view1: View? ->
                 pw.dismiss()
                 gc.mainActivity!!.viewPager!!.setCurrentItem(0, false)
             }
 
-        bt = popupView.findViewById<Button>(R.id.pwwordclck)
+        bt = popupView.findViewById(R.id.pwwordclck)
         if (gc.curFragment_idx == 1) flowLayout.removeView(bt) else
             bt.setOnClickListener { view1: View? ->
                 pw.dismiss()

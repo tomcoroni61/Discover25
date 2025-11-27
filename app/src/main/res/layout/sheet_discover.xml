@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:background="@drawable/systembars"
     android:layout_width="match_parent"
@@ -36,7 +37,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/outline_arrow_downward_alt_24"
-            android:text="" />
+            android:text=""
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/ayheaderTextView"
@@ -53,12 +55,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/outline_arrow_upward_alt_24"
+            tools:ignore="ContentDescription"
             android:text="" />
 
 
     </LinearLayout>
 
+    <trust.jesus.discover.little.ShButton
+        android:text="@string/vers_of_the_day"
+        android:id="@+id/btnVersOfDay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_gravity="center_horizontal"
+    />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginBottom="5dp"
+        android:padding="11dp"
+        android:textSize="18sp" />
 
     <!--
      make SwitchCompat look like SwitchPreferenceCompat

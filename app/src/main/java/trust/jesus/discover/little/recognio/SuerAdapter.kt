@@ -12,7 +12,7 @@ import trust.jesus.discover.little.Globus
 
 class SuerAdapter(context: Context) : LvAdapt<SuErItem?>(context, android.R.layout.simple_list_item_2) {
     private val mInflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-    private val gc: Globus = Globus.getAppContext() as Globus
+    //private val gc: Globus = Globus.getAppContext() as Globus
     private class ViewHolder {
         var tvSuch: TextView? = null
         var tvErsetz: TextView? = null
@@ -28,8 +28,8 @@ class SuerAdapter(context: Context) : LvAdapt<SuErItem?>(context, android.R.layo
             view = mInflater.inflate(R.layout.suerrow, parent, false)
             holder = ViewHolder()
 
-            holder.tvSuch = view!!.findViewById<TextView?>(R.id.tvSuch)
-            holder.tvErsetz = view.findViewById<TextView?>(R.id.tvErsetze)
+            holder.tvSuch = view!!.findViewById(R.id.tvSuch)
+            holder.tvErsetz = view.findViewById(R.id.tvErsetze)
             view.tag = holder
         } else {
             view = convertView

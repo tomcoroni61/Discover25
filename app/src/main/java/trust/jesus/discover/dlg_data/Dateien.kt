@@ -87,6 +87,11 @@ FileOutputStream outputStream = (FileOutputStream) contentResolver.openOutputStr
         val writeFile = File(privateRootDir, backUpName)
         writeFile.writeText(readFile.readText())
     }
+    fun deletePrivateFile(aFileName: String) {
+        val privateRootDir = aContext.filesDir
+        val file = File(privateRootDir, aFileName)
+        file.delete()
+    }
 
 //for dir: https://stackoverflow.com/questions/45193941/how-to-read-and-write-txt-files-in-android-in-kotlin
 
@@ -106,12 +111,7 @@ FileOutputStream outputStream = (FileOutputStream) contentResolver.openOutputStr
     private var outputStream: FileOutputStream? = null
     private var inputStream: FileInputStream? = null
     var reader: BufferedReader? = null //mit openInputstream...
-    private val aContext: Context
-
-
-    init {
-        aContext = gc.applicationContext
-    }
+    private val aContext: Context = gc.applicationContext
 
     private fun openAssetInputStream(fileName: String): Boolean {
         try {  //try .. ando will das

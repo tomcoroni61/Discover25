@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+<ScrollView android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:id="@+id/svMain"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_marginBottom="2dp"
-        android:layout_marginTop="4dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginBottom="2dp"
+    android:layout_marginTop="4dp"
 
     >
 
@@ -197,12 +195,12 @@ android:outlineAmbientShadowColor="#1E88E5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 >
-            <TextView
-                android:id="@+id/tvStatus"
-                android:layout_width="140dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginBottom="5dp" />
+                <TextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginBottom="5dp" />
 
                 <TextView
                     android:id="@+id/tvNextWord"
@@ -449,14 +447,14 @@ android:outlineAmbientShadowColor="#1E88E5"
                     />
 
                 <CheckBox
-                    android:text="@string/keep_screen_on"
                     android:id="@+id/cbKeepScreenOn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checked="false"
                     android:layout_marginStart="11dp"
                     android:layout_marginTop="2dp"
-                    />
+                    android:checked="false"
+                    android:text="@string/keep_screen_on"
+                     />
                 <CheckBox
                     android:id="@+id/cbPartReco"
                     android:layout_width="wrap_content"

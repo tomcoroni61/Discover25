@@ -12,7 +12,6 @@ class SaveLoadHelper {
 
     private var outputStream: FileOutputStream? = null
     private var inputStream: FileInputStream? = null
-    private var curValueName: String? = null
     private var reader: BufferedReader? = null //mit openInputstream...
     var rLine: String? = null
     var Crash: String? = " "

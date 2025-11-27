@@ -30,7 +30,7 @@
                 />
 
             <trust.jesus.discover.little.ShButton
-                android:id="@+id/ybtspeak"
+                android:id="@+id/cwbtspeak"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_marginStart="9dp"
@@ -43,7 +43,7 @@
                 android:id="@+id/actvText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/ybtspeak"
+                android:layout_below="@+id/cwbtspeak"
                 android:layout_margin="25dp"
                 android:layout_marginBottom="35dp"
                 android:text=""

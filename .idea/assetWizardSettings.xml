@@ -312,7 +312,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$PROJECT_DIR$/../../../../WinProgs/Android/SDK/icons/material/materialsymbolsrounded/content_copy/rounded_content_copy_24.xml" />
+                                      <entry key="url" value="file:/$PROJECT_DIR$/../../../../WinProgs/Android/SDK/icons/material/materialsymbolsoutlined/arrow_back_2/outline_arrow_back_2_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -323,7 +323,7 @@
                         <option name="values">
                           <map>
                             <entry key="color" value="b7a953" />
-                            <entry key="outputName" value="clip_copy_24" />
+                            <entry key="outputName" value="arrow_back_24" />
                             <entry key="sourceFile" value="C:\Rock\faith\develop\Android\Discover" />
                           </map>
                         </option>

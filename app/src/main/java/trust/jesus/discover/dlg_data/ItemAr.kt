@@ -32,7 +32,7 @@ class ItemAr(context: Context, gridView: GridView, activity: LettersFrag) :
     private val mActivity: LettersFrag = activity
     private val mGridView: GridView = gridView
     private var MischLetters = "AH"
-    private val gc: Globus = Globus.getAppContext() as Globus
+    //private val gc: Globus = Globus.getAppContext() as Globus
 
     fun clearme() {
         var item: Celli? = getItem(0)

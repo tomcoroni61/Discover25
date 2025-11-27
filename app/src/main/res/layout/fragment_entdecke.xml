@@ -7,7 +7,7 @@
 
     <Button
         android:text="@string/opt"
-        android:id="@+id/btn_randObst"
+        android:id="@+id/btnRandObst"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="9dp"
@@ -19,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:layout_toEndOf="@+id/btn_randObst"
+        android:layout_toEndOf="@+id/btnRandObst"
         android:background="@drawable/btn_dyn_back"
         android:paddingStart="8dp"
 
@@ -54,7 +54,7 @@
     </ScrollView>
 
     <TextView
-        android:id="@+id/tvverscnt"
+        android:id="@+id/tvSeekbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/llseekbar"
@@ -68,7 +68,7 @@
         android:id="@+id/llseekbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/tvVerstext"
+        android:layout_above="@id/tvverscnt"
         android:orientation="horizontal"
         android:visibility="invisible">
 
@@ -89,9 +89,25 @@
             android:background="@drawable/btn_dyn_back"
             android:text="@string/speak_and" />
 
-
+        <Button
+            android:text="@string/manage"
+            android:id="@+id/btnSeekFileDlg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/tvverscnt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/tvVerstext"
+        android:textSize="18sp"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="5dp"
+
+        />
     <TextView
         android:id="@+id/tvVerstext"
         android:layout_width="match_parent"

@@ -2,6 +2,8 @@ package trust.jesus.discover.preference
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
 import android.view.View
 import android.widget.TextView
@@ -12,13 +14,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 import trust.jesus.discover.R
-import trust.jesus.discover.little.FixStuff.Filenames.Companion.jsonLsFName
+import trust.jesus.discover.dlg_data.FileDlg
+import trust.jesus.discover.little.FixStuff.Filenames.Companion.defaultLsFName
+import trust.jesus.discover.little.FixStuff.Filenames.Companion.seekFileExtn
 import trust.jesus.discover.little.Globus
 
 class SettingsSearch (context: Context?, attrs: AttributeSet?) : Preference(context!!, attrs),
-//    View.OnClickListener
-  View.OnClickListener
-{
+  View.OnClickListener {
     val gc: Globus = Globus.Companion.getAppContext() as Globus
     private lateinit var sharedPrefs: SharedPreferences
     private lateinit var tvResult: TextView
@@ -30,14 +32,13 @@ class SettingsSearch (context: Context?, attrs: AttributeSet?) : Preference(cont
 
         super.onBindViewHolder(holder)
 
-        // Find the TextView using findViewById
-        val btn: View = holder.itemView.findViewById(R.id.btnbuildList)
+        var btn: View = holder.itemView.findViewById(R.id.btnbuildList)
+        btn.setOnClickListener(this)
+        btn = holder.itemView.findViewById(R.id.btnopiDlg)
         btn.setOnClickListener(this)
 
         tvResult = holder.itemView.findViewById(R.id.tvSearchRet)
-        var cnt = gc.seekList().entries()
-        if (gc.sharedPrefs.getBoolean("use_jsonList", true))
-            cnt = gc.jsonList()!!.entries()
+        val cnt = gc.seekList().entries()
 
         val txt = cnt.toString() + "verse"
         tvResult.text = txt
@@ -47,17 +48,37 @@ class SettingsSearch (context: Context?, attrs: AttributeSet?) : Preference(cont
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.btnbuildList -> btnbuildListClick()
+            R.id.btnbuildList -> {
+                Handler(Looper.getMainLooper()).postDelayed(
+                    { btnbuildListClick() },
+                    333
+                )
+
+            }
+            R.id.btnopiDlg -> btnopiDlgClick()
         }
 
     }
 
+    private fun btnopiDlgClick() {
+        val fileDlg = FileDlg(
+            context,
+            "FileOpen",  //or FileSave or FileSave..  ..= chosenDir with dir | or FileOpen
+            seekFileExtn
+        ) { chosenDir: String? ->
+            //binding.tvSeekbar.text = chosenDir
+            gc.seekList().openSeekFile(chosenDir!!)
+        }
+        //fileDlg.create(); //!
+        fileDlg.chooseFileOrDir(gc.filesDir.absolutePath)
+    }
+
     //@OptIn(DelicateCoroutinesApi::class)
     private fun fetchBibleSearch(version: String?, suchWort: String?,
-                                 matchcase: Boolean, matchwhole: Boolean, range: String?) = runBlocking  {
+                                 matchCase: Boolean, matchWhole: Boolean, range: String?) = runBlocking  {
         launch {
             try { //Date(),
-                gc.bolls()!!.fetchBibleSearchJson(version!!, suchWort!!, matchcase, matchwhole, range!!)
+                gc.bolls()!!.fetchBibleSearchJson(version!!, suchWort!!, matchCase, matchWhole, range!!)
                     .collect { result ->
                         if (result.isSuccess) {
                             val verses = result.getOrNull()  //verses?.forEach { verse ->
@@ -69,11 +90,9 @@ class SettingsSearch (context: Context?, attrs: AttributeSet?) : Preference(cont
                                 val count = jsonResponse.getInt("total")
                                 var ati = "found $count verses"
                                 if (count > 0) {
-                                    if (sharedPrefs.getBoolean("use_jsonList", true)) {
-                                        gc.dateien().writePrivateFile(jsonLsFName, verses)
-                                        gc.appVals().valueWriteString("json_suchwort", sharedPrefs.getString("search_word", ""))
-                                    } else
-                                            gc.seekList().jsonToVersList(verses)
+                                    var sf = sharedPrefs.getString("search_word", "").toString()+seekFileExtn
+                                    if (!sharedPrefs.getBoolean("new_search_list", false)) sf = defaultLsFName
+                                    gc.seekList().jsonToVersList(verses, sf)
                                     //
                                 } else ati = "no verses found"
                                 // \n" + verses.substring(1, 200)

@@ -1,37 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:paddingHorizontal="62dp"
-    android:paddingVertical="15dp"
+    android:paddingVertical="5dp"
     android:hapticFeedbackEnabled="false"
     >
 <!--android:background="?attr/tabSelected_colour"
--->
+android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        -->
     <TextView
-        android:layout_width="match_parent"
+        android:id="@+id/tvCurList"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="11dp"
+        android:layout_marginStart="15dp"
         android:text="@string/current_list"
-        android:textStyle="bold"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tvSearchRet"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_toEndOf="@id/tvCurList"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-        android:textSize="18sp"/>
+        android:textSize="18sp" />
 
     <trust.jesus.discover.little.ShButton
         android:id="@+id/btnbuildList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_below="@id/tvCurList"
+        android:layout_margin="11dp"
         android:background="@drawable/btn_dyn_back"
         android:paddingStart="9dp"
         android:paddingEnd="9dp"
         android:text="@string/build_list" />
 
+    <trust.jesus.discover.little.ShButton
+        android:id="@+id/btnopiDlg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvCurList"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="11dp"
+        android:layout_toEndOf="@id/btnbuildList"
+        android:background="@drawable/btn_dyn_back"
+        android:paddingStart="9dp"
+        android:paddingEnd="9dp"
+        android:text="@string/manage" />
 
-</LinearLayout>
+</RelativeLayout>

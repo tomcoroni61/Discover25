@@ -43,6 +43,7 @@
     <string name="copy_to_app_file_dir">Kopiere in den App Ordner?</string>
     <string name="welcome">Willkommen</string>
     <string name="introduction">Einführung</string>
+    <string name="thank_you">Danke schön</string>
     <string name="returni">Zurück</string>
     <string name="speak_vers">sprich vers</string>
     <string name="please_enter_some_text">Bitte Text eingeben</string>
@@ -98,4 +99,20 @@
     <string name="bad">hoppsa</string>
     <string name="okay_nice">okay gut</string>
     <string name="nice">passt so</string>
+    <string name="do_speak_now">Bitte sprechen !</string>
+    <string name="go_on_after">weiter ab</string>
+    <string name="check_next">nächste prüfen</string>
+    <string name="speech_commands">Sprachbefehle</string>
+    <string name="next_word">nächstes Wort</string>
+    <string name="speak_and">+ sprechen</string>
+    <string name="retry_word">nochmal</string>
+    <string name="keep_screen_on">Bildschirm eingeschaltet lassen</string>
+    <string name="shuffle">mischen</string>
+    <string name="difficulty">Schwierigkeit</string>
+    <string name="manage">verwalten..</string>
+    <string name="supi_all_words_right_spoken">super, ALLE Worte richtig gesprochen</string>
+    <string name="chapter">Kapitel</string>
+    <string name="selected">markiert</string>
+    <string name="search_one_or_more_words">Eines oder mehr Wörter suchen</string>
+    <string name="match_case">Groß- / Kleinschreibung beachten!</string>
 </resources>

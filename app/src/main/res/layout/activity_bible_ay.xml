@@ -1,34 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:id="@+id/main"
+    tools:context=".actis.BibleAy"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <RelativeLayout
+        android:id="@+id/rlTopBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
         android:orientation="horizontal">
 
-        <Button
-            android:text="@string/exit"
-            android:id="@+id/btn_randObst"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
             android:layout_marginStart="9dp"
             android:layout_marginEnd="9dp"
             android:background="@drawable/btn_dyn_back"
             android:onClick="btnExitClick"
-            />
+            android:src="@drawable/arrow_back_24" />
 
         <Button
             android:id="@+id/btn_prevChapter"
-            android:layout_width="60dp"
+            android:layout_width="55dp"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/btn_randObst"
+            android:layout_toEndOf="@id/btnBack"
             android:background="@drawable/btn_dyn_back"
             android:onClick="btnPrevClick"
             android:text="@string/prevData" />
@@ -36,8 +37,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/btn_prevChapter"
             android:layout_toStartOf="@id/btn_nextChapter"
+            android:layout_toEndOf="@id/btn_prevChapter"
             android:orientation="vertical">
 
             <TextView
@@ -55,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="4dp"
-
+                android:onClick="btnChoosiClick"
                 android:text="John 3"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText" />
@@ -63,16 +64,177 @@
 
         <Button
             android:id="@+id/btn_nextChapter"
-            android:layout_width="60dp"
+            android:layout_width="55dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
             android:layout_marginEnd="11dp"
+            android:layout_toStartOf="@id/btn_meni"
             android:background="@drawable/btn_dyn_back"
             android:onClick="btnNextClick"
             android:text="@string/nextData" />
 
+        <trust.jesus.discover.little.ShImageButton
+            android:id="@+id/btn_meni"
+            android:layout_width="30dp"
+            android:layout_height="50dp"
+            android:layout_alignParentEnd="true"
+            android:onClick="btnMenuClick"
+            android:layout_marginStart="9dp"
+            android:layout_marginEnd="9dp"
+            android:background="@drawable/btn_dyn_back"
+            android:src="@drawable/baseline_more_vert_36"
+            android:visibility="visible" />
+
     </RelativeLayout>
-    <ScrollView
+
+    <ListView
+        android:id="@+id/lvVers"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/nsvSheet"
+        android:layout_below="@id/rlTopBar"
+
+        android:layout_margin="9dp"
+        android:divider="@null"
+        android:dividerHeight="0dp" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nsvSheet"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="11dp"
+                android:layout_marginBottom="5dp"
+                android:gravity="center|center_horizontal"
+                android:text="@string/speak"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                style="?android:attr/buttonBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <trust.jesus.discover.little.ShButton
+                    android:id="@+id/btn_SpeakChapter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="11dp"
+                    android:background="@drawable/rounded_corner"
+                    android:onClick="btnSpeakChapterClick"
+                    android:text="@string/chapter" />
+
+                <trust.jesus.discover.little.ShButton
+                    android:id="@+id/btn_SpeakSelected"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="11dp"
+                    android:background="@drawable/rounded_corner"
+                    android:onClick="btnSpeakSelectedClick"
+                    android:text="@string/selected" />
+
+                <trust.jesus.discover.little.ShButton
+                    android:id="@+id/btn_StopSpeak"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="11dp"
+                    android:background="@drawable/rounded_corner"
+                    android:onClick="btnStopSpeakClick"
+                    android:text="@string/stop" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <trust.jesus.discover.little.ShImageButton
+                    android:id="@+id/btnDown"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:onClick="btnTextSmalerClick"
+                    android:background="@drawable/rounded_corner"
+                    app:srcCompat="@drawable/outline_arrow_downward_alt_24"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/ayheaderTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center|center_horizontal"
+                    android:padding="11dp"
+                    android:text="@string/text_size"
+                    android:textSize="18sp" />
+
+                <ImageButton
+                    android:id="@+id/btnUp"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:onClick="btnTextLargerClick"
+                    android:text=""
+                    android:background="@drawable/rounded_corner"
+                    app:srcCompat="@drawable/outline_arrow_upward_alt_24"
+                    tools:ignore="ContentDescription" />
+                <!--popspbtn  -->
+                <ImageButton
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/rounded_corner"
+
+                    android:contentDescription="@android:string/copy"
+                    android:onClick="btnTextCopyClick"
+                    android:src="@drawable/clip_copy_24" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="5dp"
+                android:gravity="center|center_horizontal"
+                android:text="Chapter change"
+                android:textSize="18sp" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchChapterView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:onClick="btnChapterViewClick"
+                android:padding="11dp"
+                android:paddingStart="44dp"
+                android:paddingEnd="32dp"
+                android:text="as Book" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="66dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="5dp"
+                android:gravity="center|center_horizontal"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</RelativeLayout>
+
+<!--
+<ScrollView
         android:id="@+id/svChapText"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -88,7 +250,4 @@
             android:textIsSelectable="true"
             />
     </ScrollView>
-
-</LinearLayout>
-
-
+-->

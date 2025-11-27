@@ -520,7 +520,6 @@ class SpeechFrag : BaseFragment(), View.OnClickListener {
 
         val rbFreeForm = view.findViewById<RadioButton>(R.id.rbFreeForm)
         val rbWebSearch = view.findViewById<RadioButton>(R.id.rbwebSearch)
-        val srMaxResults = view.findViewById<Spinner>(R.id.srMaxResults)
         val srLanguage = view.findViewById<Spinner>(R.id.srLanguage)
 
         rbFreeForm.isChecked =
@@ -529,14 +528,9 @@ class SpeechFrag : BaseFragment(), View.OnClickListener {
         rbWebSearch.isChecked = !rbFreeForm.isChecked
 
         var ari = arrayOf("1", "2", "3", "4", "5", "6", "7")
-        var adapter = ArrayAdapter(requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,ari
-        )
-        srMaxResults.adapter = adapter
-        srMaxResults.setSelection(gc.appVals().valueReadInt("srMaxResults", 1)-1)
 
         ari = arrayOf("System", "Deutsch", "Englisch", "French", "Italian", "CHINESE")
-        adapter = ArrayAdapter(requireContext(),
+        val adapter = ArrayAdapter(requireContext(),
             android.R.layout.simple_spinner_dropdown_item,ari
         )
         srLanguage.adapter = adapter
@@ -551,7 +545,6 @@ class SpeechFrag : BaseFragment(), View.OnClickListener {
                     gc.appVals().valueWriteString("srLangModel", RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH)
             //RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH else ttsvals.langModel = RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
 
-            gc.appVals().valueWriteInt("srMaxResults", srMaxResults.selectedItemPosition+1)
             gc.appVals().valueWriteInt("srLanguage", srLanguage.selectedItemPosition)
 
             dialog.dismiss()

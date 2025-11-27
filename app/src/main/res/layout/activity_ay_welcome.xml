@@ -32,12 +32,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:linksClickable="true"
-            android:textColorLink="?attr/selectableItemBackground"
+            android:textColorLink="?attr/tabSelected_colour"
             android:textIsSelectable="true"
             android:textSize="16sp" />
 
     </ScrollView>
 <!--android:textColorLink="#1E88E5"
+android:textColorLink="?attr/selectableItemBackground" = crashes with
+tabSelected_colour = oki
+border_colour no good colour
 -->
     <trust.jesus.discover.little.ShButton
         android:id="@+id/sbtExi"

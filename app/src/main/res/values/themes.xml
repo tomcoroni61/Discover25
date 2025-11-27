@@ -307,6 +307,23 @@
     <style name="AlertDialogCustom" parent="Theme.AppCompat.Light.Dialog">
         <item name="android:colorBackground">?attr/button_colour</item>
         <!--
+        in base..
+        <item name="android:listPopupWindowStyle">@style/MyListPopupWindow</item>
+
+        nothing works:
+    <style name="MyListPopupWindow" parent="Widget.AppCompat.ListPopupWindow">
+        <item name="android:background">@color/md_theme_dark_inversePrimary</item>
+        <item name="android:itemBackground">@color/md_theme_dark_inversePrimary</item>
+        <item name="android:windowBackground">@drawable/btn_all_back</item>
+        <item name="android:colorBackground">?attr/button_colour</item>
+        <item name="android:popupBackground">@color/md_theme_dark_inversePrimary</item>
+        <item name="android:drawable">@color/md_theme_dark_inversePrimary</item>
+        <item name="android:textAppearanceSmallPopupMenu">@color/md_theme_dark_inversePrimary</item>
+    </style>
+        only direct
+        listBereichPopupWindow?.setBackgroundDrawable( drawable) entriesfrag.kt
+
+        Widget.AppCompat.ListPopupWindow
          <item name="colorAccent">@color/draw_able</item>
         <item name="android:textColorPrimary">#FFFFFF</item>?attr/colorPrimary
 <item name="android:background">@drawable/btn_dyn_back</item>

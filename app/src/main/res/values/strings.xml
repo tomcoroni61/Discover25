@@ -150,9 +150,9 @@
     <string name="bad">houps</string>
     <string name="okay_nice">okay nice</string>
     <string name="nice">nice</string>
-    <string name="default_light_theme">Light</string>
-    <string name="default_night_theme">Night</string>
-    <string name="allow_part_reco">use part recognition</string>
+    <string name="default_light_theme" translatable="false">Light</string>
+    <string name="default_night_theme" translatable="false">Night</string>
+    <string name="allow_part_reco" translatable="false">use part recognition</string>
     <string name="do_speak_now">Do speak now !!</string>
     <string name="go_on_after">go on after</string>
     <string name="check_next">check next</string>
@@ -163,5 +163,16 @@
     <string name="keep_screen_on">keep screen on</string>
     <string name="shuffle">shuffle</string>
     <string name="difficulty">difficulty</string>
+    <string name="manage">manage..</string>
+    <string name="supi_all_words_right_spoken">supi, ALL words right spoken!!</string>
+    <string name="chapter">Chapter</string>
+    <string name="selected">selected</string>
+    <string name="search_one_or_more_words">search one or more words</string>
+    <string name="match_case">match case</string>
+    <string name="record_stopped">record stopped</string>
+    <string name="start_new_when">start new when</string>
+    <string name="error_words">errors</string>
+    <string name="restart_when_wrong_clicked">restart when wrong clicked</string>
+    <string name="vers_of_the_day">vers of the day</string>
 
 </resources>

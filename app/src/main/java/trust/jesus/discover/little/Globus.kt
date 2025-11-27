@@ -2,11 +2,13 @@ package trust.jesus.discover.little
 
 import android.app.AlertDialog
 import android.app.Application
+import android.content.ClipData
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
+import android.os.PowerManager
 import android.util.Log
 import android.view.Gravity
 import android.view.View
@@ -24,7 +26,6 @@ import trust.jesus.discover.actis.BibleAy
 import trust.jesus.discover.actis.Reportus
 import trust.jesus.discover.bible.BblParseBook
 import trust.jesus.discover.dlg_data.AppVals
-import trust.jesus.discover.dlg_data.CsvData
 import trust.jesus.discover.dlg_data.CsvList
 import trust.jesus.discover.dlg_data.Dateien
 import trust.jesus.discover.dlg_data.ErrorReporter
@@ -39,6 +40,8 @@ import kotlin.system.exitProcess
 import android.util.DisplayMetrics
 import android.view.WindowInsets
 import android.view.WindowMetrics
+import trust.jesus.discover.bible.online.Bss
+import trust.jesus.discover.bible.online.Votd
 
 
 class Globus: Application() {
@@ -53,11 +56,11 @@ class Globus: Application() {
     }
     private var mBblParseBook: BblParseBook? = null
 
-    fun jsonList(): JsonList? {
-        if (mJsonList == null) mJsonList = JsonList()
-        return mJsonList
+    fun vtdo(): Votd? {
+        if (mvtdo==null) mvtdo = Votd()
+        return mvtdo
     }
-    private var mJsonList: JsonList? = null
+    private var mvtdo: Votd? = null
 
     //private var mjsonList = JsonList()
 
@@ -66,6 +69,14 @@ class Globus: Application() {
         return mKbolls
     }
     private var mKbolls: Kbolls? = null
+
+    fun bibleSuperSearch(): Bss? {
+        if (mBss == null) mBss = Bss()
+        return mBss
+
+    }
+    private var mBss: Bss? = null
+
 
     fun ttSgl(): TTSgl? {
         if (mTTSgl == null) mTTSgl = TTSgl()
@@ -125,7 +136,7 @@ class Globus: Application() {
     private var mCsvList: CsvList? = null
 
     fun spruchFileName(): String? {
-        log("spruchFileName")
+        //log("spruchFileName")
         return appVals().valueReadString("eCurDataFile", getString(R.string.spruch_csv))
 
     }
@@ -225,18 +236,41 @@ class Globus: Application() {
         return formatText(str).uppercase(Locale.getDefault())
     }
 
+    fun doSpeaktext(txt: String): String {
+        val sz = StringBuilder()
+        var ignore = false;
+        for (i in 0..<txt.length) {
+            val c = txt[i]
+            when (c) {
+                '(', '[', '<', '{' -> ignore = true
+                ')', ']', '>', '}' -> {
+                    ignore = false
+                    continue
+                }
+            }
+            if (ignore) continue
+            sz.append(c)
+        }
+        return if (sz.isNotEmpty()) {
+            sz.toString()
+        } else {
+            txt
+        }
+    }
+
+
     fun formatText(strIn: String): String {
         var str = strIn.trim { it <= ' ' }
         val sz = StringBuilder()
 
         //str=str.toUpperCase(Locale.getDefault());
         for (i in 0..<str.length) {
-            val c = str.get(i)
+            val c = str[i]
             if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
                 sz.append(c)
             } else when (c) {
                 'ö', 'Ö', 'ä', 'Ä', 'ü', 'Ü', 'ß' -> sz.append(c)
-                ' ' -> if (sz.length > 1 && sz.get(sz.length - 1) != ' ') sz.append(c)
+                //' ' -> if (sz.length > 1 && sz.get(sz.length - 1) != ' ') sz.append(c)
                 '\n' -> sz.append(' ')
                 else -> sz.append(' ')
             }
@@ -245,6 +279,13 @@ class Globus: Application() {
         while (str.indexOf("  ") >= 0) str=str.replace("  ", " ")
         return str
     }
+
+    fun copyTextToClipboard(text: String?) {
+        val clipboard = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
+        val clip = ClipData.newPlainText("text", text)
+        clipboard.setPrimaryClip(clip)
+    }
+
 
     fun interface AskDlgOkEve {
         fun onOkClick()
@@ -337,6 +378,29 @@ class Globus: Application() {
         mainActivity!!.startActivity(intent)
         //gc.activityStart(activity, BibleAy::class.java)
     }
+
+    fun isScreenOn(): Boolean {
+        val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+        return pm.isInteractive
+    }
+    /*
+    public boolean isScreenOn(Context context) {
+    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+        DisplayManager dm = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
+        boolean screenOn = false;
+        for (Display display : dm.getDisplays()) {
+            if (display.getState() != Display.STATE_OFF) {
+                screenOn = true;
+            }
+        }
+        return screenOn;
+    } else {
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        //noinspection deprecation
+        return pm.isScreenOn();
+    }
+}
+     */
 
     var errorReporter: ErrorReporter? = null
 

@@ -1,29 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@drawable/systembars"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="5dp"
-        android:gravity="center|center_horizontal"
-        android:text="@string/word_click"
-        android:textSize="18sp" />
+    <!--
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="5dp"
+            android:gravity="center|center_horizontal"
+            android:text="@string/word_click"
+            android:textSize="18sp" />
 
+
+
+    -->
     <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/partWordSwitch"
+        android:id="@+id/errorSwitch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="11dp"
         android:paddingStart="44dp"
         android:paddingEnd="32dp"
-        android:text="@string/allow_partword" />
+        android:text="@string/restart_when_wrong_clicked" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,7 +35,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:text="@string/check_next"
+            android:text="@string/start_new_when"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
@@ -41,11 +44,11 @@
 
 
         <Spinner
-            android:id="@+id/srIgnoreWords"
+            android:id="@+id/srErrorWords"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
-            android:text="@string/words"
+            android:text="@string/error_words"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
@@ -54,36 +57,10 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            android:text="@string/go_on_after"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="11dp"
-            android:layout_marginBottom="5dp" />
-
-
-        <Spinner
-            android:id="@+id/srAutoNext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:text="@string/wrong_words"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginBottom="5dp" />
-
-
-    </LinearLayout>
-
-
+        android:layout_height="55dp"
+         />
     <!--
      make SwitchCompat look like SwitchPreferenceCompat
     android:background="@color/dark_background"

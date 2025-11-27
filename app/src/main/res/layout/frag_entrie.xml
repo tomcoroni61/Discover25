@@ -88,7 +88,8 @@
 
 
             <EditText
-                android:importantForAutofill="no" android:text=""
+                android:importantForAutofill="no"
+                android:text=""
                 android:id="@+id/yedTranslation"
                 android:layout_width="135dp"
                 android:layout_height="43dp"
@@ -108,7 +109,7 @@
                 android:layout_toEndOf="@+id/yedTranslation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/ytvText"
+                android:layout_above="@+id/entriesGetVers"
 
                 />
 
@@ -135,7 +136,7 @@
 
             <trust.jesus.discover.little.ShButton
                 android:text="@string/getvers"
-                android:id="@+id/ytvText"
+                android:id="@+id/entriesGetVers"
                 android:background="@drawable/btn_dyn_back"
                 android:layout_marginStart="9dp"
                 android:layout_toEndOf="@+id/ybtspeak"
@@ -149,7 +150,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginBottom="2dp"
-                android:layout_below="@+id/ytvText"
+                android:layout_below="@+id/entriesGetVers"
                 android:layout_marginTop="14dp"
                 android:id="@+id/cscroliEdi"
 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <corners android:radius="6dp" />
+
+    <!-- This is the border color -->
+    <stroke android:width="3dp" android:color="?attr/border_colour" />
+
+    <!--- This is the background color ?attr/btn_img_colour-->
+    <solid android:color="?attr/sysbar_colour" />
+
+</shape>

@@ -5,41 +5,34 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.TextView
-import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.size
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
 import trust.jesus.discover.R
+import trust.jesus.discover.bible.BblParseBook.VersStrings
 import trust.jesus.discover.databinding.FragmentEntdeckeBinding
-import trust.jesus.discover.dlg_data.CsvData
+import trust.jesus.discover.databinding.SheetDiscoverBinding
+import trust.jesus.discover.dlg_data.FileDlg
+import trust.jesus.discover.little.FixStuff.Filenames.Companion.seekFileExtn
 import trust.jesus.discover.preference.SettingsRand
 
-private const val Arg_search = "Arg_search"
 
 class EntdeckeFrag : BaseFragment(), View.OnClickListener {
 
     private val okList: MutableList<String?> = ArrayList()
     //private var chapterVerses: Array<BollsSR?>? = null
-    private var paramSearch: String? = null
     private var showMixed = true
     private var txtSize = 18
 
     private lateinit var binding: FragmentEntdeckeBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        paramSearch = savedInstanceState?.getString(Arg_search)
-
-        //gc.Logl("onCreate  " + (paramSearch!= null), false)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,  savedInstanceState: Bundle? ): View? {
-        paramSearch = savedInstanceState?.getString(Arg_search)
+    //    paramSearch = savedInstanceState?.getString(Arg_search)
         // gc.Logl("onCreateView  " + (paramSearch!= null), false)
 
         // Inflate the layout for this fragment
@@ -56,57 +49,24 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
         binding.tvVerstext.setOnClickListener(this)
         binding.tvMischen.setOnClickListener(this)
         binding.btnseekrund.setOnClickListener(this)
+        binding.btnSeekFileDlg.setOnClickListener(this)
 
-        showMixed = gc.appVals().valueReadBool("btn.splitTrack", false)
+
+        showMixed = gc.appVals().valueReadBool("discover_showMixed", false)
         txtSize = gc.appVals().valueReadInt("txt.size", 18)
-        checkVerslist()
-
+        checkSeekList()
         textToFlowlayout(gc.lernItem.text, showMixed)
         return rootView
     }
 
+    private var lastText = ""
     override fun onResume() {
         super.onResume()
-        checkVerslist()
+        checkSeekList()
+        if (lastText != gc.lernItem.text)
+            textToFlowlayout(gc.lernItem.text, showMixed)
+        //lastText = gc.lernItem.text
         //gc.Logl("onResume  " + (paramSearch!= null), false)
-        textToFlowlayout(gc.lernItem.text, showMixed)
-    }
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        // gc.Logl(("onSaveInstanceState  $paramSearch"), true)
-        //outState.putBoolean(IS_EDITING_KEY, isEditing)
-        if (paramSearch != null)
-            outState.putString(Arg_search, paramSearch)
-
-    }
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment BlankFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String) =
-            EntdeckeFrag().apply {
-                arguments = Bundle().apply {
-                    putString(Arg_search, param1)
-                 //   putString(ARG_PARAM2, param2)
-                }
-            }
-    }
-
-
-
-    private fun getViewIdx(view: View?): Int {
-        for (i in 0..<binding.flowLayout.size) {
-            val v: View = binding.flowLayout.getChildAt(i)
-            if (v === view) return i
-        }
-        return -1
     }
 
     private fun addWort(wd1: String?, idx: Int, asMixed : Boolean) {
@@ -130,8 +90,10 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
         binding.flowLayout.addView(textView)
         okList.add(wd)
     }
+    //private var lastText = ""  || lastText == txt
     fun textToFlowlayout(txt: String?, doMischen: Boolean) {
-        if (txt?.isEmpty() == true ) return
+        if (txt?.isEmpty() == true) return
+        lastText = txt.toString()
         binding.flowLayout.removeAllViews()
         val text = txt.toString().trim() //gc.formatTextUpper(txt)
         // gc.Logl(text, false)
@@ -156,7 +118,7 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
             addWort(wort.toString(), cnt, doMischen) //addWort(" ");
         }
         binding.ayheaderTextView.text = gc.lernItem.vers
-        if (doMischen) mischViewss()
+        if (doMischen) shuffleViews()
     }
 
     fun setTextSizes(size: Int) {
@@ -165,7 +127,7 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
             v.textSize = size.toFloat()
         }
     }
-    fun mischViewss() {
+    fun shuffleViews() {
         val cnt: Int = binding.flowLayout.size
         if (cnt < 5) return
         //gc.Logl("Oki: "+okcnt+ " / "+Cnt, true); binding.flowLayout.size
@@ -190,93 +152,53 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
             }
             mc--
         }
-        removeView = null
+        okCheck() //if first is right..
     }
 
-    private var removeView: TextView? = null
-    private var falschView: TextView? = null
-
-    private fun checkNewPlatz(idx: Int, view: View) {
-        val vText = (view as TextView).text.toString()
-        val riPl = vText == okList.get(idx)
-
-        if (riPl) view.setBackgroundResource(R.drawable.richtigplaz) else view.setBackgroundResource(
-            R.drawable.rounded_corner
-        )
-    }
-
-    private fun OkCheck() {
+    private fun okCheck() {
         var okcnt = 0
         val cnt: Int = binding.flowLayout.size
         for (i in 0..<cnt) {
             val v = binding.flowLayout.getChildAt(i) as TextView
             val txt = v.text.toString()
-            if (txt == okList[i]) okcnt++ else v.setBackgroundResource(R.drawable.rounded_corner)
+            if (txt == okList[i] && okcnt==i) {
+                okcnt++
+                v.setBackgroundResource(R.drawable.richtigplaz)
+                v.isClickable = false
+            } else v.setBackgroundResource(R.drawable.rounded_corner)
         }
         if (okcnt != cnt) {
             return
         }
-        //gc.Logl("Oki: "+okcnt+ " / "+Cnt, true); binding.flowLayout.size
-        for (i in 0..<cnt) {
-            val v: View = binding.flowLayout.getChildAt(i)
-            v.setBackgroundResource(R.drawable.richtigplaz)
-        }
-        binding.tvVerstext.text = gc.lernItem.text
-        binding.ayheaderTextView.text = gc.lernItem.vers
+        textToFlowlayout(lastText, false)
+        //binding.ayheaderTextView.text = gc.lernItem.vers
 
         // gc.showPopupWin(this.binding.root, gc.LernItem.Text, { this.mischViews() })
     }
 
     private fun wordClick(view1: View?) {
         val tv = view1 as TextView
-        val txt = tv.text.toString()
-        val viewIdx = getViewIdx(tv)
-        if (falschView != null) {
-            falschView?.setBackgroundResource(R.drawable.rounded_corner)
-            falschView = null
-        }
-        if (removeView != null) {
-            if (removeView === tv) {
-                removeView!!.setBackgroundResource(R.drawable.rounded_corner)
-                removeView = null
-            } else {
-                if (viewIdx > -1) {
-                    binding.flowLayout.removeView(removeView)
-                    binding.flowLayout.addView(removeView, viewIdx)
-                    checkNewPlatz(viewIdx, removeView!!)
-                    OkCheck()
-                }
 
-                removeView = null
-            }
-        } else {
-            if (txt == okList.get(viewIdx)) tv.setBackgroundResource(R.drawable.richtigplaz)
-            else {
-                val rid = isNext(view1)
-                if (rid > -1) {
-                    binding.flowLayout.removeView(view1)
-                    binding.flowLayout.addView(view1, rid)
-                    tv.setBackgroundResource(R.drawable.richtigplaz)
-                    OkCheck()
-                } else {
-                    falschView = tv
-                    //removeView!!.setBackgroundResource(R.drawable.selected)
-                    tv.setBackgroundResource(R.drawable.falschplatz)
-                }
-            }
-        }
+        val rid = isNext(view1)
+        if (rid > -1) {
+            binding.flowLayout.removeView(view1)
+            binding.flowLayout.addView(view1, rid)
+            tv.setBackgroundResource(R.drawable.richtigplaz)
+            okCheck()
+        } else
+            tv.setBackgroundResource(R.drawable.falschplatz)
     }
 
     private fun isNext(view: View): Int {
-        val Cnt: Int = binding.flowLayout.size
-        var okcnt = -1
+        val childCount: Int = binding.flowLayout.size
+        var okCnt = -1
         val viewtxt = (view as TextView).text.toString()
 
-        for (i in 0..<Cnt) {
+        for (i in 0..<childCount) {
             val v = binding.flowLayout.getChildAt(i) as TextView
             val txt = v.text.toString()
-            if (txt == okList.get(i)) okcnt++ else {
-                if (viewtxt == okList.get(i)) return i
+            if (txt == okList[i]) okCnt++ else {
+                if (viewtxt == okList[i]) return i
                 else return -1
             }
         }
@@ -300,15 +222,15 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
     }
 
     fun btnRandomversClick() {
-        PreferenceManager.getDefaultSharedPreferences(requireContext())
+        //PreferenceManager.getDefaultSharedPreferences(requireContext())
         val range = getRandRange(requireContext())
         val verse =  gc.bBlparseBook()?.randomBookAndChapter(range )
         binding.tvVerstext.text = "wait"
         binding.ayheaderTextView.text = "??"
         val version = getVersion( requireContext() )
-
+        //gc.log( "btnRandomversClick: $version, $range  book: ${verse?.bookNumber}, chapter: ${verse?.chapter}")
         //fetchBibleVerse("NKJV", "1", "1", "1") //
-        fetchBibleChapter(version, verse?.book.toString(), verse?.chapter.toString() )
+        fetchBibleChapter(version, verse?.bookNumber.toString(), verse?.chapter.toString() )
     }
 
 
@@ -323,24 +245,9 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
                             if (verses?.size!! > 1)  vers = random.nextInt(verses.size)
                             val txt = verses[vers]?.text
 
-                            gc.lernItem.setBollsSearchResult(gc.bolls()?.versArrayToChaptertext(verses).toString(),
+                            gc.lernItem.setBollsSearchResult( verses,
                                 txt.toString(), version,vers+1, bookNum.toInt(), chapter.toInt())
                             gc.lernItem.addToHistory()
-                            /*gc.lernItem.chapter = gc.bolls()?.versArrayToChaptertext(verses).toString()
-                            if (txt != null) {
-                                gc.lernItem.text = txt
-                            }
-                            gc.lernItem.vers =
-                                gc.bBlparseBook()!!.versShortName(bookNum.toInt(), chapter.toInt(), vers+1)
-                            gc.lernItem.translation = version
-                            gc.lernItem.partText = "ne"
-                            gc.lernItem.numVers = vers
-                            gc.lernItem.numBook = bookNum.toInt()
-                            gc.lernItem.numChapter = chapter.toInt()
-                            //gc.log("fetche: " + gc.lernItem.NumVers)
-                            val cdata = CsvData()
-                            gc.csvList()?.copyData(gc.lernItem, cdata)
-                            gc.versHistory.addVers(cdata) */
                             gc.setVersTitel(gc.lernItem.vers)
                             binding.tvVerstext.text = ""
                             textToFlowlayout(gc.lernItem.text, showMixed)
@@ -373,88 +280,133 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
     }
 
 
-    fun checkVerslist() {
-        val count = if (gc.sharedPrefs.getBoolean("use_jsonList", true)) {
-            gc.jsonList()!!.entries()
-        } else
-            gc.seekList().entries()
+    fun checkSeekList() {
+        val count = gc.seekList().entries()
 
         if (count < 3) {
             binding.llseekbar.visibility = View.INVISIBLE
             return
         }
         binding.llseekbar.visibility = View.VISIBLE
-        if (gc.sharedPrefs.getBoolean("use_jsonList", true)) {
-            val stat =  gc.jsonList()!!.getSuchwort() +
-                    "   Vc: " + gc.jsonList()!!.entries() + " done " + gc.jsonList()!!.getProzentReaded() + "% "
-            binding.tvverscnt.text = stat
-        } else {
-            val stat =  gc.seekList().getSuchwort() +
-                    "   Vc: " + gc.seekList().entries() + " done " + gc.seekList().getProzentReaded() + "% "
-            binding.tvverscnt.text = stat
-        }
-
+        val stat =  gc.seekList().getSuchwort() +
+                "   Vc: " + gc.seekList().entries() + " done " + gc.seekList().getProzentReaded() + "% "
+        binding.tvverscnt.text = stat
     }
 
-    private fun btnrandseekClick() {
-        if (gc.sharedPrefs.getBoolean("use_jsonList", true)) {
-            val jvers = gc.jsonList()?.getRandomVers()
-            gc.lernItem.setBollsSrVers(jvers)
+    private fun btnRandSeekClick() {
+
+        if (gc.seekList().entries() < 2) return
+
+        val vers = gc.seekList().getRandomVers()
+        gc.lernItem.setSeekVers(vers)
+        //gc.log("fetche: " + gc.LernItem.VersNum)
+        binding.tvVerstext.text = ""
+        binding.ayheaderTextView.text = ""
 
 
-        }  else {
-            if (gc.seekList().entries() < 2) return
-
-            val vers = gc.seekList().getRandomVers()
-            gc.lernItem.setSeekVers(vers)
-            //gc.log("fetche: " + gc.LernItem.VersNum)
-            binding.tvVerstext.text = ""
-            binding.ayheaderTextView.text = ""
-
-        }
-        gc.lernItem.chapter = ""
+        gc.lernItem.chapter.clear()
         gc.lernItem.addToHistory()
         gc.setVersTitel(gc.lernItem.vers)
-        checkVerslist()
+        checkSeekList()
         textToFlowlayout(gc.lernItem.text, showMixed)
         //mischViews()
     }
 
-    fun btnrandseekAndSpeakClick() {
-        btnrandseekClick()
+    fun btnRandSeekAndSpeakClick() {
+        btnRandSeekClick()
         tvSpeackClick()
     }
+    private fun fetchBibleVerse(vers: VersStrings) {
+        lifecycleScope.launch {
+            try { //Date(),
+                //gc.Logl("fetch start", true) fetchBibleVerse: LUT, revelation, 21:3
+                val bookNumber = gc.bBlparseBook()?.bookNumber(vers.bookName)
+                gc.bolls()!!.fetchBibleVerse(
+                    getVersion( requireContext() ),
+                    bookNumber!!.toString(), vers.chapter, vers.startVerse)
+                    .collect { result ->
+                        if (result.isSuccess) {
+                            val verses = result.getOrNull()  //verses?.forEach { verse ->
+                            textToFlowlayout(verses!!.text, false)
+                            gc.lernItem.text = verses.text
+                            gc.lernItem.vers = gc.bBlparseBook()?.versStringsToBibelStelle(vers).toString()
 
+                            //binding.tvVerstext.text = vers
+                            //textToFlowlayout(gc.lernItem.text, showMixed)
+                            //mischViews() val version = getVersion( requireContext() )
+                        } else binding.tvVerstext.text = result.exceptionOrNull()?.message
+                    }
+            } catch (e: Exception) {
+                binding.tvVerstext.text=e.message
+            }
+        }
+    }
+
+    private fun fetchvotd() {
+        lifecycleScope.launch {
+            try { //Date(),
+                //gc.Logl("fetch start", true)
+                gc.vtdo()!!.fetchLabsBibleVerse()
+                    .collect { result ->
+                        if (result.isSuccess) {
+                            val verses = result.getOrNull()  //verses?.forEach { verse ->
+                            textToFlowlayout(verses, false)
+                            //<b>Revelation 2:10</b>
+                            val start = verses!!.indexOf("<b>")
+                            val end = verses.indexOf("</b>")
+                            var vers = "error"
+                            if (start >= 0 && end > 0) {
+                                vers = verses.substring(start + 3, end)
+                                val verse =  gc.bBlparseBook()?.parseBibelStelle(vers)
+                                fetchBibleVerse(verse!!)
+                                return@collect
+                            }
+                            gc.log("start: $start, end: $end")
+                            gc.log(vers)
+                            binding.tvVerstext.text = vers
+                            //textToFlowlayout(gc.lernItem.text, showMixed)
+                            //mischViews() val version = getVersion( requireContext() )
+                        }
+                    }
+            } catch (e: Exception) {
+                binding.tvVerstext.text=e.message
+            }
+        }
+    }
+
+    private lateinit var dlgBinding: SheetDiscoverBinding
     fun doButtonSheet() {
         val dialog = BottomSheetDialog(requireContext())
+        val inflater = LayoutInflater.from(requireContext())
+        dlgBinding = SheetDiscoverBinding.inflate(inflater)
 
-        val view = layoutInflater.inflate(R.layout.sheet_discover, null)
-        val btn: SwitchCompat = view.findViewById(R.id.switchMix)
-        btn.splitTrack = gc.appVals().valueReadBool("btn.splitTrack", false)
-        btn.setOnClickListener {
-            btn.splitTrack = !btn.splitTrack //!btn.isChecked
-            showMixed = btn.splitTrack
-            gc.appVals().valueWriteBool("btn.splitTrack", btn.splitTrack)
-
+        dlgBinding.switchMix.isChecked = gc.appVals().valueReadBool("discover_showMixed", false)
+        //gc.Logl("splitTrack: " + btn.splitTrack + " checked: " + btn.isChecked, true)
+        dlgBinding.switchMix.setOnClickListener {
+            showMixed = dlgBinding.switchMix.isChecked //!btn.splitTrack
+            gc.appVals().valueWriteBool("discover_showMixed", showMixed)
+            //btn.isChecked
         }
         // dialog.setCancelable(false)
-        var botn: ImageButton = view.findViewById(R.id.btnDown)
-        botn.setOnClickListener {
+        dlgBinding.btnDown.setOnClickListener {
             // txtSize = gc.appVals().valueReadInt("txt.size", 18)
             txtSize  --
             if (txtSize < 12) txtSize = 12
             setTextSizes(txtSize)
             gc.appVals().valueWriteInt("txt.size", txtSize)
         }
-        botn = view.findViewById(R.id.btnUp)
-        botn.setOnClickListener {
+        dlgBinding.btnUp.setOnClickListener {
             txtSize ++
             if (txtSize > 24) txtSize = 24
             setTextSizes(txtSize)
             gc.appVals().valueWriteInt("txt.size", txtSize)
         }
+        dlgBinding.btnVersOfDay.setOnClickListener {
+            fetchvotd()
+
+        }
         // set content view to our view.
-        dialog.setContentView(view)
+        dialog.setContentView(dlgBinding.root)
         dialog.show()
     }
     fun mischViews() {textToFlowlayout(gc.lernItem.text, true)}
@@ -466,15 +418,31 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
             R.id.tvMoves -> doButtonSheet()
             R.id.etvTxtShow -> txtClick()
 
-            R.id.btn_randObst -> btnrandObstClick()
+            R.id.btnRandObst -> btnrandObstClick()
             R.id.btnBible -> btnBibleClick()
             R.id.wtvSpeak -> tvSpeackClick()
-            R.id.btnseekrund -> btnrandseekClick()
-            R.id.btnseekplay -> btnrandseekAndSpeakClick()
+            R.id.btnseekrund -> btnRandSeekClick()
+            R.id.btnseekplay -> btnRandSeekAndSpeakClick()
             R.id.tvVerstext -> txtClick()
+            R.id.btnSeekFileDlg -> doSeekFileDlg()
 
         }
 
+    }
+
+    private fun doSeekFileDlg() {
+        val fileDlg = FileDlg(
+            gc.mainActivity!!,
+            "FileOpen",  //or FileSave or FileSave..  ..= chosenDir with dir | or FileOpen
+            seekFileExtn
+        ) { chosenDir: String? ->
+            binding.tvSeekbar.text = chosenDir
+            gc.seekList().openSeekFile(chosenDir!!)
+            checkSeekList()
+        }
+        //fileDlg.create(); //!
+        fileDlg.chooseFileOrDir(gc.filesDir.absolutePath)
+        //binding.wtvSpeak.isSelected = true
     }
 
 

@@ -16,16 +16,19 @@ import okhttp3.Response
 import org.json.JSONObject
 import trust.jesus.discover.little.Globus
 import java.io.IOException
+import java.net.URLEncoder
 
-
+/*
+https://api.biblesupersearch.com/api?bible=kjv&reference=Rom&search=fAiTh
+ */
 class Kbolls {
 //docs: https://bolls.life/api/  https://bolls.life/donate/  home https://bolls.life  = onlinebible mit Menu nice, nice
 /* https://bolls.life/get-random-verse/YLT/   =
 {"pk": 28578, "translation": "YLT", "book": 5, "chapter": 16, "verse": 21, "text": "'Thou dost not plant for thee a shrine of any trees near the altar of Jehovah thy God, which thou makest for thyself,"}
  */
+    private val gc: Globus = Globus.getAppContext() as Globus
     private val client = OkHttpClient()
     private val gson = Gson()
-    private val gc: Globus = Globus.getAppContext() as Globus
 
     /* use in Activity:
     private fun fetchAndDisplayBibleVerse2(version: String, bookNum: String, chapter: String, vers: String) {
@@ -61,6 +64,7 @@ https://bolls.life/v2/find/MB?search=Gnade&match_case=false&match_whole=true&lim
      */
 
     fun fetchBibleVerse(version: String, bookNum: String, chapter: String, vers: String): Flow< Result <BollsVers> > = flow {
+        val version = getNearBollsVersion(version)
         val apiUrl = "https://bolls.life/get-verse/$version/$bookNum/$chapter/$vers/"
         //"https://bolls.life/get-text/MB/22/8/" NKJV
         //gc.Logl(apiUrl, true)
@@ -68,6 +72,7 @@ https://bolls.life/v2/find/MB?search=Gnade&match_case=false&match_whole=true&lim
             .url(apiUrl)
             .get()
             .build()
+        gc.Logl("fetchBibleVerse: $version, $bookNum, $chapter:$vers", true)
 
         val response = try {
             client.newCall(request).await()
@@ -76,13 +81,12 @@ https://bolls.life/v2/find/MB?search=Gnade&match_case=false&match_whole=true&lim
         }
 
         if (response?.isSuccessful == true) {
+            lastVersion = version
             val json = response.body?.string()
             try {
                 emit( Result.success( parseJsonToBibleVerse(json) ))
                 //emit(Result.success(json) as Result<String>)
-            } catch (
-                e: IllegalArgumentException
-            ) {
+            } catch ( e: IllegalArgumentException  ) {
                 emit(Result.failure(e))
             }
         } else {
@@ -122,19 +126,11 @@ https://bolls.life/v2/find/MB?search=Gnade&match_case=false&match_whole=true&lim
         return BollsVers(pk, vers, text)
     }
 
-    fun versArrayToChaptertext(verses: Array<BollsVers?>?): String {
-        var ret = ""
-        var cnt = 1
-        if (verses != null) {
-            for (verse in verses) {
-                ret += cnt ++.toString() + " " + verse?.text + "\n"
-            }
-        }
-        ret = ret + "\n"+ "\n"+ "\n"+ "\n"+ "\n"+ "\n"
-        return ret
-    }
-    fun fetchBibleChapter(version: String, bookNum: String, chapter: String): Flow< Result <Array<BollsVers?>?> > = flow {
-        val apiUrl = "https://bolls.life/get-text/$version/$bookNum/$chapter/"
+    var lastVersion = ""
+    fun fetchBibleChapter(version: String, bookNameOrNum: String, chapter: String): Flow< Result <Array<BollsVers?>?> > = flow {
+        val version = getNearBollsVersion(version)
+        val apiUrl = "https://bolls.life/get-text/$version/$bookNameOrNum/$chapter/"
+        //gc.Logl("fetchBibleChapter: $version, $bookNameOrNum, $chapter", false)
         //"https://bolls.life/get-text/MB/22/8/" NKJV
         //gc.Logl(apiUrl, true)
         if (!hasInternet()) {
@@ -154,6 +150,7 @@ https://bolls.life/v2/find/MB?search=Gnade&match_case=false&match_whole=true&lim
         }
 
         if (response?.isSuccessful == true) {
+            lastVersion = version
             val json = response.body?.string()
             try {
                 emit( Result.success( parseJsonToBibleChapterVerses(json) ))
@@ -173,20 +170,20 @@ https://bolls.life/v2/find/MB?search=Gnade&match_case=false&match_whole=true&lim
             throw IllegalArgumentException("JSON is empty or null")
         }
         //val votdApiResponse = gson.fromJson(json, BollsVers::class.java)
-        val ChapterVerses: Array<BollsVers?>? =
+        val chapterVerses: Array<BollsVers?>? =
             gson.fromJson<Array<BollsVers?>?>(json, Array<BollsVers>::class.java)
 
         //HtmlCompat.fromHtml(votdApiResponse.text, HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
         //=val data: Array<Wrapper?>? = gson.fromJson(jElement, Array<Wrapper>::class.java)
-        if (ChapterVerses.isNullOrEmpty()) {
+        if (chapterVerses.isNullOrEmpty()) {
             throw IllegalArgumentException("JSON does not contain a Bible verse")
         }
 
-        for (verse in ChapterVerses) {
+        for (verse in chapterVerses) {
             verse!!.text = HtmlCompat.fromHtml(verse.text, HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
 
         }
-        return  ChapterVerses //BollsVers( pk, vers, text )
+        return  chapterVerses //BollsVers( pk, vers, text )
     }
 
     // https://bolls.life/api/#Search
@@ -225,18 +222,19 @@ https://bolls.life/v2/find/MB?search=Gnade&match_case=false&match_whole=true&lim
         }
     }
 
+    //output see: https://bolls.life/v2/find/YLT?search=haggi&match_case=false&match_whole=true&limit=128&page=1
     fun parseJsonToBibleSearchVerses(json: String?): Array<BollsSR?>? {
         if (json.isNullOrEmpty()) {
             throw IllegalArgumentException("JSON is empty or null")
         }
         val jsonResponse = JSONObject(json)
         val jr = jsonResponse.getString("results")
-        //gc.log(jr)
+        //output see: https://bolls.life/v2/find/YLT?search=haggi&match_case=false&match_whole=true&limit=128&page=1
         if (jr.isNullOrEmpty()) {
             throw IllegalArgumentException("JSON does not contain a Bible verse")
         }
 
-        jsonResponse.put("searchword", "holy")
+        //jsonResponse.put("searchword", "holy")
         val chapterVerses: Array<BollsSR?>? =
             gson.fromJson<Array<BollsSR?>?>(jr, Array<BollsSR>::class.java)
 
@@ -269,9 +267,10 @@ bible gateway
 
 
      */
-    fun fetchBibleSearchJson(version: String, suchWort: String, match_case: Boolean,
-                             match_whole: Boolean, range: String = "nt"): Flow< Result < String? > > = flow {
-        var apiUrl = "https://bolls.life/v2/find/$version?search=$suchWort&match_case=$match_case&limit=3000&match_whole=$match_whole"
+    fun fetchBibleSearchJson(version: String, suchWort: String, matchCase: Boolean,
+                             matchWhole: Boolean, range: String = "nt"): Flow< Result < String? > > = flow {
+        val suchWort = URLEncoder.encode(suchWort, "UTF-8")
+        var apiUrl = "https://bolls.life/v2/find/$version?match_case=$matchCase&limit=3000&match_whole=$matchWhole&search=$suchWort"
         //https://bolls.life/v2/find/YLT?search=haggi&match_case=false&match_whole=true&limit=128&page=1
         //gc.Logl(apiUrl, true)
         when (range) {
@@ -309,18 +308,37 @@ bible gateway
     }
 
     fun getNearBollsVersion(versionName: String): String {
-        if (hasBibleVersionShortName(versionName)) return versionName
+        var retVersionName = ""
+        //gc.log("Start getNearBollsVersion: $versionName")
+        val versionNameUpper = versionName.trim().uppercase()
+        //var step = 1
+        if (versionName=="KJV") retVersionName = "NKJV"  //KJV is with strong numbers
+        if (retVersionName.isEmpty())
+        if (retVersionName.isEmpty() && hasBibleVersionShortName(versionNameUpper))
+            retVersionName = versionNameUpper
+        //if (retVersionName.isEmpty()) step = 3
         val ari = arrayOf(arrayOf("ELBERFELDER ELB 1905 ELB1905", "ELB"),
             arrayOf("SCHLAchter 1951 SCH", "SCH"),            arrayOf("SCHLAchter 2000 S00", "S00"),
             arrayOf("Luther 1912 LUT", "LUT"),              arrayOf("Hoffnung für Alle 2015 HFA", "HFA"),
             arrayOf("Menge-Bibel MB", "MB"),                arrayOf("GerGruenewald Sch51", "SCH"),
-            arrayOf("GNB", "HFA")
+            arrayOf("GNB", "HFA"),                          arrayOf("NLT", "ESV")
 
         )
-        for (item in ari) {
-            if (versionName.contains(item[0], true)) return item[1]
+        //if (retVersionName.isEmpty()) step = 4
+        if (retVersionName.isEmpty()) {
+             for (item in ari) {
+                    if (item[0].contains(versionName, true)) {
+                        retVersionName = item[1]
+                        break
+                    }
+                }
+            }
+        if (retVersionName.isEmpty()) {//
+            //step = 5
+            retVersionName = bibelVersionShort(versionName)
         }
-        return "HFA"
+        //gc.log("END getNearBollsVersion: $retVersionName  step $step")
+        return retVersionName
     }
     fun bibelVersionShort(versionName: String) = when (versionName) {
         //bolls all en 38!
@@ -347,11 +365,11 @@ bible gateway
         "Schlachter 2000" -> "S00"
         "Luther (1912)" -> "LUT"
         "Hoffnung für Alle, 2015" -> "HFA"
-        else -> "HFA" //throw Exception("Bibelversion '$VersionName' not found in list")
+        else -> versionName //throw Exception("Bibelversion '$VersionName' not found in list")
     }
 
     fun bibelVersionShortToLong(versionName: String) = when (versionName) {
-        //bolls all en 38!
+        //bolls all en 38!   !!NKJV changed to KJV no Strongs for now 10.25
         "NKJV" -> "New King James Version, 1982"
         "NIV" -> "New International Version, 1984"
         "NASB" -> "New American Standard Bible (1995)"
@@ -367,14 +385,14 @@ bible gateway
         "DRB" -> "Douay Rheims Bible"
         "AMP" -> "Amplified Bible, 2015"
         "BSB" -> "The Holy Bible, Berean Standard Bible"
-        "KJV" -> "King James Version 1769 with Apocrypha and Strong's Numbers"
+        "KJV" -> "New King James Version, 1982" //org: "King James Version 1769 with Apocrypha and Strong's Numbers"
         "MB" -> "Menge-Bibel"
         "ELB" -> "Elberfelder Bibel, 1871"
         "SCH" -> "Schlachter (1951)"
         "S00" ->"Schlachter 2000"
         "LUT" -> "Luther (1912)"
         "HFA" -> "Hoffnung für Alle, 2015"
-        else -> "Hoffnung für Alle, 2015" //throw Exception("Bibelversion '$VersionName' not found in list")
+        else -> versionName //throw Exception("Bibelversion '$VersionName' not found in list")
     }
 
     fun bibelVersionLang(versionName: String) = when (versionName) {
@@ -408,3 +426,4 @@ bible gateway
         return ret
     }
 }
+

@@ -26,10 +26,10 @@
     <color name="night_box_border">#0E121D</color>
 
     <!--  Blue theme  -->
-    <color name="blue_background">#242d48</color>
+    <color name="blue_background">#1A344B</color>
     <color name="blue_action_bar">#2d3d72</color>
-    <color name="blue_key_normal">#0e152a</color>
-    <color name="blue_key_pressed">#041037</color>
+    <color name="blue_key_normal">#1F2E5B</color>
+    <color name="blue_key_pressed">#233B87</color>
     <color name="blue_box_background">#20105c</color>
     <color name="blue_tab_selected">#7BE2D8</color>
 

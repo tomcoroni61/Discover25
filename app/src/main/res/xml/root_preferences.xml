@@ -71,7 +71,7 @@ app:title="@string/preference_category_bible_version_title"
 
         <SwitchPreferenceCompat
             app:key="match_case"
-            app:title="match case" />
+            app:title="@string/match_case" />
 
         <SwitchPreferenceCompat
             app:key="match_whole"
@@ -79,7 +79,7 @@ app:title="@string/preference_category_bible_version_title"
 
         <EditTextPreference
             app:key="search_word"
-            app:title="search word"
+            app:title="@string/search_one_or_more_words"
             app:useSimpleSummaryProvider="true" />
 
 
@@ -89,6 +89,7 @@ app:title="@string/preference_category_bible_version_title"
             android:windowBackground="#F8F4A1"
             android:colorBackground="#F8F4A1"
 app:dependency="search_word"..ne..
+
 <trust.jesus.discover.preference.SettingsSearch
             app:key="search_time"
             app:title="search time"
@@ -101,9 +102,13 @@ app:dependency="search_word"..ne..
             app:title="search time"
             android:layout="@layout/prefi_search_row"
             />
+
         <SwitchPreferenceCompat
-            app:key="use_jsonList"
-            app:title="json list" />
+            app:defaultValue="false"
+            app:key="new_search_list"
+            app:switchTextOff="override searchlist"
+            app:switchTextOn="new search list"
+            app:title="new search list" />
 
     </PreferenceCategory>
 

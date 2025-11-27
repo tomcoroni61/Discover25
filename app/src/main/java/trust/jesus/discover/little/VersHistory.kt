@@ -6,11 +6,11 @@ class VersHistory {
 
 
     private val dataList: ArrayList<CsvData> = ArrayList()
-    private var currentVers: Int = 0
+    private var currentVers: Int = -1
 
     fun addVers(newVers: CsvData) {
-        dataList.add(newVers)
         currentVers++
+        dataList.add(newVers)
     }
     fun previousVers(): CsvData? {
         if (currentVers > 0) {

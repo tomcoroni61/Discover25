@@ -5,7 +5,7 @@ import androidx.core.text.HtmlCompat
 import com.google.gson.Gson
 import org.json.JSONObject
 import trust.jesus.discover.bible.online.BollsSR
-import trust.jesus.discover.little.FixStuff.Filenames.Companion.wortListfile
+import trust.jesus.discover.little.FixStuff.Filenames.Companion.seekFileExtn
 
 
 class SeekList {
@@ -27,7 +27,12 @@ class SeekList {
 
     }
     private var headerList: ArrayList<String> = ArrayList()
-    private val delim = '\t'
+    private val delim = '\t';   //gc.appVals().valueReadString("eCurSeekFile","curSeekFile$seekFileExtn" ).toString()
+    private var slFileName: String = ""
+        get() {return gc.appVals().valueReadString("eCurSeekFile","curSeekFile$seekFileExtn" ).toString() }
+        set(value) {field = value; gc.appVals().valueWriteString("eCurSeekFile", value)}
+
+
     fun entries(): Int {
         readList()
         return verscount
@@ -72,7 +77,7 @@ class SeekList {
         }
         return cnt * 100 / entries()
     }
-    fun jsonToVersList(jsonString: String) {
+    fun jsonToVersList(jsonString: String, fileName: String) {
         var crashcnt = 0
         try {
 
@@ -100,7 +105,7 @@ class SeekList {
                     HtmlCompat.fromHtml(verse.text, HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
 
             crashcnt = 15
-            if (!gc.dateien().openOutputStream(wortListfile, Context.MODE_PRIVATE)) return
+            if (!gc.dateien().openOutputStream(fileName, Context.MODE_PRIVATE)) return
             var line: String?  //Thema # Vers # Translation # Res1 # Res2 # Text
             crashcnt = 18
             for (i in 0..19) {//= 20 "headerlines"
@@ -127,6 +132,7 @@ class SeekList {
                 if (!gc.dateien().writeLine(line)) break
             }
             gc.dateien().closeOutputStream()
+            slFileName = fileName// gc.appVals().valueWriteString("eCurSeekFile", fileName)
             dataList.clear() //= read new next
 
         } catch (e: Exception) {
@@ -140,12 +146,19 @@ class SeekList {
         if (headerList.size < 4) return ""
         return headerList[1]
     }
-    fun readList() {
-        verscount = dataList.size
+    fun openSeekFile(name: String) {
+        slFileName = name
+        //gc.appVals().valueWriteString("eCurSeekFile", name)
+        dataList.clear()
+        readList()
+    }
+
+    private fun readList() {
+        verscount = dataList.size  //
         if (verscount > 2) return
-        if (!gc.dateien().openInputStream(wortListfile)) return
+        if (!gc.dateien().openInputStream(slFileName)) return
         buildList()
-        gc.dateien().closeInputStream()
+        gc.dateien().closeInputStream() //slFileName
         verscount = dataList.size
     }
     private fun buildList() { //readFromPrivate
@@ -210,8 +223,8 @@ class SeekList {
         }
     }
 
-    fun writeList() {
-        if (!gc.dateien().openOutputStream(wortListfile, Context.MODE_PRIVATE)) return
+    private fun writeList() {
+        if (!gc.dateien().openOutputStream(slFileName, Context.MODE_PRIVATE)) return
 
         for (item in headerList) {
             if (!gc.dateien().writeLine(item)) break

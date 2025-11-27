@@ -10,7 +10,9 @@ import android.view.View.FOCUS_DOWN
 import android.view.View.VISIBLE
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.core.view.iterator
 import trust.jesus.discover.R
 import trust.jesus.discover.dlg_data.SuErItem
 import trust.jesus.discover.fragis.SpeechFrag
@@ -116,12 +118,14 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
                 if (wordlist.size > 8)
                     addWort(wordlist[wordlist.size-1])
                 val level = 100 - (ttsvals.helpersCnt * 100 / wordlist.size)
-                val txt = "accuracy $level %"
-                binding.tvParttext.text = txt
-                binding.tvNextWord.text = txt
+                // binding.tvStatus.text = txt  tvNextWord  tvStatus
                 binding.tvAllPartText.append("Errs = ${ttsvals.helpersCnt}\n\n")
                 stopRecognition(7)
-                binding.tvStatus.text = getEndDoneText(level)
+                binding.tvNextWord.text = getEndDoneText(level)
+                if (allRightSpoken())
+                    binding.tvNextWord.text = mSpeechFrag.getString(R.string.supi_all_words_right_spoken)
+                val txt = "accuracy $level %    ${binding.tvNextWord.text}"
+                binding.tvParttext.text = txt
                 //doPopUpTxtClick()
             }
         } else {
@@ -187,6 +191,7 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
             binding.tvAllPartText.append("addWord:  $wd  as $wArt\n")
         wd = "$wd "
         textView.text = wd
+        textView.tag = resId
         //textView.setTextColor(txtColor.value.toInt())
         //setTextSizes(txtSize)
         textView.textSize = 16.toFloat() //appVals().valueReadInt("txt.size", txtSize).toFloat()
@@ -200,6 +205,14 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
         )
     //okList.add(wd)
     }
+    private fun allRightSpoken(): Boolean {
+        for (item in binding.flDedacText) {
+            //val textView = item as TextView            if (textView.id == R.layout.sr_rightspoken)
+            if (item.tag != R.layout.sr_rightspoken) return false
+        }
+        return true //tvNextWord  tvStatus
+    }
+
     fun buildWordList() {
         var txt = mSpeechFrag.ttsvals.curTTS_SpeakText
         txt = suerByList(txt)
@@ -277,25 +290,30 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
         binding.progressBar.visibility = VISIBLE //must Gone, not INVISIBLE may stay invisible
         binding.llCommands.visibility = VISIBLE //must Gone, not INVISIBLE may stay invisible
         binding.llDifficulty.visibility = View.GONE
-
+        val drawable = ContextCompat.getDrawable(mSpeechFrag.requireContext(), R.drawable.baseline_mic_off_24)
+        binding.ybtrecord.setImageDrawable(drawable)
 
         recognitionManager.startRecognition()
         mSpeechFrag.gc.doKeepScreenOn(binding.cbKeepScreenOn.isChecked)
+        binding.cbKeepScreenOn.visibility = View.INVISIBLE
         timhandl.postDelayed(runNextWord, 1111)
         timhandl.postDelayed(runXxCheck, 11111)
     }
 
     private fun stopRecognition(delaySec: Long) {
         recognitionManager.contiousRecording = false
+        val drawable = ContextCompat.getDrawable(mSpeechFrag.requireContext(), R.drawable.baseline_mic_24)
+        binding.ybtrecord.setImageDrawable(drawable)
+        binding.ybtrecord.visibility = View.INVISIBLE
         recognitionManager.stopRecognition()
         //binding.rlSearchBar.visibility = VISIBLE
         mSpeechFrag.binding.progressBar.isIndeterminate = true
         binding.progressBar.visibility = View.GONE //must Gone, not INVISIBLE may stay invisible
-        //binding.cscroliDedac.visibility = View.INVISIBLE //must INVISIBLE may stay invisible
         mSpeechFrag.gc.doKeepScreenOn(false)
-
-        mSpeechFrag.binding.tvParttext.text = ""
-        mSpeechFrag.binding.tvStatus.text = "record stopped"
+        binding.cbKeepScreenOn.visibility = VISIBLE
+        
+        //mSpeechFrag.binding.tvParttext.text = ""
+        mSpeechFrag.binding.tvStatus.text = mSpeechFrag.getString(R.string.record_stopped)
         //binding.cscroliFlow.visibility = VISIBLE
         missedWordlist.clear()
         binding.llDifficulty.visibility = VISIBLE
@@ -307,6 +325,7 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
                 binding.cscroliDedac.visibility = View.INVISIBLE //must INVISIBLE may stay invisible
                 binding.progressBar.visibility = View.GONE //must Gone, not INVISIBLE may stay invisible
                 binding.llCommands.visibility = View.GONE //must Gone, not INVISIBLE may stay invisible
+                binding.ybtrecord.visibility = VISIBLE
             },
             delaySec * 1000
         )
@@ -316,13 +335,13 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
         mSpeechFrag.gc.appVals().valueWriteInt("srMaxResults", 1)
         ttsvals.usePartWord = false;            ttsvals.usePartReco = false
         ttsvals.showNextWords = 0;          ttsvals.ignoreWords = 0
-        useMissedList = true;               timeCheckMissedWords = 5000
+        useMissedList = true;               timeCheckMissedWords = 500
         waitShowNextWord = 11000
 
         when (ttsvals.difficultyLevel) {
             0 -> { //easiest Level
                 ttsvals.showNextWords = 5;  waitShowNextWord = 500L
-                ttsvals.ignoreWords = 7;    timeCheckMissedWords = 600
+                ttsvals.ignoreWords = 7;    timeCheckMissedWords = 60
                 ttsvals.xAutoNext = 1
                 ttsvals.usePartWord = true
                 ttsvals.partWordProzent = 25
@@ -331,7 +350,7 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
             }
             1 -> {
                 ttsvals.showNextWords = 4;  waitShowNextWord = 3000
-                ttsvals.ignoreWords = 6;    timeCheckMissedWords = 800
+                ttsvals.ignoreWords = 6;    timeCheckMissedWords = 80
                 ttsvals.xAutoNext = 1
                 ttsvals.usePartWord = true
                 ttsvals.partWordProzent = 35
@@ -340,7 +359,7 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
             }
             2 -> {
                 ttsvals.showNextWords = 3;  waitShowNextWord = 6000
-                ttsvals.ignoreWords = 3;    timeCheckMissedWords = 1300
+                ttsvals.ignoreWords = 3;    timeCheckMissedWords = 130
                 ttsvals.xAutoNext = 2
                 ttsvals.usePartWord = true
                 ttsvals.partWordProzent = 60
@@ -349,7 +368,7 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
             }
             3 -> {
                 ttsvals.showNextWords = 3;  waitShowNextWord = 9000
-                ttsvals.ignoreWords = 2;    timeCheckMissedWords = 2000
+                ttsvals.ignoreWords = 2;    timeCheckMissedWords = 200
                 ttsvals.xAutoNext = 3
                 ttsvals.usePartWord = true
                 ttsvals.partWordProzent = 65
@@ -357,7 +376,7 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
                 //mSpeechFrag.gc.appVals().valueWriteInt("srMaxResults", 2)
             }
             4 -> {
-                ttsvals.showNextWords = 2;  timeCheckMissedWords = 6000
+                ttsvals.showNextWords = 2;  timeCheckMissedWords = 600
                 ttsvals.ignoreWords = 2
                 ttsvals.xAutoNext = 4
                 ttsvals.usePartWord = true
@@ -502,22 +521,25 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
         }
     }
     override fun onBeginningOfSpeech() {
-        binding.progressBar.visibility = View.VISIBLE
+        binding.progressBar.visibility = VISIBLE
+        binding.cscroliDedac.fullScroll( FOCUS_DOWN)
     }
     override fun onReadyForSpeech(params: Bundle) {
         binding.tvStatus.text = mSpeechFrag.context?.getString(R.string.do_speak_now)
-        binding.progressBar.visibility = View.VISIBLE
+        binding.progressBar.visibility = VISIBLE
+        binding.cscroliDedac.fullScroll( FOCUS_DOWN)
     }
     override fun onError(errorCode: Int) {
         val errorMessage = recognitionManager.getErrorText(errorCode)
         binding.tvStatus.text = errorMessage
-        binding.progressBar.visibility = View.GONE //must Gone, not INVISIBLE may stay invisible
+        binding.progressBar.visibility = View.INVISIBLE //View.GONE //must Gone, not INVISIBLE may stay invisible
         if (errorCode == recognitionManager.errSpeachTimeout) {
             stopRecognition(1)
         }
     }
     override fun onRmsChanged(rmsdB: Float) {
         binding.progressBar.progress = rmsdB.toInt()
+        binding.cscroliDedac.fullScroll( FOCUS_DOWN)
     }
 
     override fun onPartialResults(results: List<String>) {
@@ -529,7 +551,7 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
     }
     override fun onResults(  results: List<String>,  scores: FloatArray?  ) {
         binding.tvStatus.text = "wait!!"
-        binding.progressBar.visibility = View.GONE //must Gone, not INVISIBLE may stay invisible
+        binding.progressBar.visibility = View.INVISIBLE //View.GONE //must Gone, not INVISIBLE may stay invisible
         resultsWordIdx = wordidx
         val text = results.joinToString(separator = "\n")
         mSpeechFrag.binding.tvParttext.text = text //Mehrfacherkennung

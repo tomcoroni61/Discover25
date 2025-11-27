@@ -179,7 +179,7 @@ class CsvList() {
         var str = "Es ist aber der Glaube eine feste Zuversicht dessen, was man hofft, und ein Nichtzweifeln an dem, was man nicht sieht."
         val count = dataList.size
         var idx: Int
-        gc.Logl("data cnt: $count", false)
+        //gc.Logl("data cnt: $count", false)
         if (count > 2) {
             var mIdx = gc.appVals().valueReadInt("randi_Idx", 0)
             brandi = !brandi

@@ -3,9 +3,9 @@
     android:height="36dp"
     android:viewportWidth="36"
     android:viewportHeight="36"
-    android:tint="@color/draw_able">
+    android:tint="?attr/btn_img_colour">
   <!-- android:tint="?attr/sysbar_colour draw_able"
-
+android:tint="@color/draw_able"
   -->
   <path
       android:fillColor="@color/cyan_background"

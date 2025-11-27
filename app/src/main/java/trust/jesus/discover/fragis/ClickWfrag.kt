@@ -2,6 +2,8 @@ package trust.jesus.discover.fragis
 
 import android.app.AlertDialog.Builder
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +12,8 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import androidx.appcompat.widget.SwitchCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.size
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import trust.jesus.discover.R
@@ -41,7 +45,7 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
         // Inflate the binding.acflowLayout for this fragment acheaderTextView
         binding.wtvSpeak.setOnClickListener(this)
         binding.ycbtspeakObt.setOnClickListener(this)
-        binding.ybtspeak.setOnClickListener(this)
+        binding.cwbtspeak.setOnClickListener(this)
         binding.actxTextView.setOnClickListener(this)
         binding.tvMischen.setOnClickListener(this)
         binding.acheaderTextView.setOnClickListener(this)
@@ -50,9 +54,12 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
 
         binding.progressBar.visibility = View.INVISIBLE
         binding.progressBar.max = 10
-        xIgnoreWords = gc.appVals().valueReadInt("ClkWords_NextWords", 2)
-        xAutoNext = gc.appVals().valueReadInt("ClkWords_xAutoNext", 5)
-        allowpartWord = gc.appVals().valueReadBool("ClkWords_partWord", true)
+        xIgnoreWords = 3 //gc.appVals().valueReadInt("ClkWords_NextWords", 2)
+        xAutoNext = 5  //gc.appVals().valueReadInt("ClkWords_xAutoNext", 5)
+        allowpartWord = true //gc.appVals().valueReadBool("ClkWords_partWord", true)
+        useRestart = gc.appVals().valueReadBool("ClkWords_useRestart", true)
+        restartValue = gc.appVals().valueReadInt("ClkWords_restartValue", 9)
+
         //recognitionManager.createRecognizer()
         loadText()
 
@@ -78,6 +85,9 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
         binding.progressBar.isIndeterminate = false
         binding.progressBar.visibility = View.VISIBLE
         binding.textView.text = "iniziere"
+        val drawable = ContextCompat.getDrawable(requireContext(), R.drawable.baseline_mic_off_24)
+        binding.ybtrecord.setImageDrawable(drawable)
+
         recognitionManager.contiousRecording = true
         recognitionManager.startRecognition()
     }
@@ -85,6 +95,9 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
     private fun stopRecognition() {
         binding.progressBar.isIndeterminate = true
         binding.progressBar.visibility = View.INVISIBLE
+        val drawable = ContextCompat.getDrawable(requireContext(), R.drawable.baseline_mic_24)
+        binding.ybtrecord.setImageDrawable(drawable)
+
         recognitionManager.contiousRecording = false
         recognitionManager.stopRecognition()
         binding.textView.text = ""
@@ -115,14 +128,14 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
     }
 
     fun tvSpeackClick() {
-        if (wordidx > 4) {
+        if (wordidx > 0) {
             val startIndex = wordidx - 4
             var cnt = startIndex + 8
             if (cnt > wordlist.size) cnt = wordlist.size
             val txt = wordlist.subList(startIndex, cnt).joinToString(separator = " ")
             gc.ttSgl()?.speak(txt.lowercase())
         } else
-            gc.ttSgl()!!.speak(gc.lernItem.text)
+            gc.ttSgl()!!.cleanSpeak(gc.lernItem.text)
     }
 
     fun ycbtttsSettingsClick() {
@@ -131,15 +144,21 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
 
     fun ycbtdoSpeakClick() {
         var tvTxt = binding.actvText.text.toString()
-        if (tvTxt.length < 5) return
         val spTxt = gc.lernItem.text
-        if (wordidx > wordlist.size-1) return
+        if (tvTxt.length < 3) {
+            gc.ttSgl()!!.cleanSpeak(spTxt)
+            return
+        }
+        if (wordidx > wordlist.size-1) {
+            gc.ttSgl()!!.speak(spTxt)
+            return
+        }
         val aWord = wordlist[wordidx - 1] //toUpperCase(Locale.GERMANY).
         val wLen = aWord.length
         val pos = spTxt.uppercase(Locale.getDefault()).indexOf(aWord, tvTxt.length - wLen - 2)
         //gc.Logl(tvTxt.length()-wLen-2 + " "+aWord+ "|"+pos + " "+spTxt.toUpperCase(Locale.GERMANY), true);
-        if (pos < 5) return
-        tvTxt = spTxt.substring(0, pos + wLen)
+        if (pos > 3)
+            tvTxt = spTxt.substring(0, pos + wLen) else tvTxt = spTxt
         //gc.Logl(tvTxt, true);
         gc.ttSgl()!!.speak(tvTxt)
     }
@@ -158,6 +177,7 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
         clickCnt = 0
         curText = gc.lernItem.text
         wordidx = -1
+        restartValueCnt = 0
         binding.acheaderTextView.text = gc.lernItem.vers
         //binding.vers.setText(gc.LernItem.Vers)
         text = gc.formatTextUpper(text)
@@ -219,14 +239,28 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
         val cnt: Int = binding.acflowLayout.size
         if (cnt > 1) id = random.nextInt(cnt - 1)
         binding.acflowLayout.addView(textView, id)
+        Handler(Looper.getMainLooper()).postDelayed( //added 10.25
+            {//needs delay after addView
+                binding.svRejected.fullScroll( FOCUS_DOWN)  //scrollTo(0, binding.flDedacText.height+11) binding.cscroliDedac.scrollBy(0, textView.height)  //scrollTo(0, binding.flDedacText.height+11)
+            },
+            135
+        )
     }
 
     private fun wordClick(view1: View?) {
         val tv = view1 as TextView
 
         clickCnt++
-        if (!checkWort(tv.text.toString()))
+        if (!checkWort(tv.text.toString())) {
             tv.setBackgroundResource(R.drawable.wrong)
+            restartValueCnt++
+            if (useRestart && restartValueCnt >= restartValue) {
+                //gc.askDlg("restarting now", null)
+                gc.toast("restarting now")
+                doAgainClick()
+                return
+            }
+        }
         //binding.vers.setText(gc.LernItem.Vers)
         val guwo = clickCnt.toString() + " - " + wordlist.size //+ "   " + gc.LernItem.Vers;
         binding.acheaderTextView.text = guwo
@@ -279,23 +313,21 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
             }
         }
         //Color.parseColor("#521B87")
-        var txt =  "xAutoNextCount $xAutoNextCount  $aWord \n  xAutoNext $xAutoNext\n"
+        //var txt =  "xAutoNextCount $xAutoNextCount  $aWord \n  xAutoNext $xAutoNext\n"
         //binding.tvGucks.text = txt
         if (xAutoNext == 0) return
         xAutoNextCount++
         if (xAutoNextCount > xAutoNext) {
             xAutoNextCount = 0
             checkWort(wordlist[wordidx])
-            txt =  "xAutoNext  $aWord xAutoNext\n"
+            //txt =  "xAutoNext  $aWord xAutoNext\n"
             //binding.tvGucks.text = txt
             return
         }
 
     }
-    private var xIgnoreWords = 0
-    private var xAutoNext = 0
-    private var xAutoNextCount = 0
-    private var allowpartWord = true
+    private var xIgnoreWords = 0;    private var xAutoNext = 0;    private var xAutoNextCount = 0;    private var allowpartWord = true
+    private var restartValue = 9;   private var restartValueCnt = 0;    private var useRestart = false
     fun doNewVersClick() {
         gc.csvList()?.getRandomText()
         loadText()
@@ -376,59 +408,42 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
         val inflater = LayoutInflater.from(requireContext())
         dlgBinding = SheetWordclkBinding.inflate(inflater)
         dialog.setContentView(dlgBinding.root)
-        var ari = arrayOf("0","1", "2", "3", "4", "5")
-        var adapter = ArrayAdapter(requireContext(),
+        val ari = arrayOf("0","1", "2", "3", "4", "5", "6", "7", "8", "9")
+        val adapter = ArrayAdapter(requireContext(),
             android.R.layout.simple_spinner_dropdown_item,ari
         )
-        dlgBinding.srIgnoreWords.adapter = adapter
-        dlgBinding.srIgnoreWords.setSelection(xIgnoreWords)
-        dlgBinding.srIgnoreWords.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        dlgBinding.srErrorWords.adapter = adapter
+        dlgBinding.srErrorWords.setSelection(restartValue)
+        dlgBinding.srErrorWords.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                if (xIgnoreWords != position)
-                    gc.appVals().valueWriteInt("ClkWords_NextWords", position)
+                if (restartValue != position)
+                    gc.appVals().valueWriteInt("ClkWords_restartValue", position)
                 //if (xIgnoreWords != position) dialog.dismiss()
 
-                xIgnoreWords = position
+                restartValue = position
             }
             override fun onNothingSelected(parent: AdapterView<*>) {  }
         }
 
-        ari = arrayOf("0","1", "2", "3", "4", "5", "6", "7", "8", "9")
-        adapter = ArrayAdapter(requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,ari
-        )
-        dlgBinding.srAutoNext.adapter = adapter
-        dlgBinding.srAutoNext.setSelection(xAutoNext)
-        dlgBinding.srAutoNext.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                if (xAutoNext != position)
-                    gc.appVals().valueWriteInt("ClkWords_xAutoNext", position)
-                //if (xIgnoreWords != position) dialog.dismiss()
-
-                xAutoNext = position
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {  }
-        }
-
-
-        dlgBinding.partWordSwitch.isChecked = allowpartWord
-        dlgBinding.partWordSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (allowpartWord != isChecked)
-                gc.appVals().valueWriteBool("ClkWords_partWord", isChecked)
-            allowpartWord = isChecked
+        dlgBinding.errorSwitch.isChecked = gc.appVals().valueReadBool("ClkWords_useRestart", false)
+        //gc.Logl("splitTrack: " + btn.splitTrack + " checked: " + btn.isChecked, true)
+        dlgBinding.errorSwitch.setOnClickListener {
+            useRestart = dlgBinding.errorSwitch.isChecked //!btn.splitTrack
+            gc.appVals().valueWriteBool("ClkWords_useRestart", dlgBinding.errorSwitch.isChecked)
+            //btn.isChecked
         }
         dialog.show()
     }
 
     override fun onClick(p0: View?) {
         when (p0?.id) {
-            R.id.wtvSpeak -> tvSpeackClick()
             R.id.ycbtspeakObt -> ycbtttsSettingsClick()
             R.id.actxTextView -> doPopUpTxtClick()
-            R.id.ybtspeak -> ycbtdoSpeakClick()
+            R.id.cwbtspeak -> ycbtdoSpeakClick()
             R.id.tvMischen -> doAgainClick()
             R.id.acheaderTextView -> doNewVersClick()
             R.id.ybtrecord -> doRecordClick()
+            R.id.wtvSpeak -> tvSpeackClick()
 
         }
     }

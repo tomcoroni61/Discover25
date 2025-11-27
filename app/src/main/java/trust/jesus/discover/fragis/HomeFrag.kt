@@ -13,9 +13,14 @@ import android.widget.ListView
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import com.google.android.material.sidesheet.SideSheetDialog
+import com.google.gson.Gson
+import org.json.JSONObject
 import trust.jesus.discover.R
 import trust.jesus.discover.actis.AyWelcome
+import trust.jesus.discover.bible.dataclasses.SsBibel
+import trust.jesus.discover.bible.online.BssSR
 import trust.jesus.discover.databinding.FragHomeBinding
+import trust.jesus.discover.dlg_data.ChooserBcvDlg
 import trust.jesus.discover.little.FixStuff.Filenames.Companion.merkVers
 
 class HomeFrag: BaseFragment(), View.OnClickListener {
@@ -85,7 +90,11 @@ class HomeFrag: BaseFragment(), View.OnClickListener {
     }
 
     fun mattsSettingsClick() {
-        gc.ttSgl()?.andoSetttings()
+        gc.ttSgl()?.andoSetttings() //gc.mainActivity!! = binding.ybtspeakObt.context
+        /*val chooserBcvDlg = ChooserBcvDlg(requireContext()) {
+                book: Int, chapter: Int, verse: Int ->
+        }
+        chooserBcvDlg.showDialog()*/
     }
 
     fun mabtPrevDataClick() {
@@ -175,33 +184,6 @@ class HomeFrag: BaseFragment(), View.OnClickListener {
         gc.appVals().valueWriteBool("dolog", binding.chipLog.isChecked)
         gc.mainActivity!!.doPageCount()
     }
-    override fun onClick(p0: View?) {
-        when (p0?.id) {
-            R.id.cbShowTex -> maShowTextClick(p0)
-            R.id.ybtspeakObt -> mattsSettingsClick()
-            R.id.sbtSpeak -> maspeackClick()
-            R.id.sbtprevdat -> mabtPrevDataClick()
-            R.id.mabtmischdat -> mabtMischDataClick()
-            R.id.sbtnextdat -> mabtNextDataClick()
-            R.id.sbtSearch -> mabtSearchClick()
-            R.id.gbtsetLvers -> gSetLernVersClick()
-            R.id.matvLerni -> matxtClick()
-            R.id.matvMerkVers -> matxtClick()
-            R.id.gbtgetLvers -> gMerktoLernVersClick()
-
-            R.id.pwLetters -> maLettersClick()
-            R.id.pwThemes -> maThemesClick()
-            R.id.pwwordmix -> maWordMixClick()
-            R.id.pwwordclck -> maWordClick()
-            R.id.pwEditclk -> maEditClick()
-
-            R.id.pwsaylck -> maSpeakRecClick()
-            R.id.tvbottomLefttw -> maspeackClick()
-            R.id.mabtWelcome -> mabtWelcomeClick()
-            R.id.chipLog -> chipLogClick()
-
-        }
-    }
     fun doThemeSheet() {
         val themeNames: Array<String> = arrayOf(
             getString(R.string.default_light_theme),
@@ -219,7 +201,7 @@ class HomeFrag: BaseFragment(), View.OnClickListener {
 
 
 
-        )
+            )
         val dialog = SideSheetDialog(requireContext())
         val view = layoutInflater.inflate(R.layout.sheet_themes, null)
         val list: ListView = view.findViewById(R.id.listView)
@@ -248,16 +230,89 @@ class HomeFrag: BaseFragment(), View.OnClickListener {
             item.setBackgroundColor(color)
         }, 100)
     }
-}
 
-/*
-  val item = list.get(gc.appVals().valueReadInt("theme", 0))
-        item.setBackgroundColor(android.graphics.Color.GREEN)
-       list.setOnItemClickListener { parent, view, position, id ->
-            gc.appVals().valueWriteInt("theme", position)
-            view.setBackgroundColor(android.graphics.Color.GREEN)
-            //gc.mainActivity?.setAppTheme(true)
-            // dialog.dismiss() getItemAtPosition
+    /*
+    fun bibleList() {
+        val asiDir = gc.assets.open("bibles/ssapibibles.json")
+        val asi = asiDir.bufferedReader().use { it.readText() }
+        val wie = JSONObject(asi)
+        val bibles = wie.getJSONObject("results")
+        val gson = Gson()
+        val verseCount = bibles.names()?.length()
+        gc.log("found $verseCount bibles")
+        var bssArray = emptyArray<SsBibel?>()
+
+        for (i in 0..<verseCount!!) {
+            val name = bibles.names()?.getString(i)
+            val text = bibles.getString(name.toString())
+            val bssR = gson.fromJson(text, SsBibel::class.java)
+            bssArray = bssArray.plus(bssR)
+            /*
+            val bssR = JSONObject(text)
+            val sn = bssR.getString("shortname")
+            val nm = bssR.getString("name") */
+
+            gc.log("bssR: ${bssR.module} ${bssR.name}")
         }
 
- */
+    }
+
+     */
+    fun bibleList() {
+        val asiDir = gc.assets.open("bibles/ssapibibles.json")
+        val asi = asiDir.bufferedReader().use { it.readText() }
+        val wie = JSONObject(asi)
+        val bibles = wie.getJSONObject("results")
+        val gson = Gson()
+        val verseCount = bibles.names()?.length()
+        gc.log("found $verseCount bibles")
+        val bssArray = mutableListOf<SsBibel>() //emptyArray<SsBibel?>() bssArray = bssArray.plus(bssR)
+
+        for (i in 0..<verseCount!!) {
+            val name = bibles.names()?.getString(i)
+            val text = bibles.getString(name.toString())
+            val bssR = gson.fromJson(text, SsBibel::class.java)
+            bssArray.add(bssR)
+            //bssArray = bssArray.plus(bssR)
+            /*
+            val bssR = JSONObject(text)
+            val sn = bssR.getString("shortname")
+            val nm = bssR.getString("name") */
+
+            //gc.log("bssR: ${bssR.module} ${bssR.name}")
+        }
+        bssArray.sortBy { it.lang_short }
+        bssArray.forEach { gc.log("bssR: ${it.lang_short} ${it.shortname}") }
+
+
+    }
+    override fun onClick(p0: View?) {
+        when (p0?.id) {
+            R.id.cbShowTex -> maShowTextClick(p0)
+            R.id.ybtspeakObt -> mattsSettingsClick()
+            R.id.sbtSpeak ->   maspeackClick() //bibleList()
+            R.id.sbtprevdat -> mabtPrevDataClick()
+            R.id.mabtmischdat -> mabtMischDataClick()
+            R.id.sbtnextdat -> mabtNextDataClick()
+            R.id.sbtSearch -> mabtSearchClick()
+            R.id.gbtsetLvers -> gSetLernVersClick()
+            R.id.matvLerni -> matxtClick()
+            R.id.matvMerkVers -> matxtClick()
+            R.id.gbtgetLvers -> gMerktoLernVersClick()
+
+            R.id.pwLetters -> maLettersClick()
+            R.id.pwThemes -> maThemesClick()
+            R.id.pwwordmix -> maWordMixClick()
+            R.id.pwwordclck -> maWordClick()
+            R.id.pwEditclk -> maEditClick()
+
+            R.id.pwsaylck -> maSpeakRecClick()
+            R.id.tvbottomLefttw -> maspeackClick()
+            R.id.mabtWelcome -> mabtWelcomeClick()
+            R.id.chipLog -> chipLogClick()
+
+        }
+    }
+
+}
+

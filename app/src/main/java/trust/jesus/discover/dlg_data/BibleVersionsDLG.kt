@@ -49,7 +49,7 @@ class BibleVersionsDLG (a: Context, simpleListener: SimpleListener?) : Dialog(a)
         //ne in "dlg" binding = BibleVersionsDLG.(layoutInflater)
         setContentView(R.layout.dlgbibleversions)
 
-        listView = findViewById<ListView?>(R.id.lVersionList)
+        listView = findViewById(R.id.lVersionList)
         val adapter = ArrayAdapter(this.context, android.R.layout.simple_list_item_1, versionsnames)
         listView!!.adapter = adapter
         listView!!.setOnItemClickListener { parent, view, position, id ->

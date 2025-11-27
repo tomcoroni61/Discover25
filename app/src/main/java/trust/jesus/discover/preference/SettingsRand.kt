@@ -43,17 +43,6 @@ class SettingsRand : AppCompatActivity() {
 
     class SettingsFragment : PreferenceFragmentCompat() {
         //private val gc: Globus = Globus.getAppContext() as Globus
-        fun isLinearLayout(view: ViewParent?): Boolean {
-            if (view == null) {
-                return false
-            }
-            try {
-                val ah: LinearLayout = view as LinearLayout
-                return true
-            } catch (e: Exception) {
-                return false
-            }
-        }
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             //gc.mainActivity!!.setActivityTheme(this)
 

@@ -36,7 +36,7 @@ class ErrorReporter : Thread.UncaughtExceptionHandler {
     var Time: Long = 0
     var Type: String? = null
     var User: String? = null
-    var CustomParameters: HashMap<String?, String?> = HashMap<String?, String?>()
+    var CustomParameters: HashMap<String?, String?> = HashMap()
 
     private var PreviousHandler: Thread.UncaughtExceptionHandler? = null
     private var CurContext: Context? = null

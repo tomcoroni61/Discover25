@@ -80,13 +80,13 @@ class FileDlg (
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.filedlg)
-        yes = findViewById<Button>(R.id.btn_yes)
-        no = findViewById<Button>(R.id.btn_no)
+        yes = findViewById(R.id.btn_yes)
+        no = findViewById(R.id.btn_no)
         yes!!.setOnClickListener(this)
         no!!.setOnClickListener(this)
-        fileList = findViewById<FlowLayout?>(R.id.flFileList)
-        edFile = findViewById<EditText>(R.id.edFileName)
-        tvDir = findViewById<TextView>(R.id.tvDirName)
+        fileList = findViewById(R.id.flFileList)
+        edFile = findViewById(R.id.edFileName)
+        tvDir = findViewById(R.id.tvDirName)
         findViewById<View?>(R.id.btn_delete)?.setOnClickListener(this)
 
         val mtitleView1 = findViewById<TextView>(R.id.tvTitel)
@@ -128,7 +128,7 @@ class FileDlg (
 
     // ***********  from SimpleFileDialog  *********************
     private fun getDirectories(dir: String): MutableList<String> {
-        val dirs: MutableList<String> = ArrayList<String>()
+        val dirs: MutableList<String> = ArrayList()
         try {
             val dirFile = File(dir)
 

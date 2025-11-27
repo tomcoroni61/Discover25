@@ -1,5 +1,6 @@
 package trust.jesus.discover.little
 
+import trust.jesus.discover.bible.dataclasses.VersItem
 import trust.jesus.discover.bible.online.BollsSR
 import trust.jesus.discover.bible.online.BollsVers
 import trust.jesus.discover.dlg_data.CsvData
@@ -12,8 +13,8 @@ class GlobVers {
     var translation: String = "?"
     var bollsVersion: String = "?"
     var partText: String = ""
-
-    var chapter = ""
+    val chapter = mutableListOf<VersItem?>() // bssArray = bssArray.plus(bssR)
+    //var chapter = ""
     var text: String = "null"
     var numVers: Int = 0
     var numBook: Int = 1
@@ -32,18 +33,18 @@ class GlobVers {
         translation = csvData.translation
         partText = csvData.partText
         text = csvData.Text
-        globi().log("setLernData: $text")
+        //globi().log("setLernData: $text")
 
         globi().lernDataIdx = idx
 
-        partText = "";        chapter = "";
+        partText = "";        chapter.clear()
         val vp = globi().bBlparseBook()!!.parse(vers)
-        if (vp.book == 0) {
-            vp.book = 17
+        if (vp.bookNumber == 0) {
+            vp.bookNumber = 17
             vp.chapter = 1
             vp.startVerse = 1
         }
-        numBook = vp.book
+        numBook = vp.bookNumber
         numChapter = vp.chapter
         numVers = vp.startVerse
         val version = translation.uppercase().trim()//Locale.getDefault()
@@ -52,8 +53,17 @@ class GlobVers {
 
     }
 
-    fun setBollsSearchResult(chapter: String, text: String, version: String, nVers: Int, nBook: Int, nChapter: Int) {
-        this.chapter = chapter
+    fun setBollsSearchResult(verses:  Array<BollsVers?>?, text: String, version: String, nVers: Int, nBook: Int, nChapter: Int) {
+        var cnt = 1
+        chapter.clear()
+        if (verses != null) {
+            for (verse in verses) {
+                chapter.add(VersItem(verse!!.text, cnt.toString() + " " + verse.text,
+                    cnt, nBook, nChapter))
+                cnt ++
+            }
+        }
+
         this.text = text;        translation = version;        bollsVersion = version
         numVers = nVers;        numBook = nBook;        numChapter = nChapter
 
@@ -67,7 +77,7 @@ class GlobVers {
         cdata.translation = translation
         cdata.partText = partText
         cdata.Text = text
-        cdata.Chapter = chapter
+        //cdata.Chapter = chapter
         cdata.NumBook = numBook
         cdata.NumChapter = numChapter
         cdata.NumVers = numVers
@@ -78,6 +88,7 @@ class GlobVers {
         val vers = globi().versHistory.currentVers()
         if (vers != null) {
             setLernData(-1, vers)
+            globi().setVersTitel(vers.vers)
             return true
         } else return false
     }
@@ -109,7 +120,7 @@ class GlobVers {
         csvData.translation = translation
         csvData.partText = partText
         csvData.Text = text
-        csvData.Chapter = chapter
+        //csvData.Chapter = chapter
         csvData.NumBook = numBook
         csvData.NumChapter = numChapter
         csvData.NumVers = numVers

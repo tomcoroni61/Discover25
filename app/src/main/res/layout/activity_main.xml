@@ -52,15 +52,15 @@ android:fitsSystemWindows="true"
 
             <TextView
                 android:id="@+id/tvVersTop"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/btnNavDlg"
                 android:layout_marginStart="9dp"
-                android:gravity="center"
-                android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
-                android:textSize="15sp"
+                android:layout_toStartOf="@id/tvmenu"
+                android:layout_toEndOf="@id/btnNavDlg"
+                android:gravity="center|center_horizontal"
 
-                />
+                android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/tvmenu"

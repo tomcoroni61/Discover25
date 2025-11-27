@@ -13,6 +13,7 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
 import android.widget.ListPopupWindow
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import trust.jesus.discover.R
@@ -28,8 +29,10 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
     private val curDataItem= CsvData() //must val!!
     private var curDataidx = 0
     private var waitSec = 10
-    private var listPopupWindow: ListPopupWindow? = null
+    private var listBereichPopupWindow: ListPopupWindow? = null
     private val bereichNames: MutableList<String> = ArrayList()
+    private val versionsNames: MutableList<String> = ArrayList()
+    private var listVersionsPopupWindow: ListPopupWindow? = null
     private val Timhandl = Handler(Looper.getMainLooper())
 
 
@@ -42,7 +45,7 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
         binding.ybtVersions.setOnClickListener(this)
         binding.ybtspeakObt.setOnClickListener(this)
         binding.ybtspeak.setOnClickListener(this)
-        binding.ytvText.setOnClickListener(this)
+        binding.entriesGetVers.setOnClickListener(this)
         binding.ybtClear.setOnClickListener(this)
         binding.ybtprevdat.setOnClickListener(this)
         binding.ybtnextdat.setOnClickListener(this)
@@ -62,7 +65,7 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
         binding.ytvcurSpruchFile.text = gc.spruchFileName()
 
 
-        doListPopup()
+        doBereichListPopup();   doVersionsListPopup()
         loadData()
 
 
@@ -101,43 +104,40 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
         override fun run() {
             if (binding.yedBereich.selectionEnd - binding.yedBereich.selectionStart > 0) return
             val txt = binding.yedBereich.text.toString()
-            if (txt.length < 3 || bereichNames.size > 1) listPopupWindow!!.show()
+            if (txt.length < 3 || bereichNames.size > 1) listBereichPopupWindow!!.show()
         }
     }
 
-    private fun hasBereich(txt: String): Boolean {
-        for (s in bereichNames) {
-            if (s.contains(txt)) return true
-        }
-        return false
-    }
 
-    private fun doListPopup() {
+    private fun doBereichListPopup() {
         bereichNames.clear()
         val cnt = gc.csvList()!!.dataList.size
         if (cnt > 2) for (i in 1..<cnt) {
             val csvData = gc.csvList()!!.dataList[i]
-            if (!hasBereich(csvData.bereich)) bereichNames.add(csvData.bereich)
+            csvData.bereich = csvData.bereich.trim()
+            if (!bereichNames.contains(csvData.bereich)) bereichNames.add(csvData.bereich)
         }
         bereichNames.sort()
 
-        if (listPopupWindow != null) return
+        if (listBereichPopupWindow != null) return
 
-        listPopupWindow = ListPopupWindow(
+        listBereichPopupWindow = ListPopupWindow(
             gc
         )
-        listPopupWindow!!.setAdapter(
+        listBereichPopupWindow!!.setAdapter(
             ArrayAdapter(
                 gc,
                 R.layout.lpw_item, bereichNames
             )
         )
-        listPopupWindow!!.anchorView = binding.yedBereich
-        listPopupWindow!!.width = 300
-        listPopupWindow!!.height = 400
-
-        listPopupWindow!!.isModal = false
-        listPopupWindow!!.setOnItemClickListener(this) //setOnClickListener
+        listBereichPopupWindow!!.anchorView = binding.yedBereich
+        listBereichPopupWindow!!.width = 300
+        listBereichPopupWindow!!.height = 400
+        val drawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.back_dyn)
+        listBereichPopupWindow?.setBackgroundDrawable( drawable)
+        //ne listBereichPopupWindow?.background = drawable falschplatz back_dyn richtig
+        listBereichPopupWindow!!.isModal = false
+        listBereichPopupWindow!!.setOnItemClickListener(this) //setOnClickListener
 
 
         binding.yedBereich.onFocusChangeListener = OnFocusChangeListener { view: View?, b: Boolean ->
@@ -148,11 +148,57 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
         }
     }
 
+
+    private fun doVersionsListPopup() {
+        versionsNames.clear()
+        val cnt = gc.csvList()!!.dataList.size
+        if (cnt > 2) for (i in 1..<cnt) {
+            val csvData = gc.csvList()!!.dataList[i]
+            csvData.translation = csvData.translation.trim()
+            if (!versionsNames.contains(csvData.translation)) versionsNames.add(csvData.translation)
+        }
+        versionsNames.sort()
+
+        if (listVersionsPopupWindow != null) return
+
+        listVersionsPopupWindow = ListPopupWindow(gc )
+        listVersionsPopupWindow!!.setAdapter(
+            ArrayAdapter( gc,
+                R.layout.lpw_item, versionsNames
+            )
+        )
+        val drawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.back_dyn)
+        listVersionsPopupWindow?.setBackgroundDrawable( drawable)
+        listVersionsPopupWindow?.anchorView = binding.yedTranslation
+        listVersionsPopupWindow!!.width = 300
+        listVersionsPopupWindow!!.height = 400
+
+        listVersionsPopupWindow!!.isModal = false
+        listVersionsPopupWindow?.setOnItemClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
+            binding.yedTranslation.setText(versionsNames[position])
+            listVersionsPopupWindow!!.dismiss()
+        }
+
+        binding.yedTranslation.onFocusChangeListener = OnFocusChangeListener { view: View?, b: Boolean ->
+            //if (binding.yedBereich == null) return @setOnFocusChangeListener
+            if (view?.isFocused == true) {
+                Timhandl.postDelayed(runVersionPopupList, 1111)
+            }
+        }
+    }
+    private val runVersionPopupList: Runnable = object : Runnable {
+        override fun run() {
+            if (binding.yedTranslation.selectionEnd - binding.yedTranslation.selectionStart > 0) return
+            val txt = binding.yedTranslation.text.toString()
+            if (txt.length < 3 || versionsNames.size > 1) listVersionsPopupWindow!!.show()
+        }
+    }
+
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         var txt = binding.yedBereich.text.toString() + " " + bereichNames[position]
         txt = txt.replace("  ", " ")
         binding.yedBereich.setText(txt)
-        listPopupWindow!!.dismiss()
+        listBereichPopupWindow!!.dismiss()
     }
 
     fun ybtclearFieldsClick() {
@@ -188,7 +234,8 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
         gc.csvList()!!.copyData(csvData!!, curDataItem)
         gc.csvList()!!.dataList.add(curDataidx, csvData)
         setFields()
-        doListPopup()
+        doBereichListPopup()
+        doVersionsListPopup()
         gc.toast("Data added")
     }
 
@@ -216,14 +263,14 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
         fieldsToItem(gc.csvList()!!.dataList[curDataidx] )
         //gc.csvList()!!.copyData(curDataItem, gc.csvList()!!.dataList[curDataidx])
         backUpAndSave("change")
-        doListPopup()
+        doBereichListPopup();   doVersionsListPopup()
     }
     private fun backUpAndSave(backAdd: String) {
         val oldName = gc.spruchFileName().toString()
         val newName = oldName.replace(".csv", "", true) + backAdd + ".csv"
         gc.dateien().backUpPrivateTextFile(oldName,newName)
         gc.csvList()!!.saveToPrivate(gc.spruchFileName(), '#')
-        doListPopup()
+        doBereichListPopup();   doVersionsListPopup()
     }
     fun ybtSearchClick() {
         val idx = gc.csvList()!!.findText(binding.yedSearchTxt.text.toString(), curDataidx + 1)
@@ -351,16 +398,82 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
 
 
 
-    fun ae_doPopUpClick() {
-        listPopupWindow!!.show()
+    fun doPopUpClick() {
+        listBereichPopupWindow!!.show()
     }
 
-
-    fun fetchBibleVerse(version: String, bookNum: String, chapter: String, vers: String) {
+    /*fun srResi() {
+        val respo = "{\"hash\":\"k5790vbscc\",\"disambiguation\":[],\"strongs\":[],\"paging\":[],\"errors\":[],\"error_level\":0,\"results\":[{\"book_id\":45,\"book_name\":\"Romans\",\"book_short\":\"Rom\",\"book_raw\":\"Rom\",\"chapter_verse\":\"2:2 - 5\",\"chapter_verse_raw\":null,\"verse_index\":{\"2\":[2,3,4,5]},\"verses\":{\"kjv\":{\"2\":{\"2\":{\"id\":27965,\"book\":45,\"chapter\":2,\"verse\":2,\"text\":\"But we are sure that the judgment of God is according to truth against them which commit such things.\",\"italics\":\"\",\"claimed\":true},\"3\":{\"id\":27966,\"book\":45,\"chapter\":2,\"verse\":3,\"text\":\"And thinkest thou this, O man, that judgest them which do such things, and doest the same, that thou shalt escape the judgment of God?\",\"italics\":\"\",\"claimed\":true},\"4\":{\"id\":27967,\"book\":45,\"chapter\":2,\"verse\":4,\"text\":\"Or despisest thou the riches of his goodness and forbearance and longsuffering; not knowing that the goodness of God leadeth thee to repentance?\",\"italics\":\"\",\"claimed\":true},\"5\":{\"id\":27968,\"book\":45,\"chapter\":2,\"verse\":5,\"text\":\"But after thy hardness and impenitent heart treasurest up unto thyself wrath against the day of wrath and revelation of the righteous judgment of God;\",\"italics\":\"\",\"claimed\":true}}}},\"verses_count\":4,\"single_verse\":false,\"nav\":{\"prev_book\":\"Acts\",\"next_book\":\"1 Corinthians\",\"next_chapter\":\"Romans 3\",\"ncb_name\":\"Romans\",\"prev_chapter\":\"Romans 1\",\"pcb_name\":\"Romans\",\"cur_chapter\":\"Romans 2\",\"ccb_name\":\"Romans\",\"ncb\":45,\"ncc\":3,\"pcb\":45,\"pcc\":1,\"ccb\":45,\"ccc\":2,\"nb\":46,\"pb\":44}}]}"
+        try {
+            val verses = gc.bibleSuperSearch()?.parseJsonToBibleVerses(
+                "kjv",
+                "2", respo
+            )
+            binding.sedVersTxt.setText(verses?.get(0)?.text)
+        }catch (e: Exception) {
+            binding.sedVersTxt.setText(e.message)
+        }
+    }*/
+    fun fetchSupiBibleVerse(version: String, bookName: String, chapter: String, versStart: String,
+                            versEnd: String) {
         lifecycleScope.launch {
-            try { //Date(),
+            try { //Date(), // https://api.biblesupersearch.com/api?bible=kjv&reference=Rom%204:1-10
+                gc.log("fetchSupiBibleVerse start")
+                gc.bibleSuperSearch()!!.fetchBibleVerses( version, bookName, chapter, versStart, versEnd)
+                    .collect { result ->
+                        if (result.isSuccess) {
+                            val collectedBibleVerse = result.getOrNull()
+                            if (collectedBibleVerse != null) {
+                                // bibleVerse = collectedBibleVerse
+                                //val referenceAndVersion = "${bibleVerse!!.reference} (${bibleVerse!!.versionLong})"
+                                //verseText.text = bibleVerse!!.text
+                                binding.sedVersTxt.setText( collectedBibleVerse.get(0)?.text )
+                                //gc.Logl(collectedBibleVerse.text, true)
+                            }
+                        } else {
+                            binding.sedVersTxt.setText(result.exceptionOrNull()?.toString())
+                            gc.log("fetchSupiBibleVerse failed " + result.exceptionOrNull()?.toString())
+                        }
+                    }
+            } catch (e: Exception) {
+                binding.sedVersTxt.setText(e.message)
+            }
+        }
+    }
+    fun fetchBollsBibleVerses(version: String, bookName: String, chapter: String, versStart: String,
+                        versEnd: String) {
+        if (versEnd.toInt() <= versStart.toInt()) {
+            fetchBollsBibleVerse(version, bookName, chapter, versStart)
+            return
+        }
+        lifecycleScope.launch {
+            try { //Date(),  bibleSuperSearch
 
-                gc.bolls()!!.fetchBibleVerse(version, bookNum, chapter, vers)
+                gc.bolls()!!.fetchBibleChapter(version, bookName, chapter)
+                    .collect { result ->
+                        if (result.isSuccess) {
+                            val collectedBibleVerses = result.getOrNull()
+                            if (collectedBibleVerses != null) {
+                                var txt = ""
+                                for (i in versStart.toInt() .. versEnd.toInt()) {
+                                    txt += "$i ${collectedBibleVerses[i-1]?.text}\n"
+                                }
+
+                                binding.sedVersTxt.setText( txt )
+                                //gc.Logl(collectedBibleVerse.text, true) versStart .. versEnd
+                            }
+                        }
+                    }
+            } catch (e: Exception) {
+                //showNetworkError(requireContext())
+            }
+        }
+    }
+    fun fetchBollsBibleVerse(version: String, bookName: String, chapter: String, vers: String ) {
+        lifecycleScope.launch {
+            try { //Date(),  bibleSuperSearch
+
+                gc.bolls()!!.fetchBibleVerse(version, bookName, chapter, vers)
                     .collect { result ->
                         if (result.isSuccess) {
                             val collectedBibleVerse = result.getOrNull()
@@ -371,25 +484,33 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
                                 binding.sedVersTxt.setText( collectedBibleVerse.text )
                                 //gc.Logl(collectedBibleVerse.text, true)
                             }
-                        }
+                        } else
+                            binding.sedVersTxt.setText(result.exceptionOrNull()?.toString())
                     }
             } catch (e: Exception) {
                 //showNetworkError(requireContext())
+                binding.sedVersTxt.setText(e.message)
             }
         }
     }
-
-    fun ybtgetVersTextClick() {
+    fun ybtGetVersTextClick() {
         var crashcnt = 0
+        //srResi()
         try {
-            val bvShort = gc.bolls()!!.bibelVersionShort(binding.yedTranslation.text.toString())
+
+            //fetchSupiBibleVerse("aa", "bb")
+            binding.sedVersTxt.setText("getting Vers")
+            val translationEd = binding.yedTranslation.text.toString()//gc.bolls()!!.bibelVersionShort(binding.yedTranslation.text.toString())
             val bs = binding.yedBibelstelle.text.toString()
             crashcnt=2
-            binding.sedVersTxt.setText(bvShort)
-            val bibelvers = gc.bBlparseBook()!!.parse(bs)//binding.yedBibelstelle.text.toString()
-            gc.Logl(bibelvers.toString(), false)
-            fetchBibleVerse(bvShort, bibelvers.book.toString(),
-                bibelvers.chapter.toString(), bibelvers.startVerse.toString())
+            val bibleVerse = gc.bBlparseBook()!!.parseBibelStelle(bs)
+            val bookNum = gc.bBlparseBook()!!.bookNumber(bibleVerse.bookName)
+            fetchBollsBibleVerses (translationEd, bookNum.toString(), bibleVerse.chapter,
+                bibleVerse.startVerse, bibleVerse.endVerse   )
+            //gc.Logl(bibelvers.toString(), false) fetchSupiBibleVerse
+            //binding.sedVersTxt.setText(bvShort.lowercase() + " " + bibelvers.toString())
+            //fetchSupiBibleVerse(bvShort, bs)
+               // bibelvers.chapter.toString(), bibelvers.startVerse.toString())
         } catch (e: Exception) {
             gc.Logl("MA_Crash Nr: " + crashcnt + " Msg " + e.message, true)
             binding.sedVersTxt.setText(e.message)
@@ -419,14 +540,14 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
     private fun btBibleClick() {
         var crashcnt = 0
         try {
-            val bvShort = gc.bolls()!!.bibelVersionShort(binding.yedTranslation.text.toString())
+            val bvShort = gc.bolls()!!.getNearBollsVersion(binding.yedTranslation.text.toString())
             val bs = binding.yedBibelstelle.text.toString()
             crashcnt=2
-            //binding.sedVersTxt.setText(bvShort)
+            //binding.sedVersTxt.setText(bvShort) bibelVersionShort
             val bibelvers = gc.bBlparseBook()!!.parse(bs)//binding.yedBibelstelle.text.toString()
             gc.Logl(bibelvers.toString(), false)
-            gc.lernItem.numVers = bibelvers.startVerse!!
-            fetchBibleChapter(bvShort, bibelvers.book.toString(),
+            gc.lernItem.numVers = bibelvers.startVerse
+            fetchBibleChapter(bvShort, bibelvers.bookNumber.toString(),
                 bibelvers.chapter.toString())
         } catch (e: Exception) {
             gc.Logl("MA_Crash Nr: " + crashcnt + " Msg " + e.message, true)
@@ -441,13 +562,15 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
                     .collect { result ->
                         if (result.isSuccess) {
                             val verses = result.getOrNull()  //verses?.forEach { verse ->
-                            gc.lernItem.chapter = gc.bolls()?.versArrayToChaptertext(verses).toString()
-                            gc.lernItem.vers =
+                            gc.lernItem.setBollsSearchResult( verses,
+                                verses!![0]?.text.toString(), version,1, bookNum.toInt(), chapter.toInt())
+
+                            /*gc.lernItem.vers =
                                 gc.bBlparseBook()!!.versShortName(bookNum.toInt(), chapter.toInt(), 1)
                             gc.lernItem.translation = version
 
                             gc.lernItem.numBook = bookNum.toInt()
-                            gc.lernItem.numChapter = chapter.toInt()
+                            gc.lernItem.numChapter = chapter.toInt()*/
                             gc.startBibleActivity(gc.lernItem.numVers)
                         }
                     }
@@ -468,11 +591,9 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
 
     override fun onClick(p0: View?) {
         when (p0!!.id) {
-            R.id.tvBereich -> ae_doPopUpClick()
-            R.id.ybtVersions -> ybtVersionsClick()
+            R.id.tvBereich -> doPopUpClick()
             R.id.ybtspeakObt -> ttsSettingsClick()
             R.id.ybtspeak -> ybtdoSpeakClick()
-            R.id.ytvText -> ybtgetVersTextClick()
             R.id.ybtClear -> ybtclearFieldsClick()
             R.id.ybtprevdat -> ybtPrevDataClick()
             R.id.ybtnextdat -> ybtNextDataClick()
@@ -486,6 +607,8 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
             R.id.ybtopen -> ybtOpenClick()
             R.id.ybtsaveAs -> ybtSaveAsClick()
             R.id.ybcheese -> ybtChooserClick()
+            R.id.entriesGetVers -> ybtGetVersTextClick()
+            R.id.ybtVersions -> ybtVersionsClick()
             R.id.btBible -> btBibleClick()
             R.id.ybttoLearn -> ybttoLearnClick()
         }

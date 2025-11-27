@@ -1,6 +1,7 @@
 package trust.jesus.discover.little.recognio
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -23,6 +24,19 @@ class SpToTx (
     private val context: Context,
     private val callback: RecognitionCallback? = null
 ) : RecognitionListener {
+    fun stopRecognition() {
+        isActivated = false
+        stopContinuesRecognition()
+        muteRecognition(false)
+        Handler(Looper.getMainLooper()).postDelayed(
+            {
+                stopContinuesRecognition()
+                muteRecognition(false)
+            },
+            1135 + waitRunable
+        )
+
+    }
 
     var isActivated: Boolean = false
     var shouldMute: Boolean = true
@@ -37,7 +51,7 @@ class SpToTx (
     var langModel = RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
     //private var maxResults = 3
     var speechLang: Locale = Locale.getDefault()
-
+    private val waitRunable = 30L
 
     private val runStartRecognition: Runnable = object : Runnable {
         //geht nur wenn handy eingeschalten ist.
@@ -145,11 +159,6 @@ class SpToTx (
         if (speech == null) return
         speech?.stopListening()
     }
-    fun stopRecognition() {
-        isActivated = false
-        stopContinuesRecognition()
-        muteRecognition(false)
-    }
 
     fun cancelRecognition() {
         speech?.cancel()
@@ -206,6 +215,7 @@ class SpToTx (
         //gc.Logl("onEndOfSpeech", true)
     }
 
+    @SuppressLint("SwitchIntDef")
     override fun onError(errorCode: Int) {
         if (!isActivated) return
         callback?.onError(errorCode)
@@ -223,7 +233,7 @@ class SpToTx (
         }
 
         if (contiousRecording) //startRecognition()
-            timhandl.postDelayed(runStartRecognition, 1351)
+            timhandl.postDelayed(runStartRecognition, waitRunable)
     }
 
     override fun onEvent(eventType: Int, params: Bundle) {
@@ -251,7 +261,7 @@ class SpToTx (
         //gc.Logl("onResults", false)
         lastRecognition = System.currentTimeMillis()
         if (contiousRecording) //startRecognition()
-            timhandl.postDelayed(runStartRecognition, 261)
+            timhandl.postDelayed(runStartRecognition, waitRunable)
         /*
         if (matches != null) {
             if (isActivated) {
