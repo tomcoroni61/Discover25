@@ -15,8 +15,8 @@ class Votd {
     private val gc: Globus = Globus.getAppContext() as Globus
     private val client = OkHttpClient()
 
-    fun fetchLabsBibleVerse(): Flow< Result < String? > > = flow {
-        val apiUrl = "https://labs.bible.org/api/?passage=votd"
+    fun fetchVotdUrl(apiUrl: String): Flow< Result < String? > > = flow {
+        //val apiUrl = "https://labs.bible.org/api/?passage=votd"
         //val apiUrl = "https://www.biblegateway.com/votd/get/?format=json&version=HFA"
 //"https://www.biblegateway.com/votd/get/?format=json&version=HFA"    ?????
         gc.bolls()?.hasInternet()?.let {
@@ -75,10 +75,16 @@ https://labs.bible.org/api/?passage=votd     returns:
 https://bible-api.com/votd ne
 fetchDailyVerse
 "https://www.biblegateway.com/votd/get/?format=json&version=HFA"    ?????
+https://www.biblegateway.com/reading-plans/verse-of-the-day/next?version=NLT  OFF also
 
 https://dailyverses.net/get/verse.js?language=niv  returns:
 document.getElementById("dailyVersesWrapper").innerHTML = '\u003cdiv class=\"dailyVerses bibleText\"\u003eWhen God raised up his servant, he sent him first to you to bless you by turning each of you from your wicked ways.\u003c/div\u003e\u003cdiv class=\"dailyVerses bibleVerse\"\u003e\u003ca href=\"https://dailyverses.net/2025/11/25\" rel=\"noopener\" target=\"_blank\"\u003eActs 3:26\u003c/a\u003e\u003c/div\u003e';
 
+https://beta.ourmanna.com/api/v1/get
+I put no trust in my bow, my sword does not bring me victory; - Psalm 44:6 (NIV)
 
+YouVersion free? MIT-Licence
+from: https://github.com/Glowstudent777/YouVersion-Core/blob/40f1662b8c7eb766d83fe4d3c51f7f7ef3629be0/src/db/versions.json
+https://www.bible.com/de/verse-of-the-day
 
  */

@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <!-- app on uptodown rejected 6.10.25  -->
+<ScrollView
+        android:id="@+id/svRejected"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="3dp"
+        android:orientation="vertical">
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/cscroliFlow"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_below="@+id/tvVersIdx"
+            android:focusableInTouchMode="true"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="2dp">
+
+            <org.apmem.tools.layouts.FlowLayout
+                android:id="@+id/asfLText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="25dp"
+                android:layout_marginBottom="5dp"
+                android:minHeight="110dp"
+                android:orientation="horizontal"> <!-- ok Bottom space
+        android:gravity="bottom" android:paddingBottom="22dp"
+            android:layout_below="@+id/ctvText" -->
+
+            </org.apmem.tools.layouts.FlowLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <LinearLayout
+            android:id="@+id/lkeyreco"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            >
+
+            <CheckBox
+                android:id="@+id/cbKeyRecoAutoCheck"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="11dp"
+                android:layout_marginTop="2dp"
+                android:checked="false"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:text=""
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvkeyreciNextWord"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="2dp"
+                android:textSize="16sp"
+
+
+                />
+        </LinearLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nvkeyreco"
+            android:layout_width="match_parent"
+            android:layout_height="110dp"
+            android:layout_below="@+id/lkeyreco"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="2dp"
+
+            >
+
+            <TextView
+                android:id="@+id/tvkeyreci"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/tvVersIdx"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="25dp"
+                android:textSize="15sp"
+
+                />
+        </androidx.core.widget.NestedScrollView>
+
+
+        <EditText
+            android:id="@+id/keypadText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/nvkeyreco"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:hint="@string/tap_me"
+            android:importantForAutofill="no"
+            android:inputType="textMultiLine"
+            android:minHeight="110dp"
+            android:textSize="16sp" />
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal">
+
+            <Button
+                android:id="@+id/keypadClear"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_below="@+id/keypadText"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="9dp"
+                android:text="@string/stop"
+                android:textSize="11sp" />
+
+            <Button
+                android:id="@+id/keypadCheck"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_below="@+id/keypadText"
+                android:layout_marginStart="9dp"
+                android:layout_toStartOf="@+id/keypadClear"
+                android:text="@string/check_it"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llDifficulty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="11dp"
+                android:layout_marginBottom="5dp"
+                android:text="@string/difficulty" />
+
+
+            <Spinner
+                android:id="@+id/srdifficultyLevel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/ydivi4"
+            android:layout_width="match_parent"
+            android:layout_marginTop="11dp"
+            android:layout_marginBottom="11dp"
+            android:layout_below="@+id/lsimplereco"
+            android:layout_height="12dp"
+            android:background="?android:attr/listDivider" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/rlSearchBar"
+
+            >
+            <Button
+                android:text="@string/prevData"
+                android:id="@+id/sbtprevdat"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:layout_toStartOf="@+id/sbtrandidat"
+                android:layout_marginStart="9dp"
+                android:visibility="visible" />
+
+            <trust.jesus.discover.little.ShImageButton
+                android:id="@+id/sbtrandidat"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="9dp"
+                android:background="@drawable/btn_dyn_back"
+                android:src="@drawable/refresh_btn"
+                android:text=""
+                android:visibility="visible" />
+
+            <Button
+                android:text="@string/nextData"
+                android:layout_width="60dp"
+                android:id="@+id/sbtnextdat"
+                android:layout_height="50dp"
+                android:layout_toEndOf="@+id/sbtrandidat"
+                android:layout_marginStart="9dp"
+                />
+            <Button
+                android:text="@string/search"
+                android:id="@+id/sbtSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:textSize="14sp"
+                android:layout_below="@+id/sbtnextdat"
+                android:layout_alignParentStart="true"
+                />
+
+            <EditText
+                android:id="@+id/sedSeek"
+                android:layout_width="280dp"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/sbtSearch"
+                android:layout_below="@+id/sbtnextdat"
+                android:importantForAutofill="no"
+                android:inputType="text"
+
+                />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="166dp"
+            android:layout_marginStart="9dp"
+             />
+
+        <TextView
+            android:id="@+id/tvAllPartText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="25dp"
+            android:minHeight="500dp"
+
+
+            android:textSize="13sp" />
+
+    </LinearLayout>
+
+    </ScrollView>
+

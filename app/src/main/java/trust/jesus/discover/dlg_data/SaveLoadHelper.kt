@@ -32,7 +32,7 @@ class SaveLoadHelper {
             // that's OK, we probably haven't created it yet
         } catch (e: Exception) {
             //e.printStackTrace();
-            gc.errReport(e, "openInputStream", true)
+            gc.crashLog("openInputStream ex: " + e.message, 352)//errReport(e, "", true)
             return false
         }
         return true
@@ -59,7 +59,7 @@ class SaveLoadHelper {
         return true
     }
 
-    fun insertLine(aFileName: String?, Line1: String?, Line2: String?, maxLines: Int) {
+    fun insertLine(aFileName: String?, line1: String?, line2: String?, maxLines: Int) {
         val list = ArrayList<String?>()
         var cnt = 0
 
@@ -72,8 +72,8 @@ class SaveLoadHelper {
         }
 
         list.add(0, " ")
-        list.add(0, Line1)
-        list.add(0, Line2)
+        list.add(0, line1)
+        list.add(0, line2)
         if (!openOutputStream(aFileName, Context.MODE_PRIVATE)) return
         for (aStrLine in list) {
             if (!writeLine(aStrLine)) return
@@ -86,7 +86,7 @@ class SaveLoadHelper {
             if (outputStream != null) outputStream!!.close()
             outputStream = null
         } catch (e: java.lang.Exception) {
-            gc.errReport(e, "failed to close ", true)
+            gc.crashLog("failed to close ex: " + e.message, 352)//errReport(e, " ", true)
 
         }
     }
@@ -97,7 +97,7 @@ class SaveLoadHelper {
             outputStream = gc.openFileOutput(FileName, mode) //outputStream.flush();
             //  gc.iLog("DataDir: "+aContext.getFilesDir());
         } catch (e: java.lang.Exception) {
-            gc.errReport(e, "failed to open for write ", true)
+            gc.crashLog("failed to open for write ex: " + e.message, 352)//errReport(e, "", true)
             return false
         }
         return true
@@ -113,7 +113,7 @@ class SaveLoadHelper {
                 reader = null
             }
         } catch (t: Throwable) {
-            gc.errReport(t as Exception, "closeInputStream", true)
+            gc.crashLog("closeInputStream ex: " + t.message, 352)//errReport(t as Exception, "", true)
            // Toast.makeText(aContext, "Exception: " + t, Toast.LENGTH_LONG).show()
         }
     }

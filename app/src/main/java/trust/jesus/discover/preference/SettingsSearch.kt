@@ -21,7 +21,7 @@ import trust.jesus.discover.little.Globus
 
 class SettingsSearch (context: Context?, attrs: AttributeSet?) : Preference(context!!, attrs),
   View.OnClickListener {
-    val gc: Globus = Globus.Companion.getAppContext() as Globus
+    val gc: Globus = Globus.getAppContext() as Globus
     private lateinit var sharedPrefs: SharedPreferences
     private lateinit var tvResult: TextView
 // use lifecycleScope with Preference
@@ -40,7 +40,7 @@ class SettingsSearch (context: Context?, attrs: AttributeSet?) : Preference(cont
         tvResult = holder.itemView.findViewById(R.id.tvSearchRet)
         val cnt = gc.seekList().entries()
 
-        val txt = cnt.toString() + "verse"
+        val txt = "$cnt verse"
         tvResult.text = txt
 
         holder.itemView.setOnClickListener(this)

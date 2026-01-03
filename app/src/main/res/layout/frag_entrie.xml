@@ -1,119 +1,229 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-
     <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_marginTop="3dp"
         >
-        <RelativeLayout
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            >  <!-- android:collapseColumns="0" = collapse the first column of the table row-->
 
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:gravity="center"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvBereich"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="1dp"
+                    android:text="@string/theme" />
+
+
+                <EditText
+                    android:id="@+id/yedBereich"
+                    android:layout_width="135dp"
+                    android:layout_height="49dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="1dp"
+                    android:autofillHints=""
+                    android:ems="10"
+                    android:inputType="text"
+                    android:hint="@string/themes"
+
+                    />
+
+            </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        >
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="2dp"
+            android:text="@string/vers"
+
+            />
+
+        <EditText
+            android:id="@+id/yedBibelstelle"
+            android:layout_width="135dp"
+            android:layout_height="41dp"
+            android:layout_below="@+id/yedBereich"
+            android:layout_marginStart="9dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:inputType="text"
+            android:text="" />
+    </TableRow>
+
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        >
+
+    <TextView
+            android:id="@+id/ytvUebi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/yedBibelstelle"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="1dp"
+            android:text="@string/translation" />
+
+
+        <EditText
+            android:id="@+id/yedTranslation"
+            android:layout_width="135dp"
+            android:layout_height="43dp"
+            android:layout_below="@+id/yedBibelstelle"
+            android:layout_marginStart="8dp"
+            android:ems="10"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:text="" />
+    </TableRow>
+
+        </TableLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/cscroliEdi"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="2dp"
             >
 
-
-            <TextView
-                android:text="@string/theme"
-                android:id="@+id/tvBereich"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                />
-
-
             <EditText
-                android:autofillHints="" android:text="@string/themes"
-                android:id="@+id/yedBereich"
-                android:layout_width="135dp"
-                android:layout_height="49dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="18dp"
+                android:id="@+id/sedVersTxt"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:autofillHints=""
                 android:ems="10"
-                android:inputType="text"
-                android:layout_toEndOf="@+id/ytvUebi"
+                android:inputType="textMultiLine"
+                tools:ignore="LabelFor"
+                android:minHeight="200dp"
+                 />
 
-                />
+        </androidx.core.widget.NestedScrollView>
 
-            <TextView
-                android:text="@string/vers"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_below="@+id/yedBereich"
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+
+            <trust.jesus.discover.little.ShImageButton
+                android:id="@+id/ybtadd"
+                android:layout_width="53dp"
+                android:layout_height="53dp"
+                android:layout_marginStart="1dp"
+                android:background="@drawable/btn_dyn_back"
+                android:src="@drawable/add_24"
                 android:layout_marginTop="2dp"
+                android:layout_marginEnd="9dp"
+                android:visibility="visible" />
 
-                />
 
-            <EditText
-                android:autofillHints="" android:text=""
-                android:id="@+id/yedBibelstelle"
-                android:layout_width="135dp"
-                android:layout_height="41dp"
-                android:ems="10"
-                android:layout_toEndOf="@+id/ytvUebi"
+            <trust.jesus.discover.little.ShImageButton
+                android:id="@+id/ybtdele"
+                android:layout_width="53dp"
+                android:layout_height="53dp"
                 android:layout_marginStart="9dp"
-                android:inputType="text"
-                android:layout_below="@+id/yedBereich"
-                />
+                android:layout_marginTop="2dp"
+                android:background="@drawable/btn_dyn_back"
+                android:src="@drawable/delete_forever_24"
+                android:visibility="visible" />
+
 
             <trust.jesus.discover.little.ShButton
-                android:text="@string/bible"
-                android:id="@+id/btBible"
+                android:id="@+id/ybtchange"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_below="@+id/yedDataIdx"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="2dp"
+                android:layout_toEndOf="@+id/ybtdele"
                 android:background="@drawable/btn_dyn_back"
-                android:layout_marginStart="13dp"
-                android:layout_marginBottom="9dp"
-                android:layout_toEndOf="@+id/yedBibelstelle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/ybtVersions"
-
-                />
-
-            <TextView
-                android:text="@string/translation"
-                android:id="@+id/ytvUebi"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="7dp"
-                android:layout_below="@+id/yedBibelstelle"
-                />
+                android:text="@string/change"
+                android:visibility="visible"
+                app:hideTime="600" />
 
 
-            <EditText
-                android:importantForAutofill="no"
-                android:text=""
-                android:id="@+id/yedTranslation"
-                android:layout_width="135dp"
-                android:layout_height="43dp"
-                android:ems="10"
-                android:inputType="text"
-                android:layout_marginStart="8dp"
-                android:layout_toEndOf="@+id/ytvUebi"
-                android:layout_below="@+id/yedBibelstelle"
-                />
 
-            <trust.jesus.discover.little.ShButton
-                android:text="@string/nextData"
-                android:id="@+id/ybtVersions"
-                android:background="@drawable/btn_dyn_back"
-                android:layout_marginStart="13dp"
-                android:layout_marginBottom="9dp"
-                android:layout_toEndOf="@+id/yedTranslation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/entriesGetVers"
+        </LinearLayout>
 
-                />
+        <!--
 
-            <Button
+        <trust.jesus.discover.little.ShButton
+            android:id="@+id/ybtVersions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/entriesGetVers"
+            android:layout_marginStart="13dp"
+            android:layout_marginBottom="9dp"
+            android:layout_toEndOf="@+id/yedTranslation"
+            android:background="@drawable/btn_dyn_back"
+            android:text="@string/nextData"
+            android:visibility="invisible"
+
+            />
+
+    <trust.jesus.discover.little.ShButton
+            android:id="@+id/btBible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/ybtVersions"
+            android:layout_marginStart="13dp"
+            android:layout_marginBottom="9dp"
+            android:layout_toEndOf="@+id/yedBibelstelle"
+            android:background="@drawable/btn_dyn_back"
+            android:text="@string/bible"
+
+            android:visibility="invisible" />
+
+
+        <trust.jesus.discover.little.ShButton
+            android:id="@+id/entriesGetVers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/yedTranslation"
+            android:layout_marginStart="9dp"
+            android:layout_toEndOf="@+id/ybtspeak"
+            android:background="@drawable/btn_dyn_back"
+            android:text="@string/getvers"
+            android:visibility="invisible"
+
+            />
+
+         <Button
                 android:text="@string/opt"
                 android:layout_width="wrap_content"
                 android:id="@+id/ybtspeakObt"
@@ -123,261 +233,300 @@
                 android:layout_marginStart="9dp"
                 android:visibility="visible" />
 
-            <trust.jesus.discover.little.ShButton
-                android:text="@string/speak"
-                android:layout_width="wrap_content"
-                android:id="@+id/ybtspeak"
-                android:background="@drawable/btn_dyn_back"
-                android:layout_centerInParent="true"
-                android:layout_height="50dp"
-                android:layout_below="@+id/yedTranslation"
-                android:layout_marginStart="9dp"
-                android:visibility="visible" />
+                android:textAllCaps="false"
 
-            <trust.jesus.discover.little.ShButton
-                android:text="@string/getvers"
-                android:id="@+id/entriesGetVers"
-                android:background="@drawable/btn_dyn_back"
-                android:layout_marginStart="9dp"
-                android:layout_toEndOf="@+id/ybtspeak"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/yedTranslation"
+        <Button
+            android:id="@+id/ybcheese"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_below="@+id/ybtopen"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/import_from_downloads"
+            android:visibility="invisible"
 
-                />
+            />
 
-            <androidx.core.widget.NestedScrollView
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginBottom="2dp"
-                android:layout_below="@+id/entriesGetVers"
-                android:layout_marginTop="14dp"
-                android:id="@+id/cscroliEdi"
-
-                >
-
-                <EditText
-                    android:id="@+id/sedVersTxt"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:autofillHints=""
-                    android:ems="10"
-                    android:inputType="textMultiLine"
-                    android:minHeight="250dp" />
-
-            </androidx.core.widget.NestedScrollView>
+-->
 
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_below="@+id/yLsearch"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="1dp"
+            android:background="?android:attr/listDivider" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <trust.jesus.discover.little.ShImageButton
+            android:id="@+id/ybtspeak"
+            android:layout_width="53dp"
+            android:layout_height="53dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginEnd="19dp"
+            android:background="@drawable/btn_dyn_back"
+            android:src="@drawable/text_to_speech"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/ybtClear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cscroliEdi"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="2dp"
+            android:text="@string/clear_all_fields"
+            android:visibility="visible" />
+
+    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
 
             <Button
-                android:text="@string/clear"
-                android:id="@+id/ybtClear"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_below="@+id/cscroliEdi"
-                android:layout_marginStart="15dp"
-                android:visibility="visible" />
-            <Button
-                android:text="@string/prevData"
                 android:id="@+id/ybtprevdat"
                 android:layout_width="60dp"
                 android:layout_height="50dp"
-                android:layout_below="@+id/cscroliEdi"
-                android:layout_toEndOf="@+id/ybtClear"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="9dp"
+                android:layout_marginTop="2dp"
+                android:text="@string/prevData"
                 android:visibility="visible" />
 
             <Button
-                android:text="@string/nextData"
-                android:layout_width="60dp"
                 android:id="@+id/ybtnextdat"
+                android:layout_width="60dp"
                 android:layout_height="50dp"
                 android:layout_below="@+id/cscroliEdi"
-                android:layout_marginTop="20dp"
-                android:layout_toEndOf="@+id/ybtprevdat"
-
                 android:layout_marginStart="9dp"
-                android:visibility="visible" />
-
-
-            <!--
-            android:layout_toEndOf="@+id/ybtprevdat"
-            -->
-            <EditText
-                android:autofillHints="" android:text=""
-                android:id="@+id/yedDataIdx"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="9dp"
-                android:layout_toEndOf="@+id/ybtClear"
-                android:layout_below="@+id/ybtprevdat"
-                android:ems="10"
-                android:inputType="number" />
-
-            <TextView
-                android:text=""
-                android:id="@+id/ytvCount"
-                android:layout_marginTop="40dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="9dp"
-                android:layout_toEndOf="@+id/yedDataIdx"
-                android:layout_below="@+id/ybtprevdat"
-                />
-
-            <trust.jesus.discover.little.ShButton
-                android:text="@string/add"
-                android:id="@+id/ybtadd"
-                android:background="@drawable/btn_dyn_back"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_below="@+id/yedDataIdx"
-                android:layout_toStartOf="@+id/ybtdele"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="9dp"
-                android:visibility="visible" />
-
-
-            <trust.jesus.discover.little.ShButton
-                android:text="@string/delete"
-                android:id="@+id/ybtdele"
-                android:background="@drawable/btn_dyn_back"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_below="@+id/yedDataIdx"
-                android:layout_marginTop="20dp"
-                android:layout_marginHorizontal="93dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginStart="9dp"
-                android:visibility="visible" />
-
-
-            <trust.jesus.discover.little.ShButton
-                android:text="@string/change"
-                android:id="@+id/ybtchange"
-                android:background="@drawable/btn_dyn_back"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_marginTop="20dp"
-                android:layout_below="@+id/yedDataIdx"
-                android:layout_toEndOf="@+id/ybtdele"
-                app:hideTime="600"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="9dp"
-                android:visibility="visible" />
-
-            <Button
-                android:text="@string/to_learn"
-                android:id="@+id/ybttoLearn"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_marginTop="20dp"
-                android:layout_below="@+id/ybtchange"
-                android:layout_marginStart="15dp"
-                android:visibility="visible" />
-
-            <Button
-                android:text="@string/add_cur_vers"
-                android:id="@+id/btnAddLearnItem"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_marginTop="20dp"
-                android:layout_toEndOf="@+id/ybttoLearn"
-                android:layout_below="@+id/ybtchange"
-                android:layout_marginStart="15dp"
-                android:visibility="visible" />
-
-            <!-- new Line   -->
-            <LinearLayout android:orientation="horizontal"
-                android:layout_below="@+id/ybttoLearn"
-                android:id="@+id/yLsearch"
-                android:layout_marginTop="20dp"
-                android:layout_height="wrap_content" android:layout_width="match_parent">
-
-                <EditText
-                    android:id="@+id/yedSearchTxt"
-                    android:layout_width="0dp"
-                    android:layout_weight= "1"
-                    android:layout_height="wrap_content"
-
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="9dp"
-                    android:ems="10" android:importantForAutofill="no"
-                    />
-
-                <Button
-                    android:text="@string/search"
-                    android:id="@+id/ybtsearch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginEnd="9dp"
-                    android:visibility="visible" />
-
-            </LinearLayout>
-
-            <View
-                android:id="@+id/ybarione"
-                android:layout_width="match_parent"
-                android:layout_marginTop="11dp"
-                android:layout_marginBottom="11dp"
-                android:layout_below="@+id/yLsearch"
-                android:layout_height="19dp"
-                android:background="?android:attr/listDivider" />
-            <!-- new Line   -->
-
-            <TextView
-                android:text="@string/current_file"
-                android:id="@+id/textV22"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:layout_marginStart="10dp"
-                android:layout_below="@+id/ybarione"
                 android:layout_marginTop="2dp"
 
-                />
+                android:text="@string/nextData"
+                android:visibility="visible" />
+
+            <EditText
+                android:id="@+id/yedDataIdx"
+                android:layout_width="55dp"
+                android:layout_height="60dp"
+                android:layout_below="@+id/ybtprevdat"
+                android:layout_marginStart="9dp"
+                android:layout_marginTop="2dp"
+                android:autofillHints=""
+                android:ems="10"
+                android:inputType="number"
+                android:text="" />
 
             <TextView
-                android:id="@+id/ytvcurSpruchFile"
-                android:layout_width="155dp"
-                android:layout_height="41dp"
-                android:ems="10"
-                android:textSize="18sp"
-                android:layout_toEndOf="@+id/textV22"
-                android:layout_marginStart="8dp"
-                android:layout_below="@+id/ybarione"
-                />
-
-            <Button
-                android:id="@+id/ybtshareData"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_toEndOf="@+id/ytvcurSpruchFile"
-                android:layout_below="@+id/ybarione"
-                android:layout_marginStart="15dp"
-                app:drawableEndCompat="@drawable/ic_share_white_24dp"
-                android:visibility="visible" />
-
-            <!-- new Line   -->
-
-            <Button
-                android:text="@string/load_original"
-                android:id="@+id/ybtloadOrg"
+                android:id="@+id/ytvCount"
                 android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_marginTop="20dp"
-                android:textSize="11sp"
-                android:layout_below="@+id/ybtshareData"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="9dp"
+                android:layout_marginTop="4dp"
+                android:text=""
+                android:textSize="17sp" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_below="@+id/yLsearch"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="1dp"
+            android:background="?android:attr/listDivider" />
+
+        <LinearLayout
+            android:id="@+id/yLsearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ybttoLearn"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/yedSearchTxt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+
+                android:layout_marginEnd="9dp"
+                android:layout_weight="1"
+                android:ems="10"
+                android:importantForAutofill="no"
+                android:inputType="text" />
+
+            <Button
+                android:id="@+id/ybtsearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
+                android:layout_marginEnd="9dp"
+                android:text="@string/search"
                 android:visibility="visible" />
 
-            <!--
+        </LinearLayout>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+        <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/ytvDataVers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:layout_marginTop="4dp"
+            android:text=""
+            android:textSize="17sp" />
+
+        <Button
+            android:id="@+id/ybttoLearn"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_below="@+id/ybtchange"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="2dp"
+            android:text="@string/to_learn"
+            android:visibility="visible" />
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/ytvGlobeVers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:layout_marginTop="14dp"
+            android:text=""
+            android:textSize="17sp" />
+
+        <trust.jesus.discover.little.ShImageButton
+            android:id="@+id/btnAddLearnItem"
+            android:layout_width="53dp"
+            android:layout_height="53dp"
+            android:layout_marginStart="11dp"
+            android:background="@drawable/btn_dyn_back"
+            android:src="@drawable/add_24"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="9dp"
+            android:visibility="visible" />
+
+
+    </TableRow>
+
+        </TableLayout>    <!-- new Line   -->
+
+        <View
+            android:id="@+id/ybarione"
+            android:layout_width="match_parent"
+            android:layout_height="29dp"
+            android:layout_below="@+id/yLsearch"
+            android:layout_marginTop="28dp"
+            android:layout_marginBottom="11dp"
+            android:background="?android:attr/listDivider" />
+        <!-- new Line   -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="11dp"
+        android:orientation="horizontal">
+
+    <TextView
+            android:id="@+id/textV22"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ybarione"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="1dp"
+            android:text="@string/current_file"
+            android:textSize="15sp"
+
+            />
+
+        <TextView
+            android:id="@+id/ytvcurSpruchFile"
+            android:layout_width="155dp"
+            android:layout_height="41dp"
+            android:layout_marginTop="2dp"
+            android:layout_below="@+id/ybarione"
+            android:layout_marginStart="14dp"
+            android:layout_toEndOf="@+id/textV22"
+            android:ems="10"
+            android:textSize="19sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="11dp"
+        android:orientation="horizontal">
+
+    <Button
+            android:id="@+id/ybtshareData"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="15dp"
+            android:visibility="visible"
+            app:drawableEndCompat="@drawable/ic_share_white_24dp" />
+
+        <trust.jesus.discover.little.ShButton
+            android:id="@+id/ybtsaveAs"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/btn_dyn_back"
+            android:paddingStart="19dp"
+            android:paddingEnd="19dp"
+            android:text="@string/save_as"
+
+            android:visibility="visible" />
+
+    </LinearLayout>
+        <!-- new Line  android:textSize="14sp" -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="11dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/ybtloadOrg"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_below="@+id/ybtshareData"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="2dp"
+            android:text="@string/load_original"
+            android:textSize="12sp"
+            android:visibility="visible" />
+
+        <!--
 
                     <Button
                         android:text="dwl.."
@@ -409,57 +558,32 @@
                       -->
 
 
-            <Button
-                android:text="@string/open"
-                android:id="@+id/ybtopen"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_marginTop="20dp"
-                android:layout_below="@+id/ybtshareData"
-                android:layout_toEndOf="@+id/ybtloadOrg"
-                android:layout_marginStart="5dp"
+        <Button
+            android:id="@+id/ybtopen"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_below="@+id/ybtshareData"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="2dp"
+            android:layout_toEndOf="@+id/ybtloadOrg"
+            android:text="@string/open"
 
-                />
+            />
 
-            <trust.jesus.discover.little.ShButton
-                android:text="@string/save_as"
-                android:id="@+id/ybtsaveAs"
-                android:background="@drawable/btn_dyn_back"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:textSize="11sp"
-                android:layout_marginTop="20dp"
-                android:layout_below="@+id/ybtshareData"
-                android:layout_toEndOf="@+id/ybtopen"
-                android:layout_marginStart="15dp"
-                android:visibility="visible" />
+    </LinearLayout>
 
-            <!-- new Line  import out use share -->
-
-            <Button
-                android:text="@string/import_from_downloads"
-                android:id="@+id/ybcheese"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_marginTop="20dp"
-                android:visibility="invisible"
-                android:layout_below="@+id/ybtopen"
-                android:layout_marginStart="15dp"
-
-                />
-
-            <!-- new Line   -->
-            <View
-                android:id="@+id/ydivi2"
-                android:layout_width="match_parent"
-                android:layout_marginTop="11dp"
-                android:layout_marginBottom="11dp"
-                android:layout_below="@+id/ybcheese"
-                android:layout_height="29dp"
-                android:background="?android:attr/listDivider" />
+        <!-- new Line  import out use share -->
 
 
+        <!-- new Line   -->
+        <View
+            android:id="@+id/ydivi2"
+            android:layout_width="match_parent"
+            android:layout_height="29dp"
+            android:layout_marginTop="11dp"
+            android:layout_marginBottom="11dp"
+            android:background="?android:attr/listDivider" />
 
-        </RelativeLayout>
+
+    </LinearLayout>
     </ScrollView>
-</RelativeLayout>

@@ -1,61 +1,280 @@
+package trust.jesus.discover.actis
+
+import android.app.Activity
+import android.app.ActivityManager
+import android.app.ApplicationErrorReport.CrashInfo
+import android.content.Context
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
+import android.os.Build
+import android.util.Log
+import java.io.PrintWriter
+import java.io.StringWriter
+import kotlin.concurrent.Volatile
 
 
-    private fun btnClick() {
-        val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        fetchBibleSearch( sharedPrefs.getString("search_bible_version", ""),
-            sharedPrefs.getString("search_word", ""),
-            sharedPrefs.getBoolean("match_case", false),
-            sharedPrefs.getBoolean("match_whole", false),
-            sharedPrefs.getString("search_range", "") )
+class ErrorHandler private constructor(activity: Activity) : Thread.UncaughtExceptionHandler {
 
-
-        //fetchBibleSearch("YLT", "haggi")
+    override fun uncaughtException(thread: Thread, exception: Throwable) {
+        // Don't re-enter -- avoid infinite loops if crash-reporting crashes.
+        if (mCrashing) return
+        mCrashing = true
+        catchException(thread, exception)
+        defaultExceptionHandler(thread, exception)
     }
 
 
+    fun catchException(thread: Thread?, exception: Throwable): String {
+        var errorMsg = ""
+        try {
+            errorMsg = logCrash(exception)
+        } catch (ex: Exception) {
+            Log.e(mPackageName, ex.message!!)
+        }
 
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginTop="2dp"
-    android:layout_marginBottom="2dp"
-    tools:context=".MainActivity">
-
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        >
-
-        <!--
-        ??android:theme="@style/Theme.Discover.AppBarOverlay"
-            = Menubar:
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:minHeight="?actionBarSize"
-                android:padding="@dimen/appbar_padding"
-                android:text="@string/app_name"
-                android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title" />
-
-        -->
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/view_pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        return errorMsg
+    }
 
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    fun onDestroy() {
+        mErrorHandler = null
+    }
+
+    init {
+        mPackageName = getPackageName(activity)
+    }
+
+
+    companion object {
+        fun getINSTANCE(activity: Activity): ErrorHandler {
+            if (mErrorHandler == null) {
+                mErrorHandler = ErrorHandler(activity)
+            }
+            return mErrorHandler!!
+        }
+
+
+        private fun getPackageName(pContext: Context): String {
+            var packageName = ""
+
+            try {
+                val activityManager = pContext
+                    .getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+
+                packageName = activityManager.getRunningAppProcesses().get(0).processName
+
+                // There is a limit to the tag length of 23.
+                packageName = packageName.take(if (packageName.length > 22) 22 else packageName.length)
+            } catch (ex: Exception) {
+            }
+
+            if (packageName.isEmpty()) {
+                packageName = pContext.getPackageName()
+            }
+
+            return packageName
+        }
+
+
+        fun toCatch(activity: Activity) {
+            Thread.setDefaultUncaughtExceptionHandler(getINSTANCE(activity))
+        }
+
+
+        fun logError(message: String) {
+            if (message.isEmpty()) {
+                return
+            }
+
+            logError(Throwable(message.trim { it <= ' ' }))
+        }
+
+
+        fun logError(exception: Throwable) {
+            try {
+                logCrash(exception)
+            } catch (e: Exception) {
+                Log.e(mPackageName, e.message!!)
+            }
+        }
+
+
+        // Return the last crash information
+        fun crashInfo(): CrashInfo? {
+            return mCrashInfo
+        }
+
+
+        private fun getAppLabel(pContext: Context): String {
+            val lPackageManager = pContext.getPackageManager()
+
+            var lApplicationInfo: ApplicationInfo? = null
+
+            try {
+                lApplicationInfo = lPackageManager
+                    .getApplicationInfo(pContext.getApplicationInfo().packageName, 0)
+            } catch (e: PackageManager.NameNotFoundException) {
+            }
+
+            return (if (lApplicationInfo != null) lPackageManager
+                .getApplicationLabel(lApplicationInfo) else "Unknown") as String
+        }
+
+
+        fun inDebugger(): Boolean {
+            //  If in Debugger Environment
+
+            val debugging: Boolean = Debug.isDebuggerConnected()
+
+            return debugging
+        }
+
+
+        @NonNull
+        private fun errorMsg(exception: Throwable, exceptError: String): String {
+            if (!exceptError.contains("error")) {
+                mReportBuilder.append(reportError(exception))
+            }
+
+            if (!exceptError.contains("callstack")) {
+                mReportBuilder.append(reportCallStack(exception))
+            }
+
+            if (!exceptError.contains("deviceinfo")) {
+                mReportBuilder.append(reportDeviceInfo())
+            }
+
+            if (!exceptError.contains("firmware")) {
+                mReportBuilder.append(reportFirmware())
+            }
+
+            return mReportBuilder.toString()
+        }
+
+
+        private fun reportError(exception: Throwable?): String {
+            mCrashInfo = CrashInfo(exception)
+
+            if (mCrashInfo!!.exceptionMessage == null) {
+                errorMessage = "<unknown error>"
+            } else {
+                errorMessage = mCrashInfo!!.exceptionMessage
+                    .replace(": " + mCrashInfo!!.exceptionClassName, "")
+            }
+
+            val throwFile = if (mCrashInfo!!.throwFileName == null)
+                "<unknown file>"
+            else
+                mCrashInfo!!.throwFileName
+
+            return ("\n************ " + mCrashInfo!!.exceptionClassName + " ************\n"
+                    + errorMessage + LINE_SEPARATOR
+                    + "\n File: " + throwFile
+                    + "\n Method: " + mCrashInfo!!.throwMethodName + "()"
+                    + "\n Line No.: " + mCrashInfo!!.throwLineNumber.toString() + LINE_SEPARATOR)
+            //          + "Class: " + crashInfo.throwClassName + LINE_SEPARATOR
+        }
+
+
+        private fun reportCallStack(exception: Throwable): String {
+            val stackTrace = StringWriter()
+
+            exception.printStackTrace(PrintWriter(stackTrace))
+
+            val callStack = stackTrace.toString()
+
+            val errMsg = exception.toString()
+
+            return ("\n************ CALLSTACK ************\n"
+                    + callStack.replace(errMsg, "")
+                    + LINE_SEPARATOR)
+        }
+
+
+        private fun reportDeviceInfo(): String {
+            return ("\n************ DEVICE INFORMATION ***********\n"
+                    + "Brand: "
+                    + Build.BRAND
+                    + LINE_SEPARATOR
+                    + "Device: "
+                    + Build.DEVICE
+                    + LINE_SEPARATOR
+                    + "Model: "
+                    + Build.MODEL
+                    + LINE_SEPARATOR
+                    + "Id: "
+                    + Build.ID
+                    + LINE_SEPARATOR
+                    + "Product: "
+                    + Build.PRODUCT
+                    + LINE_SEPARATOR)
+        }
+
+
+        private fun reportFirmware(): String {
+            return ("\n************ FIRMWARE ************\n"
+                    + "SDK: "
+                    + Build.VERSION.SDK_INT
+                    + LINE_SEPARATOR
+                    + "Release: "
+                    + Build.VERSION.RELEASE
+                    + LINE_SEPARATOR
+                    + "Incremental: "
+                    + Build.VERSION.INCREMENTAL
+                    + LINE_SEPARATOR)
+        }
+
+
+        // Empty the report as it is begin re-populated.
+        private fun reportEmptied() {
+            // No need to empty
+
+            if (mReportBuilder.length == 0) {
+                return
+            }
+
+            mReportBuilder.setLength(0)
+
+            mReportBuilder.trimToSize()
+        }
+
+
+        fun defaultExceptionHandler(thread: Thread?, exception: Throwable?) {
+            try {
+                // Execute the old handler.
+
+                if (mOldHandler != null) {
+                    mOldHandler.uncaughtException(thread, exception)
+                }
+            } catch (ex: Exception) {
+                Log.e(mPackageName, ex.message!!)
+            }
+        }
+
+
+        fun logCrash(exception: Throwable): String {
+            return errorMsg(exception, "deviceinfo firmware")
+        }
+
+
+        // Prevents infinite loops.
+        @Volatile
+        private var mCrashing = false
+
+        private val mReportBuilder = StringBuilder()
+
+        private const val LINE_SEPARATOR = "\n"
+
+        private val mOldHandler: Thread.UncaughtExceptionHandler? = Thread
+            .getDefaultUncaughtExceptionHandler()
+
+        private var mErrorHandler: ErrorHandler? = null
+
+        private var mPackageName: String?
+
+        private var mCrashInfo: CrashInfo? = null
+
+        // Return the last error message
+        var errorMessage: String? = ""
+    }
+}

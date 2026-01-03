@@ -1,47 +1,38 @@
 package trust.jesus.discover.little
 
-import android.app.AlertDialog
 import android.app.Application
 import android.content.ClipData
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
-import android.os.Build
 import android.os.PowerManager
 import android.util.Log
-import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.core.content.PermissionChecker
+import androidx.appcompat.app.AlertDialog
 import androidx.preference.PreferenceManager
-import trust.jesus.discover.bible.online.Kbolls
 import trust.jesus.discover.MainActivity
 import trust.jesus.discover.R
 import trust.jesus.discover.actis.BibleAy
 import trust.jesus.discover.actis.Reportus
 import trust.jesus.discover.bible.BblParseBook
+import trust.jesus.discover.bible.online.Bss
+import trust.jesus.discover.bible.online.Kbolls
+import trust.jesus.discover.bible.online.Votd
 import trust.jesus.discover.dlg_data.AppVals
 import trust.jesus.discover.dlg_data.CsvList
 import trust.jesus.discover.dlg_data.Dateien
-import trust.jesus.discover.dlg_data.ErrorReporter
 import trust.jesus.discover.dlg_data.SaveLoadHelper
-import trust.jesus.discover.little.FixStuff.Filenames.Companion.LogMaxLines
+import trust.jesus.discover.little.FixStuff.Filenames.Companion.crashLogName
+import trust.jesus.discover.little.FixStuff.Filenames.Companion.logMaxLines
+import trust.jesus.discover.little.FixStuff.Filenames.Companion.logName
+import trust.jesus.discover.little.recognio.SpeechEx
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.Random
-import kotlin.system.exitProcess
-import android.util.DisplayMetrics
-import android.view.WindowInsets
-import android.view.WindowMetrics
-import trust.jesus.discover.bible.online.Bss
-import trust.jesus.discover.bible.online.Votd
+import kotlin.toString
 
 
 class Globus: Application() {
@@ -55,7 +46,7 @@ class Globus: Application() {
         return mBblParseBook
     }
     private var mBblParseBook: BblParseBook? = null
-
+    var mSpeechEx: SpeechEx? = null
     fun vtdo(): Votd? {
         if (mvtdo==null) mvtdo = Votd()
         return mvtdo
@@ -119,15 +110,18 @@ class Globus: Application() {
     fun csvList(): CsvList? {
         if (mCsvList == null) {
             mCsvList = CsvList()
-            val fname = spruchFileName()
-            if (!mCsvList!!.readFromPrivate(fname, '#')) {
-                if (appVals().valueReadBool(
-                        "welcome",
-                        false
-                    )
-                ) Logl(fname + " not found, read Org now", true)
-                mCsvList!!.readFromAssets(getString(R.string.spruch_csv), "#")
-                mCsvList!!.saveToPrivate(fname, '#')
+            val fName = spruchFileName()
+            //log("load spruch: $fName")
+            if (!mCsvList!!.readFromPrivate(fName, '#')) {
+                if (appVals().valueReadBool("welcome",false))
+                    logl("$fName not found, read Org now", true)
+                dateien().assetFileToPrivate(fName.toString())
+                //mCsvList!!.readFromAssets(getString(R.string.spruch_csv), "#")
+                //mCsvList!!.saveToPrivate(fName, '#')
+                if (!mCsvList!!.readFromPrivate(fName, '#')) {
+                    //globDlg().messageBox("failed to load example verses")
+                    globDlg().messageBox("!!failed to load verslist: $fName !!", this)
+                }
             }
             //mCsvList!!.readFromAssets(getString(R.string.spruch_csv), "#")
         }
@@ -148,9 +142,6 @@ class Globus: Application() {
     val lernItem = GlobVers() //10.25 klasse.. : GlobVers by lazy { GlobVers() }
     var lernDataIdx = 0
 
-    fun setVersTitel(versTitel: String?) {
-        mainActivity!!.binding.tvVersTop.text = versTitel
-    }
     var sharedText: String? = null
     @JvmField
     val random = Random()
@@ -190,47 +181,78 @@ class Globus: Application() {
         private var appContext: Context? = null
         private const val LOG_TAG = "guide me"
     }
-    fun Logl(msg: String, mitToast: Boolean) {
+
+    //var sdf: SimpleDateFormat = SimpleDateFormat("EE dd-MM-yyyy HH:mm:ss", Locale.GERMANY)
+    fun logl(msg: String, mitToast: Boolean) {
         Log.d(LOG_TAG, msg)
         if (mitToast) toast(msg)
     }
+    fun logIntern(msg: String, mitToast: Boolean) {
+        SLH()?.insertLine(logName, msg, "    " + sdf.format(System.currentTimeMillis()), logMaxLines)
+        logl(msg, mitToast)
+    }
     fun log(msg: String) {
-        Logl(msg, false)
+        logl(msg, false)
     }
     fun toast(msg: String?) {
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
     }
-    fun crashLog(msg: String, curLineNum: Int) {
-        Logl(msg, false)
+    fun crashLog(ex: Exception, curLineNum: Int) {//msg: String
+        val sw = StringWriter()
+        ex.printStackTrace(PrintWriter(sw))
+        val msg = ex.message.toString()
+        logl(msg, true)
         SLH()!!.insertLine(
-            FixStuff.Filenames.log, "at Line " +
-                    curLineNum + "   " + sdf.format(System.currentTimeMillis()),
-            "Crasherl: $msg", LogMaxLines
+            logName, "id " +
+                    curLineNum + "  c: " + crashCnt + sdf.format(System.currentTimeMillis()),
+            "Crasherl: $msg", logMaxLines
         )
-//        toast("Crasherl: $msg")
-        crashcnt++
+//        toast("Crasherl: $msg") e: Throwable
+        crashCnt++
+        startErrorReporter(sw.toString())
     }
-    var crashcnt = 0
-
-    fun checkPermissions(askUser: Boolean, vararg permissionsId: String): Boolean {
-        var permissions = true
-        for (p in permissionsId) { //permissions &&
-            permissions = ContextCompat.checkSelfPermission(
-                mainActivity!!,
-                p
-            ) == PermissionChecker.PERMISSION_GRANTED
-
-            val callbackId = 0 //42 falls user ablehnt, hier egal requestPermissions
-            if (askUser && !permissions) {
-                //if (permissions)                Toast.makeText(mainActi, Arrays.toString(permissionsId) +" ok, change in Settings", Toast.LENGTH_LONG).show();
-                ActivityCompat.requestPermissions(mainActivity!!, permissionsId, callbackId)
-                //permissions = false;
-            }
+    var canLogCrash = true
+    fun crashLog(msg: String, curLineNum: Int) {//
+        logl(msg, true)
+        try {
+            if (!canLogCrash) return
+            SLH()!!.insertLine(
+                logName, "id " +
+                        curLineNum + "  c: " + crashCnt + sdf.format(System.currentTimeMillis()),
+                "Crasherl: $msg", logMaxLines
+            )
+        } catch (e: Exception) {
+            canLogCrash = false
         }
-
-        return permissions
+//        toast("Crasherl: $msg") e: Throwable
+        crashCnt++
+    }
+    var crashCnt = 0  //about crash:
+    //https://stackoverflow.com/questions/32229170/catch-all-possible-android-exception-globally-and-reload-application
+    //https://medium.com/@hiren6997/effective-error-handling-in-android-from-try-catch-hell-to-modern-solutions-4fe5836c419c
+    fun handleUncaughtException(e: Throwable) {
+        val sw = StringWriter()
+        e.printStackTrace(PrintWriter(sw))
+        crashLog("handleUncaughtException: " + e.message, 352)
+        var msg = "short: " + e.message.toString()
+        msg += "\n full: \n$sw"
+        dateien().writePrivateFile(crashLogName, msg)
+        // !! in manifest eintragen...
+        //startErrorReporter(sw.toString())
     }
 
+    fun startErrorReporter(msg: String) {
+        try {
+            //log("startErrorReporter: " + msg.substring(44))
+            val intent = Intent(this, Reportus::class.java)
+            intent.putExtra("ErrMsg", msg) //or..Intent.EXTRA_TEXT
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+        }  catch (ex: Exception) {
+        //Log.e(mPackageName, ex.message!!)
+        log("ex: " + ex.message)
+    }
+    }
 
     fun formatTextUpper(str: String): String {
         return formatText(str).uppercase(Locale.getDefault())
@@ -284,71 +306,10 @@ class Globus: Application() {
         val clipboard = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
         val clip = ClipData.newPlainText("text", text)
         clipboard.setPrimaryClip(clip)
+        toast("text copied to clipboard")
     }
 
 
-    fun interface AskDlgOkEve {
-        fun onOkClick()
-    }
-
-    fun askDlg(ask: String?, askDlgOkEve: AskDlgOkEve?) {
-        askDlg(getString(R.string.app_name), ask, askDlgOkEve)
-    }
-
-    fun askDlg(title: String?, ask: String?, askDlgOkEve: AskDlgOkEve?) {
-        var ask = ask
-        val tv = TextView(mainActivity!!)
-        ask = "\n" + ask
-        tv.text = ask
-        tv.layoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        tv.gravity = Gravity.CENTER
-        AlertDialog.Builder(mainActivity!!)
-            .setTitle(title)
-            .setView(tv)
-            .setPositiveButton(
-                "Ok"
-            ) { dialog: DialogInterface?, id: Int ->
-                //finish();
-                askDlgOkEve!!.onOkClick()
-            }
-            .setNegativeButton("No", null).show()
-        //d.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-        //alertDialog.show();
-    }
-
-    val popUpWidth: Int
-        get() {
-            var (wid, screenHeight) = getScreenDimensions()
-            wid = wid - (wid / 15)
-            return wid
-        }
-    fun getScreenDimensions(): Pair<Int, Int> {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            // For Android 11 and above
-            // Get the window metrics
-            val windowMetrics: WindowMetrics = mainActivity!!.windowManager.currentWindowMetrics
-            // Get the insets and bounds of the window
-            val insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
-            // Calculate the width and height of the screen
-            val bounds = windowMetrics.bounds
-            val width = bounds.width() - insets.left - insets.right
-            val height = bounds.height() - insets.top - insets.bottom
-            // Return the width and height
-            Pair(width, height)
-        } else {
-            // For Android 10 and below
-            // Get the display metrics
-            val displayMetrics = DisplayMetrics()
-            @Suppress("DEPRECATION")
-            // Get the default display metrics
-            mainActivity!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
-            // Return the width and height
-            Pair(displayMetrics.widthPixels, displayMetrics.heightPixels)
-        }
-    }
 
     fun doKeepScreenOn(keepOn: Boolean) {
         if (keepOn) mainActivity!!.window.addFlags(
@@ -368,7 +329,7 @@ class Globus: Application() {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             ctx.startActivity(intent)
         } catch (e: Exception) {
-            errReport(e, "Start Bug ", true)
+            crashLog("Start Bug ex: " + e.message, 352)//errReport(e, " ", true)
         }
     }
     fun startBibleActivity(startVers: Int = 0) {
@@ -402,51 +363,37 @@ class Globus: Application() {
 }
      */
 
-    var errorReporter: ErrorReporter? = null
-
-    fun errReport(e: Exception, msg: String?, doToast: Boolean) {
-        if (msg != null) Logl(msg + " " + e.message, doToast)
-        if (errorReporter != null) {
-            //errorReporter.
-            errorReporter!!.doException(e)
-        }
-    }
-
-    private var oldHandler: Thread.UncaughtExceptionHandler? = null
-    private fun globalExceptionHandler() {
-        //if (!BuildConfig.DEBUG)            return;
-
-        oldHandler = Thread.getDefaultUncaughtExceptionHandler()
-        Thread.setDefaultUncaughtExceptionHandler { t: Thread?, e: Throwable? ->
-            try {
-                val sw = StringWriter()
-                e?.printStackTrace(PrintWriter(sw))
-                // !! in manifest eintragen...
-                val intent = Intent(this, Reportus::class.java)
-                intent.putExtra("ErrMsg", sw.toString()) //or..Intent.EXTRA_TEXT
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                startActivity(intent)
-                crashLog("ex: " + e!!.message, 286)
-            } catch (ex: Exception) {
-                // ex.printStackTrace();
-                crashLog("ex: " + ex.message, 295)
-            } finally {
-                if (oldHandler != null) oldHandler!!.uncaughtException(t!!, e!!)
-                else exitProcess(1)
-                //System.exit();
+    /*
+    https://stackoverflow.com/questions/32229170/catch-all-possible-android-exception-globally-and-reload-application
+        private var oldHandler: Thread.UncaughtExceptionHandler? = null
+        private fun globalExceptionHandler() { //try in MainActivity attachUnhandledExceptionHandler
+            //if (!BuildConfig.DEBUG)            return;
+            if (oldHandler != null) return Throwable to Exception
+            oldHandler = Thread.getDefaultUncaughtExceptionHandler()
+            Thread.setDefaultUncaughtExceptionHandler { t: Thread?, e: Throwable? ->
+                try {
+                    handleUncaughtException(e!!)
+                } catch (ex: Exception) {
+                    // ex.printStackTrace();
+                    crashLog("ex: " + ex.message, 295)
+                } finally {
+                    if (oldHandler != null) oldHandler!!.uncaughtException(t!!, e!!)
+                    else exitProcess(1)
+                    //System.exit();
+                }
             }
         }
-    }
 
+     */
     private var startCount = 0
     override fun onCreate() {
         super.onCreate() //Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         appContext = applicationContext
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         startCount++
-        globalExceptionHandler()
+        //globalExceptionHandler()
         //new Reportus("Nice to meet you");
-        if (startCount > 1) Logl("app starts: $startCount", true)
+        logIntern("app starts: $startCount time(s)", false) //if (startCount > 1)
         appContext?.cacheDir?.deleteOnExit() // .deleteRecursively()
 
     }

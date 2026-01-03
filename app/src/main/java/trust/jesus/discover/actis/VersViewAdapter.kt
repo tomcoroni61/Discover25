@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.compose.ui.graphics.Color
 import trust.jesus.discover.R
 import trust.jesus.discover.bible.dataclasses.VersItem
 import trust.jesus.discover.dlg_data.LvAdapt
@@ -93,10 +92,48 @@ class VersViewAdapter (context: Context) : LvAdapt<VersItem?>(context, R.layout.
         gc.appVals().valueWriteInt("bibletext.size", textsize)
     }
 
+    fun selectedLines(lines: MutableList<VersItem>) {
+        lines.clear()
+        var selCount = selCount()
+        //gc.log("selectedText count: $selCount")
+        when (selCount) {
+            0 -> return
+            2 -> {
+                for (i in 0..<count) {
+                    val item = getItem(i)
+                    if (item != null) {
+                        if (item.selected)
+                            selCount--
+                        when (selCount) {
+                            1 -> {
+                                item.positon = i
+                                lines.add(item)
+                            }
+                            0 -> {
+                                item.positon = i
+                                lines.add(item)
+                                return
+                            }
+                        }
+                    }
+                }
+
+            } //->2
+            else -> for (i in 0..<count) {
+                val item = getItem(i)
+                if (item != null && item.selected) {
+                    item.positon = i
+                    lines.add(item)
+                }
+            }
+
+        }
+
+    }
     fun selectedText(forSpeak: Boolean = false): String {
         var txt = ""
         var selCount = selCount()
-        gc.log("selectedText count: $selCount")
+        //gc.log("selectedText count: $selCount")
         when (selCount) {
             0 -> return ""
             2 -> {

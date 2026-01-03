@@ -1,72 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
-    android:layout_height="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    >
 
-    <Button
-        android:id="@+id/btSearchBack"
-        android:layout_marginStart="5dp"
-        android:text="@string/prevData"
-        android:layout_alignParentTop="false"
-        android:focusable="false" android:textSize="12sp"
-        android:layout_marginTop="-41dp"
-        android:layout_width="45dp" android:layout_height="40dp"/>
-    <!-- android:layout_toEndOf="@+id/btSearchBack"  android:layout_toEndOf="@+id/btSearchVor"
-    android:visibility="invisible" android:height="20dp" android:width="20dp" -->
-
-    <Button
-        android:id="@+id/btSearchNext"
-        android:layout_width="45dp"
-        android:layout_height="40dp"
-        android:layout_alignTop="@id/btSearchBack"
-        android:layout_toEndOf="@id/btSearchBack"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:focusable="false"
-        android:text="@string/nextData"
-        android:textSize="12sp" />
-
-    <EditText
-        android:id="@+id/etSearch"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/btSearchNext"
-        android:layout_alignTop="@id/btSearchBack"
-        android:layout_marginEnd="55dp"
-        android:autofillHints=""
-        android:focusable="auto"
-        android:focusableInTouchMode="true"
-        android:inputType=""
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:textSize="15sp"
-        />
+        android:layout_marginTop="12dp"
+        android:gravity="center_horizontal"
+        android:visibility="gone"
+        android:orientation="horizontal">
 
-    <Button
-        android:layout_width="45dp"
-        android:layout_height="40dp"
-        android:layout_alignTop="@id/btSearchBack"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:focusable="false"
-        android:text="@string/exit"
-        android:textSize="12sp" />
+        <Button
+            android:id="@+id/btSearchBack"
+            android:layout_width="45dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="1dp"
+            android:focusable="false"
+            android:text="@string/prevData"
+            android:textSize="12sp" />
+        <!-- android:layout_toEndOf="@+id/btSearchBack"  android:layout_toEndOf="@+id/btSearchVor"
+    android:visibility="invisible" android:height="20dp" android:width="20dp" -->
+
+        <Button
+            android:id="@+id/btSearchNext"
+            android:layout_width="45dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:focusable="false"
+            android:text="@string/nextData"
+            android:textSize="12sp" />
+
+        <EditText
+            android:id="@+id/etSearch"
+            android:layout_width="129dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:autofillHints=""
+            android:focusable="auto"
+            android:focusableInTouchMode="true"
+            android:inputType="text"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:textSize="15sp" />
+
+        <Button
+            android:layout_width="55dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:focusable="false"
+            android:text="@string/exit"
+            android:textSize="12sp" />
+    </LinearLayout>
 
     <ScrollView
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/etSearch"
         android:fillViewport="true">
+
         <TextView
-            android:textSize="18sp"
-            android:textIsSelectable="true"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvLogText"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            />
+            android:textIsSelectable="true"
+            android:textSize="18sp" />
 
     </ScrollView>
-</RelativeLayout>
+</LinearLayout>

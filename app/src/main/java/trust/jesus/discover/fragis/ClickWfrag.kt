@@ -1,6 +1,6 @@
 package trust.jesus.discover.fragis
 
-import android.app.AlertDialog.Builder
+//import android.app.AlertDialog.Builder
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,12 +12,11 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.size
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import trust.jesus.discover.R
-import trust.jesus.discover.databinding.FragmentClickWfragBinding
+import trust.jesus.discover.databinding.FragClickWBinding
 import trust.jesus.discover.databinding.SheetWordclkBinding
 import trust.jesus.discover.little.recognio.RecognitionCallback
 import trust.jesus.discover.little.recognio.RecognitionStatus
@@ -27,30 +26,32 @@ import java.util.Locale
 
 class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
 
-    private lateinit var binding: FragmentClickWfragBinding
+    //private lateinit var binding: FragmentClickWfragBinding
     private var wordidx = 0
     private var clickCnt: Int = 0
     private var curText: String? = null
     private val wordlist: MutableList<String> = ArrayList()
+    private lateinit var binding: FragClickWBinding
+    //private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
+    private lateinit var dlgBinding: SheetWordclkBinding
+    //private lateinit var ptSheetBinding: SheetptWordclkBinding
 
 
     private val recognitionManager: SpToTx by lazy {
-        SpToTx(gc,  callback = this)
+        SpToTx(requireContext(),  callback = this)
     }
 
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?,
-                               savedInstanceState: Bundle? ): View? {
+                               savedInstanceState: Bundle? ): View {
         // Inflate the binding.acflowLayout for this fragment ybtspeak
-        binding = FragmentClickWfragBinding.inflate(layoutInflater)
+        binding = FragClickWBinding.inflate(layoutInflater)
         // Inflate the binding.acflowLayout for this fragment acheaderTextView
         binding.wtvSpeak.setOnClickListener(this)
-        binding.ycbtspeakObt.setOnClickListener(this)
         binding.cwbtspeak.setOnClickListener(this)
-        binding.actxTextView.setOnClickListener(this)
         binding.tvMischen.setOnClickListener(this)
         binding.acheaderTextView.setOnClickListener(this)
         binding.ybtrecord.setOnClickListener (this)
-
+        binding.btnSheetUp.setOnClickListener(this)
 
         binding.progressBar.visibility = View.INVISIBLE
         binding.progressBar.max = 10
@@ -59,13 +60,12 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
         allowpartWord = true //gc.appVals().valueReadBool("ClkWords_partWord", true)
         useRestart = gc.appVals().valueReadBool("ClkWords_useRestart", true)
         restartValue = gc.appVals().valueReadInt("ClkWords_restartValue", 9)
-
+        // https://blog.mindorks.com/android-bottomsheet-in-kotlin/
         //recognitionManager.createRecognizer()
         loadText()
-
-
         return binding.root
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -139,7 +139,7 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
     }
 
     fun ycbtttsSettingsClick() {
-        gc.ttSgl()!!.andoSetttings()
+        gc.ttSgl()!!.andoSettings()
     }
 
     fun ycbtdoSpeakClick() {
@@ -165,10 +165,10 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
 
     private var curVers = ""
     private fun loadText() {
-        gc.setVersTitel(curVers)
+        gc.lernItem.setVersTitel() //gc.setVersTitel(curVers)
         if (curVers == gc.lernItem.vers) return
         curVers = gc.lernItem.vers
-        gc.setVersTitel(curVers)
+        gc.lernItem.setVersTitel() //gc.setVersTitel(curVers)
         var text = gc.lernItem.text
         if (gc.lernItem.partText.length>9)
             text = gc.lernItem.partText
@@ -178,7 +178,7 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
         curText = gc.lernItem.text
         wordidx = -1
         restartValueCnt = 0
-        binding.acheaderTextView.text = gc.lernItem.vers
+        //binding.acheaderTextView.text = gc.lernItem.vers
         //binding.vers.setText(gc.LernItem.Vers)
         text = gc.formatTextUpper(text)
         var wort = StringBuilder()
@@ -248,24 +248,42 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
     }
 
     private fun wordClick(view1: View?) {
-        val tv = view1 as TextView
+        try {
 
-        clickCnt++
-        if (!checkWort(tv.text.toString())) {
-            tv.setBackgroundResource(R.drawable.wrong)
-            restartValueCnt++
-            if (useRestart && restartValueCnt >= restartValue) {
-                //gc.askDlg("restarting now", null)
-                gc.toast("restarting now")
-                doAgainClick()
-                return
+            val tv = view1 as TextView
+
+            clickCnt++
+            if (!checkWort(tv.text.toString())) {
+                tv.setBackgroundResource(R.drawable.wrong)
+                restartValueCnt++
+                if (useRestart && restartValueCnt >= restartValue) {
+                    //gc.askDlg("restarting now", null)
+                    val guwo = wordlist[wordidx]
+                    for (i in 0..<binding.acflowLayout.size) {
+                        val v = binding.acflowLayout.getChildAt(i) as TextView
+                        v.setBackgroundResource(R.drawable.wrong)
+                        v.setOnClickListener(null)
+
+                        if (guwo == v.text) v.setBackgroundResource(R.drawable.richtig)
+                    }
+                    // gc.toast("restarting now")
+                    Looper.myLooper()?.let { Handler(it).postDelayed({ doAgainClick() }, 3100) }
+                    return
+                }
             }
+            //binding.vers.setText(gc.LernItem.Vers)
+            val guwo = clickCnt.toString() + " - " + wordlist.size //+ "   " + gc.LernItem.Vers;
+            binding.acheaderTextView.text = guwo
+        } catch (e: Exception) {
+            gc.logl(e.toString(), true)
         }
-        //binding.vers.setText(gc.LernItem.Vers)
-        val guwo = clickCnt.toString() + " - " + wordlist.size //+ "   " + gc.LernItem.Vers;
-        binding.acheaderTextView.text = guwo
+
     }
     private fun checkWort(aWord: String): Boolean {
+        if (wordidx >= wordlist.size) {
+            gc.logl("Err checkWort", true)
+            return false
+        }
         val guwo = wordlist[wordidx]
         if (guwo == aWord) {
             xAutoNextCount = 0
@@ -344,11 +362,7 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
             RecognitionStatus.UNAVAILABLE -> {
                 //Log.i("Recognition", "onPrepared: Failure or unavailable")
                 binding.tvStatus.text = "onPrepared: Failure or unavailable"
-                Builder(this.requireContext())
-                    .setTitle("Speech Recognizer unavailable")
-                    .setMessage("Your device does not support Speech Recognition. Sorry!")
-                    .setPositiveButton(android.R.string.ok, null)
-                    .show()
+                gc.globDlg().messageBox("Your device does not support Speech Recognition. Sorry!",requireContext())
             }
 
             RecognitionStatus.Err_RECORD_AUDIO_Permission -> binding.textView.text = "Err_RECORD_AUDIO_Permission press again"
@@ -402,7 +416,6 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
         }
     }
 
-    private lateinit var dlgBinding: SheetWordclkBinding
     fun doButtonSheet() {//binding = FragHomeBinding.inflate(layoutInflater)
         val dialog = BottomSheetDialog(requireContext())
         val inflater = LayoutInflater.from(requireContext())
@@ -437,13 +450,13 @@ class ClickWfrag : BaseFragment(), View.OnClickListener, RecognitionCallback {
 
     override fun onClick(p0: View?) {
         when (p0?.id) {
-            R.id.ycbtspeakObt -> ycbtttsSettingsClick()
-            R.id.actxTextView -> doPopUpTxtClick()
+            //R.id.ycbtspeakObt -> ycbtttsSettingsClick()
             R.id.cwbtspeak -> ycbtdoSpeakClick()
             R.id.tvMischen -> doAgainClick()
             R.id.acheaderTextView -> doNewVersClick()
             R.id.ybtrecord -> doRecordClick()
             R.id.wtvSpeak -> tvSpeackClick()
+            R.id.btnSheetUp -> doButtonSheet()
 
         }
     }

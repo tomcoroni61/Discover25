@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="230dp"
+    android:layout_height="match_parent"
+    android:background="@drawable/systembars"
+    xmlns:tools="http://schemas.android.com/tools">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <!--
+    android:background="@drawable/systembars"
+    android:foregroundGravity="left"
+    android:gravity="center"
+    -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:textSize="22sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="?attr/button_colour"
+        android:gravity="center"
+        android:text="@string/app_range"
+        android:textSize="22sp" />
+
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/scBase"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:paddingStart="44dp"
+        android:paddingEnd="25dp"
+        android:text="@string/base" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/scMid"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:paddingStart="44dp"
+        android:paddingEnd="25dp"
+        android:text="@string/more" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/scMax"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:paddingStart="44dp"
+        android:paddingEnd="25dp"
+        android:text="@string/all" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="31dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/tvBible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="?attr/button_colour"
+        android:gravity="center"
+        android:text="@string/bible"
+        android:textSize="22sp" />
+    <!--  ?attr/button_colour
+android:backgroundTint="#C0CA33"
+        android:background="#43A047"
+-->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="11dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:textSize="22sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
+
+        <ImageView
+            android:id="@+id/ivVoices"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="11dp"
+            android:layout_marginEnd="9dp"
+            android:background="?attr/button_colour"
+            android:gravity="center"
+            app:srcCompat="@drawable/voice_selection"
+            tools:ignore="ContentDescription" />
+    <TextView
+        android:id="@+id/tvTheme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="?attr/button_colour"
+        android:gravity="center"
+        android:text="@string/theme"
+        android:textSize="22sp" />
+
+    </LinearLayout>
+    <!--  ?attr/button_colour
+android:backgroundTint="#C0CA33"
+        android:background="#43A047"
+-->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="11dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/tvVersHistory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="?attr/button_colour"
+        android:gravity="center"
+        android:text="@string/vers_history"
+        android:textSize="22sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="21dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:textSize="22sp" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp">
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:src="@drawable/bookmark_star_24"
+                android:textSize="16sp"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/tvMerkVers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:text="@string/joh_3_16"
+                android:textSize="16sp" />
+
+            <trust.jesus.discover.little.ShImageButton
+                android:id="@+id/btnGet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:background="@drawable/rounded_corner"
+                android:onClick="btnTextSmalerClick"
+                android:src="@drawable/outline_arrow_downward_alt_24"
+                tools:ignore="ContentDescription" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+<!--
+android:layout_marginStart="11dp"
+            android:layout_marginEnd="11dp"
+            -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:layout_marginStart="4dp"
+                android:text="@string/global"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tvGlobalVers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:text="Joh 3:16"
+                android:textSize="16sp" />
+
+            <trust.jesus.discover.little.ShImageButton
+                android:id="@+id/btnSet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="11dp"
+                android:background="@drawable/rounded_corner"
+                android:onClick="btnTextSmalerClick"
+                android:src="@drawable/outline_arrow_upward_alt_24"
+                tools:ignore="ContentDescription" />
+
+        </TableRow>
+
+    </TableLayout>
+
+    <!-- new Line
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btnGet"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginStart="9dp"
+            android:text="get"
+            android:textSize="14sp"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/btnSet"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginStart="9dp"
+            android:text="@string/set"
+            android:textSize="14sp"
+            android:visibility="visible" />
+
+    </LinearLayout>
+
+      -->
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="41dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/tvWelcome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="?attr/button_colour"
+        android:gravity="bottom|center"
+        android:text="@string/welcome"
+        android:textSize="22sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="41dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:textSize="22sp" />
+
+    <ImageView
+        android:id="@+id/tvheidi"
+        android:layout_width="match_parent"
+        android:layout_height="33dp"
+        android:layout_gravity="bottom"
+        android:background="?attr/button_colour"
+        android:contentDescription="@string/exit"
+        android:gravity="bottom|center"
+        android:textSize="22sp"
+        app:srcCompat="@drawable/exit_to_app_24" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="141dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/tvChangeLoge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="?attr/button_colour"
+        android:gravity="bottom|center"
+        android:text="change log"
+        android:textSize="22sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="61dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:textSize="22sp" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chipLog"
+        style="@style/Widget.MaterialComponents.Chip.Filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="11dp"
+        android:layout_marginTop="22dp"
+        android:background="?attr/button_colour"
+        android:checked="true"
+        android:text="Log things"
+        android:visibility="visible" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="11dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/tvErrorReporter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="?attr/button_colour"
+        android:gravity="center"
+        android:text="Err Reporter"
+        android:textSize="22sp" />
+
+</LinearLayout>
+
+</ScrollView>

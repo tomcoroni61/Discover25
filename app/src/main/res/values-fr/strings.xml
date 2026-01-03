@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- done with https://stringstranslator.com/  at 13.12.25 -->
+<resources>
+
+    <string name="add">ajouter</string>
+
+    <string name="again">encore</string>
+
+    <string name="app_name">Apprendre la Bible</string>
+
+    <string name="change">modifier</string>
+
+    <string name="clear">Effacer</string>
+
+    <string name="current_file">fichier actuel</string>
+
+    <string name="delete">supprimer</string>
+
+    <string name="down">bas</string>
+
+    <string name="edit">Modifier</string>
+
+    <string name="exit">quitter</string>
+
+    <string name="letters">Lettres..</string>
+
+    <string name="load_original">charger l\'original</string>
+
+    <string name="no">Non</string>
+
+    <string name="open">Ouvrir</string>
+
+    <string name="opt">Option</string>
+
+    <string name="recite">réciter</string>
+
+    <string name="replace">Remplacer</string>
+
+    <string name="s">Parler</string>
+
+    <string name="search">Rechercher</string>
+
+    <string name="send_me_email" translatable="false">Choose mailer</string>
+
+    <string name="show_text">Afficher le texte</string>
+
+    <string name="speak">parler</string>
+
+    <string name="start">Démarrer</string>
+
+    <string name="stop">Arrêter</string>
+
+    <string name="translation">Traduction</string>
+
+    <string name="up">haut</string>
+    <string name="welcome">Bienvenue</string>
+    <string name="introduction">Introduction</string>
+    <string name="thank_you">Merci</string>
+
+    <string name="vers">Verset</string>
+
+    <string name="word_click">Cliquer le mot</string>
+    <string name="word_mix">mélange de mots</string>
+
+    <string name="words">mots</string>
+
+    <string name="yes">Oui</string>
+    <string name="word_clicklz">"clic de mot"</string>
+    <string name="spruch_csv">dictons25.csv</string>
+    <string name="save_as">Enregistrer sous</string>
+    <string name="import_from_downloads" translatable="false">import from downloads</string>
+    <string name="overwrite">"Écraser : "</string>
+    <string name="set">définir</string>
+    <string name="lernvers">à apprendre :</string>
+    <string name="add_to_your_bibleverses">Ajouter à vos versets bibliques ?</string>
+    <string name="copy_to_app_file_dir">"Copier dans le répertoire de l\'application ? "</string>
+    <string name="question_mark" translatable="false">  \? </string>
+    <string name="returni">Retour</string>
+    <string name="please_enter_some_text">Veuillez entrer du texte</string>
+    <string name="check_it">vérifier</string>
+    <string name="tap_me">appuyez sur moi pour enregistrer avec le clavier</string>
+    <string name="themes">Thèmes</string>
+    <string name="getvers">Obtenir verset</string>
+    <string name="random_vers">Verset aléatoire</string>
+    <string name="title_activity_settings_rand">Paramètres aléatoires</string>
+
+    <!-- Preference Titles -->
+    <string name="preference_listPreference_bible_version_title">Sélectionner la version de la Bible</string>
+    <string name="preference_listPreference_bible_version_default_value" translatable="false">NLT</string>
+
+    <!-- Messages Preferences -->
+
+    <!-- Sync Preferences -->
+    <string name="bible">Bible</string>
+    <string name="wait">attendre</string>
+    <string name="Title_entdecke">Découvrir</string>
+    <string name="Title_speech">Parole</string>
+    <string name="title_words">Mots</string>
+    <string name="Title_clickw">CliqueMot</string>
+    <string name="Title_home">Accueil</string>
+    <string name="Title_letters">Lettres</string>
+    <string name="title_edit">Modifier</string>
+    <string name="new_vers">nouveau verset</string>
+    <string name="verslist">Liste de mots croisés</string>
+    <string name="discover">découvrir</string>
+    <string name="title_activity_ay_welcome">Bienvenue</string>
+    <string name="no_text_to_speak">pas de texte à prononcer</string>
+    <string name="current_list">Liste actuelle</string>
+    <string name="build_list">Construire la liste</string>
+    <string name="show_verses">afficher les versets</string>
+    <string name="as_mixed">en mélange</string>
+    <string name="text_size">Taille du texte</string>
+
+    <string name="theme">Thème</string>
+    <string name="dark">Sombre</string>
+    <string name="blue">Bleu</string>
+    <string name="cyan">Cyan</string>
+    <string name="orange">Orange</string>
+    <string name="purple">Violet</string>
+    <string name="red">Rouge</string>
+    <string name="grey">Gris</string>
+    <string name="green">Vert</string>
+    <string name="yellow">Jaune</string>
+    <string name="ocher">Ocre</string>
+    <string name="okay_verry_nice">excellente</string>
+    <string name="seek_rand">liste de mots</string>
+    <string name="to_learn">à apprendre</string>
+    <string name="add_cur_vers" translatable="false">add cur vers</string>
+    <string name="show_next">afficher suivant</string>
+    <string name="wrong_words">mots erronés</string>
+    <string name="allow_partword">autoriser mot partiel</string>
+    <string name="record_language">enregistrer langue</string>
+    <string name="online_bibel_version_ausw_hlen">choisir version bible en ligne</string>
+    <string name="bad">oups</string>
+    <string name="okay_nice">d\'accord, bien</string>
+    <string name="nice">bien</string>
+    <string name="default_light_theme" translatable="false">Light</string>
+    <string name="default_night_theme" translatable="false">Night</string>
+    <string name="allow_part_reco" translatable="false">use part recognition</string>
+    <string name="do_speak_now">Parler maintenant !!</string>
+    <string name="go_on_after">continuer après</string>
+    <string name="check_next">vérifier suivant</string>
+    <string name="speech_commands">Commandes vocales</string>
+    <string name="next_word">mot suivant</string>
+    <string name="speak_and">+ parler</string>
+    <string name="retry_word">réessayer</string>
+    <string name="keep_screen_on">garder l\'écran allumé</string>
+    <string name="shuffle">mélanger</string>
+    <string name="difficulty">difficulté</string>
+    <string name="manage">gérer..</string>
+    <string name="supi_all_words_right_spoken">super, TOUS les mots correctement prononcés!!</string>
+    <string name="chapter">Chapitre</string>
+    <string name="selectedi">sélectionné</string>
+    <string name="search_one_or_more_words">chercher un ou plusieurs mots</string>
+    <string name="match_case">respecter la casse</string>
+    <string name="record_stopped">enregistrement arrêté</string>
+    <string name="start_new_when">démarrer nouveau quand</string>
+    <string name="error_words">erreurs</string>
+    <string name="restart_when_wrong_clicked">redémarrer quand mauvais cliqué</string>
+    <string name="vers_of_the_day">verset du jour</string>
+    <string name="as_book">comme Livre</string>
+    <string name="chapter_change">Changement de chapitre</string>
+    <string name="speak_options">Options de parole</string>
+    <string name="pause_after_biblevers">Pause après versets bibliques</string>
+    <string name="seconds">Secondes</string>
+    <string name="repeat_bibleverses">Répéter les versets bibliques</string>
+    <string name="Title_speech2">réciter</string>
+    <string name="clear_all_fields">Effacer tous les champs</string>
+    <string name="further_word">plus loin</string>
+    <string name="speak_word">parler</string>
+    <string name="search_list_of_verses">dans la liste des versets</string>
+    <string name="list_search_whole_bible">Recherche dans toute la Bible...</string>
+    <string name="select_random_range">Sélectionner une plage aléatoire</string>
+    <string name="one_book_only">un seul livre</string>
+    <string name="book_name_short">Nom du livre (abrégé)</string>
+    <string name="select_search_range">Sélectionner la plage de recherche</string>
+    <string name="match_whole_word">Associer le mot entier</string>
+    <string name="app_range">Plage d\'applications</string>
+    <string name="base">facile</string>
+    <string name="more">plus</string>
+    <string name="all">toute</string>
+
+</resources>

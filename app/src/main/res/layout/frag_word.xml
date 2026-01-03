@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <!-- Vertical Orientation set
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="trust.jesus.discover.fragis.ClickWfrag"
+
+    -->
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/llSpeko"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="2dp"
+        android:paddingBottom="2dp">
+
+        <org.apmem.tools.layouts.FlowLayout
+            android:id="@+id/flowLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:layout_marginBottom="1dp"
+            android:orientation="horizontal"
+            android:paddingBottom="52dp">
+            <!-- Vertical Orientation set -->
+
+        </org.apmem.tools.layouts.FlowLayout>
+
+    </ScrollView>
+    <!-- android:text="@string/s"  -->
+    <LinearLayout
+        android:id="@+id/llSpeko"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/llBottom"
+        android:gravity="center_horizontal"
+        >
+
+
+    <trust.jesus.discover.little.ShTextView
+
+        android:id="@+id/wtvSpeak"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="8dp"
+        app:drawableEndCompat="@drawable/text_to_speech"
+        android:textSize="22sp"
+        />
+
+    <TextView
+        android:text=""
+        android:id="@+id/ayheaderTextView"
+        android:layout_marginBottom="9dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:drawableStartCompat="@drawable/arrows_shuffle"
+        app:drawableEndCompat="@drawable/arrows_shuffle"
+        android:layout_marginStart="15dp"
+        android:textSize="18sp"
+        />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_horizontal"
+        android:id="@+id/llBottom"
+        >
+
+        <TextView
+            android:id="@+id/tvrepeat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:drawableEndCompat="@drawable/repeat"
+            android:textSize="17sp"
+            android:layout_marginStart="35dp"
+            android:layout_marginBottom="6dp"
+            android:text="@string/again" />
+
+    <TextView
+        android:text="@string/shuffle"
+        android:id="@+id/tvMischen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="17sp"
+        android:layout_marginStart="25dp"
+        app:drawableEndCompat="@drawable/arrows_shuffle"
+        android:layout_marginBottom="1dp" />
+
+
+
+    </LinearLayout>
+
+</RelativeLayout>

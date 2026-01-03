@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+    <LinearLayout
+        android:id="@+id/llTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="11dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <trust.jesus.discover.little.ShImageButton
+            android:id="@+id/btnRandObst"
+            android:layout_width="53dp"
+            android:layout_height="53dp"
+            android:layout_marginStart="9dp"
+            android:background="@drawable/btn_dyn_back"
+            android:src="@drawable/gears_solid_full"
+            android:textAllCaps="false" />
+
+        <trust.jesus.discover.little.ShButton
+            android:id="@+id/btn_randomvers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="9dp"
+            android:background="@drawable/btn_dyn_back"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="@string/random_vers" />
+
+
+        <trust.jesus.discover.little.ShButton
+            android:id="@+id/btnBible"
+            android:layout_width="66dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:drawablePadding="8dp"
+            android:paddingStart="6dp"
+            android:paddingEnd="9dp"
+            android:text="@string/plus"
+            app:drawableEndCompat="@drawable/text_to_speech" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/tvverscnt"
+        android:layout_below="@+id/llTop"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="32dp">
+
+        <org.apmem.tools.layouts.FlowLayout
+            android:id="@+id/flowLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:layout_marginBottom="55dp"
+            android:orientation="horizontal"> <!-- Vertical Orientation set -->
+
+        </org.apmem.tools.layouts.FlowLayout>
+
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/tvSeekbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/llseekbar"
+        android:textSize="18sp"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="5dp"
+
+        />
+
+    <LinearLayout
+        android:id="@+id/llseekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/tvverscnt"
+        android:layout_marginBottom="11dp"
+        android:orientation="horizontal"
+        android:visibility="invisible">
+
+        <trust.jesus.discover.little.ShButton
+            android:id="@+id/btnseekrund"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:background="@drawable/btn_dyn_back"
+            android:text="@string/seek_rand" />
+
+
+        <trust.jesus.discover.little.ShButton
+            android:id="@+id/btnseekplay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:background="@drawable/btn_dyn_back"
+            android:text="@string/speak_and" />
+
+        <Button
+            android:id="@+id/btnSeekFileDlg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:text="@string/manage" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvverscnt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/tvVerstext"
+        android:textSize="18sp"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="5dp"
+
+        />
+    <TextView
+        android:id="@+id/tvVerstext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/llBottom"
+        android:layout_gravity="center"
+        android:layout_marginStart="9dp"
+        android:layout_marginEnd="9dp"
+        android:gravity="center"
+        android:textSize="19sp" />
+
+
+    <LinearLayout
+        android:id="@+id/llBottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_horizontal">
+
+        <ImageButton
+            android:id="@+id/btnSheetUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="9dp"
+            android:layout_marginBottom="5dp"
+            android:text=""
+            android:background="@drawable/rounded_corner"
+            app:srcCompat="@drawable/outline_arrow_upward_alt_24"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/tvMischen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            app:drawableEndCompat="@drawable/repeat"
+            android:layout_marginBottom="5dp" />
+
+        <TextView
+        android:text=""
+        android:id="@+id/ayheaderTextView"
+        android:layout_marginBottom="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        app:drawableEndCompat="@drawable/arrows_shuffle"
+        android:textSize="18sp"
+        tools:ignore="RelativeOverlap" />
+
+        <trust.jesus.discover.little.ShTextView
+            android:id="@+id/wtvSpeak"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginBottom="5dp"
+            app:drawableEndCompat="@drawable/text_to_speech"
+            android:textSize="18sp"
+            />
+    </LinearLayout>
+
+
+</RelativeLayout>

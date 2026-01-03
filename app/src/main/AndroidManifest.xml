@@ -17,13 +17,20 @@
         <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> no for Ando 10+
  <action android:name="android.intent.action.TTS_SERVICE" />
  <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" tools:ignore="QueryAllPackagesPermission" />
+ adb shell bmgr restore trust.jesus.discover
+ dumpsys backup
     -->
     <queries>
         <intent>
             <action android:name="android.intent.action.TTS_SERVICE" />
         </intent>
     </queries>
-
+    <!--suppress AndroidElementNotAllowed -->
+    <queries>
+        <intent>
+            <action android:name="android.speech.RecognitionService" />
+        </intent>
+    </queries>
     <application
         android:name=".little.Globus"
         android:allowBackup="true"
@@ -82,7 +89,9 @@
         <activity
             android:name=".actis.Reportus"
             android:exported="false"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/Theme.AppCompat.Dialog" />
+        <!--android:theme="@style/AppTheme"
+        -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

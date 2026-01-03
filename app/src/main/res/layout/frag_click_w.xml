@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal">
+
+<!-- app on uptodown rejected 6.10.25  -->
+    <ScrollView
+        android:id="@+id/svRejected"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/tvGucks"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="12dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp">
+
+
+            <trust.jesus.discover.little.ShImageButton
+                android:id="@+id/cwbtspeak"
+                android:layout_width="53dp"
+                android:layout_height="53dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="9dp"
+                android:background="@drawable/btn_dyn_back"
+                android:src="@drawable/text_to_speech"
+                android:textAllCaps="false" />
+
+
+            <TextView
+                android:id="@+id/actvText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/cwbtspeak"
+                android:layout_margin="25dp"
+                android:layout_marginBottom="35dp"
+                android:text=""
+                android:textSize="19sp" />
+
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <TextView
+        android:text=""
+        android:id="@+id/tvGucks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/acflowLayout"
+        android:layout_margin="5dp"
+        android:textSize="13sp"
+        />
+    <org.apmem.tools.layouts.FlowLayout
+        android:id="@+id/acflowLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal"
+        android:paddingBottom="12dp"> <!-- ok Bottom space
+        android:gravity="bottom"
+            android:layout_below="@+id/ctvText" -->
+
+    </org.apmem.tools.layouts.FlowLayout>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tvStatus"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="5dp" />
+
+    <TextView
+        android:id="@+id/tvStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/lreco"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="5dp" />
+
+    <LinearLayout
+        android:id="@+id/lreco"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/llBottom"
+        android:layout_marginBottom="11dp">
+
+        <trust.jesus.discover.little.ShImageButton
+            android:id="@+id/ybtrecord"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="9dp"
+            android:background="@drawable/btn_dyn_back"
+
+            android:src="@drawable/baseline_mic_24"
+            android:visibility="visible" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:indeterminate="true"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </LinearLayout>
+
+
+
+
+
+    <LinearLayout
+        android:id="@+id/llBottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="11dp"
+        android:gravity="center_horizontal">
+
+        <ImageButton
+            android:id="@+id/btnSheetUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="29dp"
+            android:layout_marginBottom="1dp"
+            android:background="@drawable/rounded_corner"
+            app:srcCompat="@drawable/outline_arrow_upward_alt_24"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/tvMischen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:textSize="23sp"
+            app:drawableEndCompat="@drawable/repeat"
+            android:layout_marginBottom="1dp" />
+
+        <TextView
+            android:id="@+id/acheaderTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginBottom="1dp"
+            app:drawableEndCompat="@drawable/arrows_shuffle"
+
+            android:textSize="23sp" />
+
+        <trust.jesus.discover.little.ShTextView
+            android:id="@+id/wtvSpeak"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="22dp"
+            android:layout_marginBottom="6dp"
+            android:textSize="18sp"
+            app:drawableEndCompat="@drawable/text_to_speech" />
+
+    </LinearLayout>
+<!--android:drawableEnd="@drawable/arrows_shuffle"
+drawableStartCompat-->
+
+</RelativeLayout>

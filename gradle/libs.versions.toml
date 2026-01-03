@@ -1,6 +1,10 @@
 [versions]
-agp = "8.12.3"
+agp = "8.13.2"
 gson = "2.13.2"
+htmlcleaner = "2.29"
+htmlspanner = "1.0.2"
+htmlTextview = "4.0"
+htmlTextviewVersion = "1.0.15"
 kotlin = "2.2.21"
 coreKtx = "1.17.0"
 junit = "4.13.2"
@@ -24,6 +28,9 @@ composeBom = "2025.11.00"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+html-textview = { module = "org.sufficientlysecure:html-textview", version.ref = "htmlTextview" }
+htmlcleaner = { module = "net.sourceforge.htmlcleaner:htmlcleaner", version.ref = "htmlcleaner" }
+htmlspanner = { module = "it.sysdata.mobile:htmlspanner", version.ref = "htmlspanner" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -48,6 +55,7 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 okhttp-v4110 = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttpVersion" }
+sakacyber-html-textview = { module = "com.github.sakacyber:html-textview", version.ref = "htmlTextviewVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

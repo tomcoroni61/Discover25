@@ -1,0 +1,36 @@
+<vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="32dp"
+    android:tint="?attr/btn_img_colour"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path
+      android:pathData="M18,4l3,3l-3,3"
+      android:strokeLineJoin="round"
+      android:strokeWidth="2"
+      android:fillColor="#00000000"
+      android:strokeColor="?attr/btn_img_colour"
+      android:strokeLineCap="round"/>
+  <path
+      android:pathData="M18,20l3,-3l-3,-3"
+      android:strokeLineJoin="round"
+      android:strokeWidth="2"
+      android:fillColor="#00000000"
+      android:strokeColor="?attr/btn_img_colour"
+      android:strokeLineCap="round"/>
+  <path
+      android:pathData="M3,7h3a5,5 0,0 1,5 5a5,5 0,0 0,5 5h5"
+      android:strokeLineJoin="round"
+      android:strokeWidth="2"
+      android:fillColor="#00000000"
+      android:strokeColor="?attr/btn_img_colour"
+      android:strokeLineCap="round"/>
+  <path
+      android:pathData="M3,17h3a5,5 0,0 0,5 -5a5,5 0,0 1,5 -5h5"
+      android:strokeLineJoin="round"
+      android:strokeWidth="2"
+      android:fillColor="#00000000"
+      android:strokeColor="?attr/btn_img_colour"
+      android:strokeLineCap="round"/>
+</vector>

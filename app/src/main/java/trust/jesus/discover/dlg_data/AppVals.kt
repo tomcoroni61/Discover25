@@ -119,6 +119,13 @@ class AppVals : Dateien() {
         return defValue
     }
 
+    fun valueWriteLong(valueName: String?, value: Long) {
+         valueWriteString(valueName, value.toString())
+    }
+
+    fun valueReadLong(valueName: String?, defValue: Long): Long {
+        return valueReadString(valueName, defValue.toString())!!.toLong()
+    }
 
     private fun readBool(): Boolean {
         try {

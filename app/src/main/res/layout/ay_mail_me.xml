@@ -1,39 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    tools:context=".actis.Reportus"
     android:id="@+id/main"
-    android:layout_marginTop="40dp"
-
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:layout_marginTop="4dp"
+    android:background="@drawable/btn_dyn_back"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:context=".actis.Reportus">
 
-    <TextView
+    <EditText
         android:id="@+id/edMessage"
         android:layout_width="match_parent"
         android:layout_height="306dp"
+        android:layout_margin="11dp"
         android:ems="10"
         android:gravity="start|top"
-        android:textIsSelectable="true" />
+        android:inputType="textMultiLine"
+        android:textIsSelectable="true"
+        tools:ignore="Autofill,LabelFor" />
 
-    <Button
-        android:text="@string/send_me_email"
-        android:id="@+id/btSendMa"
+    <TextView
         android:layout_width="wrap_content"
-        android:layout_marginStart="69dp"
-        android:layout_below="@+id/edMessage"
         android:layout_height="wrap_content"
-        android:onClick="adSendMailClick"
-        />
+        android:linksClickable="true"
+        android:textColorLink="?attr/tabSelected_colour"
+        android:textSize="17sp"
+        android:text="@string/CrashReport_MailBody" />
 
-    <Button
-        android:text="@string/exit"
-        android:layout_width="120dp"
-        android:layout_toEndOf="@id/btSendMa"
-        android:layout_marginStart="19dp"
-        android:onClick="adSendExitClick"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/edMessage"
-        />
-</RelativeLayout>
+        android:layout_marginTop="11dp"
+        android:gravity="center_horizontal"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:onClick="adAddInfoClick"
+            android:text="@string/add_info" />
+
+        <ImageButton
+            android:layout_width="60dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="9dp"
+            android:background="@drawable/btn_dyn_back"
+            android:contentDescription="@string/bottom_sheet_behavior"
+            android:onClick="adShareCrashClick"
+            android:src="@drawable/ic_share_white_24dp" />
+
+        <ImageButton
+            android:layout_width="60dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="9dp"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/btn_dyn_back"
+            android:contentDescription="@string/bottom_sheet_behavior"
+            android:onClick="adCopyCrashClick"
+            android:src="@drawable/clip_copy_24" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="11dp"
+        android:layout_marginBottom="11dp"
+        android:gravity="center_horizontal">
+
+        <ImageButton
+            android:id="@+id/btSendMa"
+            android:layout_width="60dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="9dp"
+            android:background="@drawable/btn_dyn_back"
+            android:contentDescription="@string/send_me_email"
+            android:onClick="adSendMailClick"
+            android:src="@drawable/mail_forward"
+            android:visibility="visible" />
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="19dp"
+            android:onClick="adSendExitClick"
+            android:text="@string/exit"
+
+            />
+    </LinearLayout>
+</LinearLayout>

@@ -23,7 +23,8 @@
             android:layout_marginEnd="9dp"
             android:background="@drawable/btn_dyn_back"
             android:onClick="btnExitClick"
-            android:src="@drawable/arrow_back_24" />
+            android:src="@drawable/arrow_back_24"
+            tools:ignore="ContentDescription" />
 
         <Button
             android:id="@+id/btn_prevChapter"
@@ -102,22 +103,63 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_alignParentBottom="true"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="11dp"
-                android:layout_marginBottom="5dp"
-                android:gravity="center|center_horizontal"
-                android:text="@string/speak"
-                android:textSize="18sp" />
+                >
+
+                <trust.jesus.discover.little.ShImageButton
+                    android:id="@+id/btnSheetMin"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_marginStart="9dp"
+                    android:background="@drawable/rounded_corner"
+                    android:onClick="btnSheetSmalerClick"
+                    app:srcCompat="@drawable/outline_arrow_downward_alt_24"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="11dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_toStartOf="@id/btnVoice"
+                    android:layout_toEndOf="@id/btnSheetMin"
+                    android:gravity="center"
+                    android:text="@string/speak"
+                    android:textSize="25sp" />
+
+                <ImageButton
+                    android:id="@+id/btnVoice"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_toStartOf="@id/btnSheetPlus"
+                    android:background="@drawable/rounded_corner"
+                    android:onClick="btnVoiceSelectClick"
+                    app:srcCompat="@drawable/voice_selection"
+                    tools:ignore="ContentDescription" />
+
+                <ImageButton
+                    android:id="@+id/btnSheetPlus"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="9dp"
+                    android:background="@drawable/rounded_corner"
+                    android:onClick="btnSheetLargerClick"
+                    android:text=""
+                    app:srcCompat="@drawable/outline_arrow_upward_alt_24"
+                    tools:ignore="ContentDescription" />
+
+            </RelativeLayout>
 
             <LinearLayout
                 style="?android:attr/buttonBarStyle"
@@ -128,7 +170,6 @@
                 android:orientation="horizontal">
 
                 <trust.jesus.discover.little.ShButton
-                    android:id="@+id/btn_SpeakChapter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="11dp"
@@ -137,16 +178,14 @@
                     android:text="@string/chapter" />
 
                 <trust.jesus.discover.little.ShButton
-                    android:id="@+id/btn_SpeakSelected"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="11dp"
                     android:background="@drawable/rounded_corner"
                     android:onClick="btnSpeakSelectedClick"
-                    android:text="@string/selected" />
+                    android:text="@string/selectedi" />
 
                 <trust.jesus.discover.little.ShButton
-                    android:id="@+id/btn_StopSpeak"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="11dp"
@@ -207,7 +246,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="5dp"
                 android:gravity="center|center_horizontal"
-                android:text="Chapter change"
+                android:text="@string/chapter_change"
                 android:textSize="18sp" />
 
             <androidx.appcompat.widget.SwitchCompat
@@ -219,7 +258,68 @@
                 android:padding="11dp"
                 android:paddingStart="44dp"
                 android:paddingEnd="32dp"
-                android:text="as Book" />
+                android:text="@string/as_book" />
+
+            <TextView
+                android:text="@string/speak_options"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="11dp"
+                android:layout_marginBottom="5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:text="@string/pause_after_biblevers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="11dp"
+                    android:layout_marginBottom="5dp" />
+
+
+                <Spinner
+                    android:id="@+id/srSpeakVersPause"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:text="@string/seconds"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginBottom="5dp" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:text="@string/repeat_bibleverses"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="11dp"
+                    android:layout_marginBottom="5dp" />
+
+
+                <Spinner
+                    android:id="@+id/srRepeatVerses"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"

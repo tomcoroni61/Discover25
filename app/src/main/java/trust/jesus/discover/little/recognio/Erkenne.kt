@@ -1,6 +1,6 @@
 package trust.jesus.discover.little.recognio
 
-import android.app.AlertDialog.Builder
+//import android.app.AlertDialog.Builder
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -8,23 +8,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.FOCUS_DOWN
 import android.view.View.VISIBLE
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.view.iterator
 import trust.jesus.discover.R
-import trust.jesus.discover.dlg_data.SuErItem
 import trust.jesus.discover.fragis.SpeechFrag
 
 class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListener {
 
 
     private val mSpeechFrag=speechFrag
-    private var wordidx = 0
+    private var wordIndex = 0
     private var resultsWordIdx = 0
     private val binding=mSpeechFrag.binding
-    private val ttsvals=mSpeechFrag.ttsvals
+    private val ttsvals=mSpeechFrag.vallsTts
     val wordlist: MutableList<String> = ArrayList()
     private val missedWordlist: MutableList<String> = ArrayList()
     private val missedExactWordlist: MutableList<String> = ArrayList()
@@ -37,17 +35,11 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
     private var wa: WordArt = WordArt.RightSpoken
 
 
-    fun getEndDoneText(level: Int): String {
-        var txt = mSpeechFrag.getString(R.string.bad)
-        if (level==100) txt = mSpeechFrag.getString(R.string.okay_verry_nice) else
-            if (level >= 90) txt = mSpeechFrag.getString(R.string.okay_nice) else
-                if (level >= 60) txt = mSpeechFrag.getString(R.string.nice)
-        return txt
-    }
+
     // #############    missedExactWordlist     missedWordlist  things  #######################
     private fun addToMissedWordlist(aWord: String) {
         if (!useMissedList ) return
-        for (i in wordidx..< wordlist.size) {
+        for (i in wordIndex..< wordlist.size) {
             if (wordlist[i] == aWord) {
                 missedExactWordlist.add(wordlist[i])
                 return
@@ -57,10 +49,10 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
     }
     private fun isInExactMissedWordlist(): Boolean {
         for (word in missedExactWordlist) {
-            if (word == wordlist[wordidx]) {
+            if (word == wordlist[wordIndex]) {
                 missedExactWordlist.remove(word)
                 wa = WordArt.RightSpoken
-                checkWort(wordlist[wordidx])
+                checkWort(wordlist[wordIndex])
                 return true
             }
         }
@@ -74,10 +66,10 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
             timhandl.postDelayed(runXxCheck, 111)
         } else {
                 for (word in missedWordlist) {
-                    if (wordidx >= wordlist.size) break
-                    if (sameWord(wordlist[wordidx], word)) {
+                    if (wordIndex >= wordlist.size) break
+                    if (sameWord(wordlist[wordIndex], word)) {
                         wa = WordArt.InMissedList
-                        checkWort(wordlist[wordidx])
+                        checkWort(wordlist[wordIndex])
                         val idx = missedWordlist.indexOf(word)
                         if (idx > -1) missedWordlist.removeAt(idx)
                         //missedWordlist.remove(word) //removes only first occurence
@@ -109,10 +101,10 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
 
     //with all okey
     private fun checkWort(aWord: String): Boolean {
-        val guwo = wordlist[wordidx]
+        val guwo = wordlist[wordIndex]
         // binding.textView.text = aWord + " =? " + guwo  5 100
         if (guwo == aWord) {
-            if (wordidx < wordlist.size-1)
+            if (wordIndex < wordlist.size-1)
                 doFoundWords() //erhöht wordidx
             else {//all okay
                 if (wordlist.size > 8)
@@ -121,7 +113,7 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
                 // binding.tvStatus.text = txt  tvNextWord  tvStatus
                 binding.tvAllPartText.append("Errs = ${ttsvals.helpersCnt}\n\n")
                 stopRecognition(7)
-                binding.tvNextWord.text = getEndDoneText(level)
+                binding.tvNextWord.text = mSpeechFrag.gc.mSpeechEx!!.getEndDoneText(level)
                 if (allRightSpoken())
                     binding.tvNextWord.text = mSpeechFrag.getString(R.string.supi_all_words_right_spoken)
                 val txt = "accuracy $level %    ${binding.tvNextWord.text}"
@@ -134,9 +126,9 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
         return true
     }
     private fun doFoundWords() {
-        if (wordidx >= wordlist.size) return
-        addWort(wordlist[wordidx])
-        wordidx++
+        if (wordIndex >= wordlist.size) return
+        addWort(wordlist[wordIndex])
+        wordIndex++
         lastFoundsWordTime = System.currentTimeMillis()
         timhandl.postDelayed(runNextWord, 1111)
     }
@@ -144,9 +136,9 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
 
     private fun showNextWords() {
         if (ttsvals.showNextWords < 1 || !recognitionManager.contiousRecording
-            || wordidx >= wordlist.size) return
+            || wordIndex >= wordlist.size) return
         var words = ""
-        var cnt = wordidx
+        var cnt = wordIndex
         var nw = 0
         while (cnt < wordlist.size && nw < ttsvals.showNextWords ) {
             words += wordlist[cnt] + " "
@@ -214,26 +206,18 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
     }
 
     fun buildWordList() {
-        var txt = mSpeechFrag.ttsvals.curTTS_SpeakText
-        txt = suerByList(txt)
+        var txt = mSpeechFrag.vallsTts.curTTS_SpeakText
+        txt = mSpeechFrag.gc.mSpeechEx!!.suerByList(txt)
         txt = mSpeechFrag.gc.formatTextUpper(txt)
         wordlist.clear()
-        wordidx = 0
+        wordIndex = 0
         wordlist.addAll( txt.split(' '))
         for (item in wordlist) {
             if (item.isEmpty()) wordlist.remove(item)
         }
         wordlist.remove("")
     }
-    fun suerByList(text: String): String {
-        var text = text
-        for (i in 0..< mSpeechFrag.sueradapter!!.count) {
-            val item: SuErItem? = mSpeechFrag.sueradapter!!.getItem(i)
-            if (item == null) continue
-            text = text.replace(item.suche!!.toRegex(), item.ersetze!!)
-        }
-        return text
-    }
+
     private fun doVersIdxClick() {
         if (!binding.cscroliDedac.isVisible) {
             binding.cscroliFlow.visibility = View.INVISIBLE //here can be Gone or INVISIBLE
@@ -246,10 +230,6 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
         }
     }
 
-    infix fun View.below(view: View) {
-        (this.layoutParams as? RelativeLayout.LayoutParams)?.addRule(RelativeLayout.BELOW, view.id)
-    }
-
     fun doRecordClick() {
         if (recognitionManager.isActivated) {
             mSpeechFrag.binding.textViewi.text = mSpeechFrag.getString(R.string.stop)
@@ -257,8 +237,8 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
         }
         else {
             mSpeechFrag.getSpeakText()
-            if (mSpeechFrag.ttsvals.curTTS_SpeakText.isEmpty()) {
-                mSpeechFrag.gc.globDlg().messageBox(mSpeechFrag.getString(R.string.no_text_to_speak))
+            if (mSpeechFrag.vallsTts.curTTS_SpeakText.isEmpty()) {
+                mSpeechFrag.gc.globDlg().messageBox(mSpeechFrag.getString(R.string.no_text_to_speak), mSpeechFrag.requireContext())
                 //Toast.makeText(this.requireContext(), mSpeechFrag.getString(R.string.please_enter_some_text), Toast.LENGTH_SHORT)                    .show()
                 return
             }
@@ -279,7 +259,7 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
         ttsvals.helpersCnt = 0
         ttsvals.xAutoNextCount = 0
         missedWordlist.clear();         missedExactWordlist.clear()
-        wordidx = 0
+        wordIndex = 0
         //binding.cscroliFlow.visibility = View.INVISIBLE //here INVISIBLE may stay invisible
         binding.cscroliDedac.visibility = VISIBLE
         binding.textViewi.visibility = VISIBLE
@@ -301,34 +281,42 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
     }
 
     private fun stopRecognition(delaySec: Long) {
-        recognitionManager.contiousRecording = false
-        val drawable = ContextCompat.getDrawable(mSpeechFrag.requireContext(), R.drawable.baseline_mic_24)
-        binding.ybtrecord.setImageDrawable(drawable)
-        binding.ybtrecord.visibility = View.INVISIBLE
-        recognitionManager.stopRecognition()
-        //binding.rlSearchBar.visibility = VISIBLE
-        mSpeechFrag.binding.progressBar.isIndeterminate = true
-        binding.progressBar.visibility = View.GONE //must Gone, not INVISIBLE may stay invisible
-        mSpeechFrag.gc.doKeepScreenOn(false)
-        binding.cbKeepScreenOn.visibility = VISIBLE
-        
-        //mSpeechFrag.binding.tvParttext.text = ""
-        mSpeechFrag.binding.tvStatus.text = mSpeechFrag.getString(R.string.record_stopped)
-        //binding.cscroliFlow.visibility = VISIBLE
-        missedWordlist.clear()
-        binding.llDifficulty.visibility = VISIBLE
+        try {
+            recognitionManager.contiousRecording = false
+            val drawable =
+                ContextCompat.getDrawable(mSpeechFrag.requireContext(), R.drawable.baseline_mic_24)
+            binding.ybtrecord.setImageDrawable(drawable)
+            binding.ybtrecord.visibility = View.INVISIBLE
+            recognitionManager.stopRecognition()
+            //binding.rlSearchBar.visibility = VISIBLE
+            mSpeechFrag.binding.progressBar.isIndeterminate = true
+            binding.progressBar.visibility = View.GONE //must Gone, not INVISIBLE may stay invisible
+            mSpeechFrag.gc.doKeepScreenOn(false)
+            binding.cbKeepScreenOn.visibility = VISIBLE
 
-        Handler(Looper.getMainLooper()).postDelayed(
-            {
-                binding.rlSearchBar.visibility = VISIBLE
-                binding.cscroliFlow.visibility = VISIBLE
-                binding.cscroliDedac.visibility = View.INVISIBLE //must INVISIBLE may stay invisible
-                binding.progressBar.visibility = View.GONE //must Gone, not INVISIBLE may stay invisible
-                binding.llCommands.visibility = View.GONE //must Gone, not INVISIBLE may stay invisible
-                binding.ybtrecord.visibility = VISIBLE
-            },
-            delaySec * 1000
-        )
+            //mSpeechFrag.binding.tvParttext.text = ""
+            mSpeechFrag.binding.tvStatus.text = mSpeechFrag.getString(R.string.record_stopped)
+            //binding.cscroliFlow.visibility = VISIBLE
+            missedWordlist.clear()
+            binding.llDifficulty.visibility = VISIBLE
+
+            Handler(Looper.getMainLooper()).postDelayed(
+                {
+                    binding.rlSearchBar.visibility = VISIBLE
+                    binding.cscroliFlow.visibility = VISIBLE
+                    binding.cscroliDedac.visibility =
+                        View.INVISIBLE //must INVISIBLE may stay invisible
+                    binding.progressBar.visibility =
+                        View.GONE //must Gone, not INVISIBLE may stay invisible
+                    binding.llCommands.visibility =
+                        View.GONE //must Gone, not INVISIBLE may stay invisible
+                    binding.ybtrecord.visibility = VISIBLE
+                },
+                delaySec * 1000
+            )
+        } catch (e: Exception) {
+            mSpeechFrag.gc.logl("stopRecognition $e", true)
+        }
 
     }
     fun doLearnLevel() {
@@ -431,7 +419,7 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
 
         if (recognitionManager.isActivated) {
             recognitionManager.stopRecognition()
-            var startidx = wordidx - 4
+            var startidx = wordIndex - 4
             if (startidx < 0) startidx = 0
             var cnt = startidx + 8
             if (cnt > wordlist.size) cnt = wordlist.size
@@ -452,7 +440,7 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
             wa = WordArt.RightSpoken
             return true
         }//math.abs
-        //mSpeechFrag.gc.log( "sameWord: $word1  $word2  ${ttsvals.usePartWord}\n\n" )
+        //mSpeechFrag.gc.log( "sameWord: $word1  $word2  ${vallsTts.usePartWord}\n\n" )
         if ( !ttsvals.usePartWord ) return false
 
         var sword = ""
@@ -477,18 +465,6 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
                 }
             }
             val level = (okicnt * 100 / sword.length)
-            //mSpeechFrag.gc.log("partWord: $sword  in $lword  level: $level\n\n")
-            /*var cnt = 0
-            var cnt2 = 0
-            while (cnt < dl) {
-                if (word1[cnt] == word2[cnt2]) {
-                    okicnt++
-                    cnt2++
-                } else {
-                    cnt2++
-                }
-                cnt++
-            }*/
 
             if (level > ttsvals.partWordFoundProzent) {
                 wa = WordArt.PartSpoken
@@ -510,11 +486,7 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
             RecognitionStatus.UNAVAILABLE -> {
                 //Log.i("Recognition", "onPrepared: Failure or unavailable")
                 binding.tvStatus.text = "onPrepared: Failure or unavailable"
-                Builder(this.mSpeechFrag.requireContext())
-                    .setTitle("Speech Recognizer unavailable")
-                    .setMessage("Your device does not support Speech Recognition. Sorry!")
-                    .setPositiveButton(android.R.string.ok, null)
-                    .show()
+                mSpeechFrag.gc.globDlg().messageBox("Your device does not support Speech Recognition. Sorry!",mSpeechFrag.requireContext())
             }
 
             RecognitionStatus.Err_RECORD_AUDIO_Permission -> binding.textViewi.text = "Err_RECORD_AUDIO_Permission press again"
@@ -544,7 +516,7 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
 
     override fun onPartialResults(results: List<String>) {
         if (!ttsvals.usePartReco) return
-        resultsWordIdx = wordidx
+        resultsWordIdx = wordIndex
         val text ="PR: " + results.joinToString(separator = "\n")
         binding.tvParttext.text = text
         checkMatch(results)
@@ -552,7 +524,7 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
     override fun onResults(  results: List<String>,  scores: FloatArray?  ) {
         binding.tvStatus.text = "wait!!"
         binding.progressBar.visibility = View.INVISIBLE //View.GONE //must Gone, not INVISIBLE may stay invisible
-        resultsWordIdx = wordidx
+        resultsWordIdx = wordIndex
         val text = results.joinToString(separator = "\n")
         mSpeechFrag.binding.tvParttext.text = text //Mehrfacherkennung
         checkMatch(results)
@@ -563,7 +535,7 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
     private fun checkMatch(matches: List<String>) {
         doingCheckMatch = true
         for (match in matches) {
-            val line = suerByList(match ).uppercase() + " "
+            val line = mSpeechFrag.gc.mSpeechEx!!.suerByList(match ).uppercase() + " "
             binding.tvAllPartText.append("\n~~~~~~~~\n")
             binding.tvAllPartText.append("checkMatchWords: $line\n")
             val list = line.split(' ')
@@ -576,54 +548,49 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
     private fun recoCheckWort(aWord: String): Boolean {//return bool not used
         if (aWord.isEmpty()) return false
         //val aWord = aWordi//suerByList(aWordi)
-        binding.tvAllPartText.append("recoCheckOneWort $aWord with ${wordlist[wordidx]} \n")
+        binding.tvAllPartText.append("recoCheckOneWort '$aWord' with ${wordlist[wordIndex]} \n")
         wa = WordArt.WrongSpoken
         var oki=false
-        if (sameWord(wordlist[wordidx], aWord)) {
+        if (sameWord(wordlist[wordIndex], aWord)) {
             //wa = WordArt.RightSpoken
-            checkWort(wordlist[wordidx])
+            checkWort(wordlist[wordIndex])
             oki = true
         }
-        /*if (!oki && useMissedList && isInmissedWordlist(wordlist[wordidx])) {
-            wa = WordArt.InMissedList
-            checkWort(wordlist[wordidx])
-            oki = true
-        }*/
         if (oki) return true
 
         if (ttsvals.ignoreWords > 0) {
             //binding.tvAllPartText.append(aWord + " recow??\n")
             var cnt = 1
-            if (wordidx + cnt == wordlist.size) {
-                //ttsvals.helpersCnt++
+            if (wordIndex + cnt == wordlist.size) {
+                //vallsTts.helpersCnt++
                 wa = WordArt.NextFound
-                binding.tvAllPartText.append("\nErr? ignoreWords last word  $aWord =? ${wordlist[wordidx]}  Errs = ${ttsvals.helpersCnt}\n")
-                checkWort(wordlist[wordidx])
+                binding.tvAllPartText.append("\nErr? ignoreWords last word  $aWord =? ${wordlist[wordIndex]}  Errs = ${ttsvals.helpersCnt}\n")
+                checkWort(wordlist[wordIndex])
                 return true
             }
-            while (cnt <= ttsvals.ignoreWords && wordidx + cnt < wordlist.size) {
-                if (sameWord(wordlist[wordidx + cnt], aWord)) {
-                    binding.tvAllPartText.append("\nErr? ignoreWords found  $aWord =? ${wordlist[wordidx + cnt]}  Errs = ${ttsvals.helpersCnt}\n")
+            while (cnt <= ttsvals.ignoreWords && wordIndex + cnt < wordlist.size) {
+                if (sameWord(wordlist[wordIndex + cnt], aWord)) {
+                    binding.tvAllPartText.append("\nErr? ignoreWords found  $aWord =? ${wordlist[wordIndex + cnt]}  Errs = ${ttsvals.helpersCnt}\n")
                     wa = WordArt.NextFound
-                    checkWort(wordlist[wordidx])
+                    checkWort(wordlist[wordIndex])
                     if (!frommissedWordlist) {
                         addToMissedWordlist(aWord)
                         binding.tvAllPartText.append("ignoreWords add:  $aWord  to missedWordlist\n")
                     } //neeed for next word
-                    //ttsvals.helpersCnt++ no error..
+                    //vallsTts.helpersCnt++ no error..
                     return true
                 }
                 cnt++
             }
         }
 
-        if (ttsvals.xAutoNext > 0 && resultsWordIdx == wordidx) {
+        if (ttsvals.xAutoNext > 0 && resultsWordIdx == wordIndex) {
             ttsvals.xAutoNextCount++
             if (ttsvals.xAutoNextCount > ttsvals.xAutoNext) {
                 ttsvals.xAutoNextCount = 0
                 wa = WordArt.AutoAdd
                 ttsvals.helpersCnt++
-                checkWort(wordlist[wordidx])
+                checkWort(wordlist[wordIndex])
                 //txt =  "xAutoNext  $aWord xAutoNext\n"
                 //binding.tvGucks.text = txt
                 return true
@@ -640,8 +607,8 @@ class Erkenne (speechFrag: SpeechFrag) : RecognitionCallback, View.OnClickListen
     fun goNextWord() {
         wa = WordArt.WrongSpoken
         ttsvals.helpersCnt++
-        binding.tvAllPartText.append("\nErr goNextWord:  ${wordlist[wordidx]}  \n")
-        checkWort(wordlist[wordidx])
+        binding.tvAllPartText.append("\nErr goNextWord:  ${wordlist[wordIndex]}  \n")
+        checkWort(wordlist[wordIndex])
     }
     fun reciteAgain() {
         doRecordClick()

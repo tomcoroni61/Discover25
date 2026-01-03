@@ -5,7 +5,7 @@ import trust.jesus.discover.little.Globus
 import java.util.Random
 
 open class BaseFragment: Fragment()  {
-    val gc: Globus = Globus.Companion.getAppContext() as Globus
+    val gc: Globus = Globus.getAppContext() as Globus
     val random: Random = Random()
 
     /*

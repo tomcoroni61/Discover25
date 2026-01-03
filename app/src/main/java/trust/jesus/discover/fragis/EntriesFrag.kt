@@ -1,7 +1,5 @@
 package trust.jesus.discover.fragis
 
-import android.Manifest
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -23,6 +21,7 @@ import trust.jesus.discover.dlg_data.CsvData
 import trust.jesus.discover.dlg_data.FileDlg
 import java.util.Locale
 
+
 class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
 
     private lateinit var binding: FragEntrieBinding
@@ -30,10 +29,9 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
     private var curDataidx = 0
     private var waitSec = 10
     private var listBereichPopupWindow: ListPopupWindow? = null
-    private val bereichNames: MutableList<String> = ArrayList()
     private val versionsNames: MutableList<String> = ArrayList()
     private var listVersionsPopupWindow: ListPopupWindow? = null
-    private val Timhandl = Handler(Looper.getMainLooper())
+    private val timHandel = Handler(Looper.getMainLooper())
 
 
 
@@ -42,10 +40,10 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
         binding = FragEntrieBinding.inflate(layoutInflater)
 
         binding.tvBereich.setOnClickListener(this)
-        binding.ybtVersions.setOnClickListener(this)
-        binding.ybtspeakObt.setOnClickListener(this)
+        //binding.ybtVersions.setOnClickListener(this)
+        //binding.ybtspeakObt.setOnClickListener(this)
         binding.ybtspeak.setOnClickListener(this)
-        binding.entriesGetVers.setOnClickListener(this)
+        //binding.entriesGetVers.setOnClickListener(this)
         binding.ybtClear.setOnClickListener(this)
         binding.ybtprevdat.setOnClickListener(this)
         binding.ybtnextdat.setOnClickListener(this)
@@ -57,15 +55,16 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
         binding.ybtloadOrg.setOnClickListener(this)
         binding.ybtopen.setOnClickListener(this)
         binding.ybtsaveAs.setOnClickListener(this)
-        binding.ybcheese.setOnClickListener(this)
-        binding.btBible.setOnClickListener(this)
+        //binding.ybcheese.setOnClickListener(this)
+        //binding.btBible.setOnClickListener(this)
         binding.ybttoLearn.setOnClickListener(this)
         binding.btnAddLearnItem.setOnClickListener(this)
 
         binding.ytvcurSpruchFile.text = gc.spruchFileName()
 
 
-        doBereichListPopup();   doVersionsListPopup()
+        doThemesListPopup();
+        //doVersionsListPopup()
         loadData()
 
 
@@ -90,7 +89,7 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
         override fun run() {
             waitSec--
             if (waitSec > 0) {
-                Timhandl.postDelayed(saveNewName, 1111)
+                timHandel.postDelayed(saveNewName, 1111)
                 return
             }
             val fn = binding.ytvcurSpruchFile.text.toString()
@@ -104,34 +103,34 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
         override fun run() {
             if (binding.yedBereich.selectionEnd - binding.yedBereich.selectionStart > 0) return
             val txt = binding.yedBereich.text.toString()
-            if (txt.length < 3 || bereichNames.size > 1) listBereichPopupWindow!!.show()
+            //listBereichPopupWindow!!.listView?.adapter?.count themesList.size > 1
+            if (txt.length < 3 || gc.csvList()!!.themesList.size > 0) listBereichPopupWindow!!.show()
         }
     }
 
 
-    private fun doBereichListPopup() {
-        bereichNames.clear()
-        val cnt = gc.csvList()!!.dataList.size
-        if (cnt > 2) for (i in 1..<cnt) {
-            val csvData = gc.csvList()!!.dataList[i]
-            csvData.bereich = csvData.bereich.trim()
-            if (!bereichNames.contains(csvData.bereich)) bereichNames.add(csvData.bereich)
-        }
-        bereichNames.sort()
-
+    private fun doThemesListPopup() {
         if (listBereichPopupWindow != null) return
+        binding.yedBereich.onFocusChangeListener = OnFocusChangeListener { view: View?, b: Boolean ->
+            //if (binding.yedBereich == null) return @setOnFocusChangeListener
+            if (view?.isFocused == true) {
+                timHandel.postDelayed(runPopupList, 1111)
+            }
+        }
 
-        listBereichPopupWindow = ListPopupWindow(
-            gc
-        )
+
+
+
+        listBereichPopupWindow = ListPopupWindow(requireContext())
         listBereichPopupWindow!!.setAdapter(
             ArrayAdapter(
-                gc,
-                R.layout.lpw_item, bereichNames
+                requireContext(),//android.R.layout.simple_list_item_2 R.layout.lpw_item
+                R.layout.lpw_item,//must be TextView
+                gc.csvList()!!.themesList
             )
         )
         listBereichPopupWindow!!.anchorView = binding.yedBereich
-        listBereichPopupWindow!!.width = 300
+        listBereichPopupWindow!!.width = 350
         listBereichPopupWindow!!.height = 400
         val drawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.back_dyn)
         listBereichPopupWindow?.setBackgroundDrawable( drawable)
@@ -139,38 +138,33 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
         listBereichPopupWindow!!.isModal = false
         listBereichPopupWindow!!.setOnItemClickListener(this) //setOnClickListener
 
-
-        binding.yedBereich.onFocusChangeListener = OnFocusChangeListener { view: View?, b: Boolean ->
-            //if (binding.yedBereich == null) return @setOnFocusChangeListener
-            if (view?.isFocused == true) {
-                Timhandl.postDelayed(runPopupList, 1111)
-            }
-        }
     }
 
 
     private fun doVersionsListPopup() {
         versionsNames.clear()
+        val version = binding.yedTranslation.text.toString().trim()
         val cnt = gc.csvList()!!.dataList.size
         if (cnt > 2) for (i in 1..<cnt) {
             val csvData = gc.csvList()!!.dataList[i]
             csvData.translation = csvData.translation.trim()
-            if (!versionsNames.contains(csvData.translation)) versionsNames.add(csvData.translation)
+            if (csvData.translation.length >3 && !versionsNames.contains(csvData.translation) &&
+                ( version.length < 3 || !csvData.translation.contains(version)) )
+                    versionsNames.add(csvData.translation)
         }
         versionsNames.sort()
 
         if (listVersionsPopupWindow != null) return
 
-        listVersionsPopupWindow = ListPopupWindow(gc )
+        listVersionsPopupWindow = ListPopupWindow(requireContext() )
         listVersionsPopupWindow!!.setAdapter(
-            ArrayAdapter( gc,
-                R.layout.lpw_item, versionsNames
-            )
-        )
+            ArrayAdapter( requireContext(),
+                R.layout.lpw_item, versionsNames ) )
+
         val drawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.back_dyn)
         listVersionsPopupWindow?.setBackgroundDrawable( drawable)
         listVersionsPopupWindow?.anchorView = binding.yedTranslation
-        listVersionsPopupWindow!!.width = 300
+        listVersionsPopupWindow!!.width = 350
         listVersionsPopupWindow!!.height = 400
 
         listVersionsPopupWindow!!.isModal = false
@@ -182,7 +176,7 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
         binding.yedTranslation.onFocusChangeListener = OnFocusChangeListener { view: View?, b: Boolean ->
             //if (binding.yedBereich == null) return @setOnFocusChangeListener
             if (view?.isFocused == true) {
-                Timhandl.postDelayed(runVersionPopupList, 1111)
+                timHandel.postDelayed(runVersionPopupList, 1111)
             }
         }
     }
@@ -195,7 +189,7 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
     }
 
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        var txt = binding.yedBereich.text.toString() + " " + bereichNames[position]
+        var txt = binding.yedBereich.text.toString() + " " + gc.csvList()?.themesList[position]
         txt = txt.replace("  ", " ")
         binding.yedBereich.setText(txt)
         listBereichPopupWindow!!.dismiss()
@@ -222,20 +216,15 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
         //startActivity(Intent("com.android.settings.TTS_SETTINGS"))
     }
 
-    fun ttsSettingsClick() {
-        gc.ttSgl()?.andoSetttings()
-    }
 
     fun ybtdoSpeakClick() {
-        gc.ttSgl()?.speak(binding.sedVersTxt.text.toString())
+        gc.ttSgl()?.cleanSpeak(binding.sedVersTxt.text.toString())
     }
 
     private fun versDataToListAndFields(csvData: CsvData?) {
         gc.csvList()!!.copyData(csvData!!, curDataItem)
         gc.csvList()!!.dataList.add(curDataidx, csvData)
         setFields()
-        doBereichListPopup()
-        doVersionsListPopup()
         gc.toast("Data added")
     }
 
@@ -247,30 +236,39 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
 
 
     fun ybtAddDataClick() {
+        if (gc.csvList()!!.hasDataText(binding.sedVersTxt.text.toString())) {
+            gc.globDlg().messageBox("Text already exists", requireContext())
+            return
+        }
         val csvData = CsvData()
         fieldsToItem(csvData) //
-        //gc.askDlg("Text doppelt, dennoch hinzufügen?", () -> adl(csvData)); kapput?
         versDataToListAndFields(csvData)
         backUpAndSave("add")
     }
+/*
 
+ */
     fun btnAddLearnItemClick() {
+        if (gc.csvList()!!.hasDataText(gc.lernItem.text)) {
+            gc.globDlg().messageBox("Text already exists", requireContext())
+            return
+        }
         gc.lernItem.bereich = ""
-        versDataToListAndFields(gc.lernItem.tocsvData())
+            versDataToListAndFields(gc.lernItem.tocsvData())
         backUpAndSave("addLearn")
     }
     private fun ybtChangeDataClick() {
         fieldsToItem(gc.csvList()!!.dataList[curDataidx] )
         //gc.csvList()!!.copyData(curDataItem, gc.csvList()!!.dataList[curDataidx])
         backUpAndSave("change")
-        doBereichListPopup();   doVersionsListPopup()
+        //doVersionsListPopup()
     }
     private fun backUpAndSave(backAdd: String) {
         val oldName = gc.spruchFileName().toString()
         val newName = oldName.replace(".csv", "", true) + backAdd + ".csv"
         gc.dateien().backUpPrivateTextFile(oldName,newName)
         gc.csvList()!!.saveToPrivate(gc.spruchFileName(), '#')
-        doBereichListPopup();   doVersionsListPopup()
+        //doVersionsListPopup()
     }
     fun ybtSearchClick() {
         val idx = gc.csvList()!!.findText(binding.yedSearchTxt.text.toString(), curDataidx + 1)
@@ -281,25 +279,25 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
     }
 
     //  START         **************  extra save / load / restore / share ....   START
-    fun ybtloadOrgDataClick() {
+    fun ybtLoadOrgDataClick() {
         val fn = getString(R.string.spruch_csv)
         if (!gc.dateien().assetFileToPrivate(fn)) {
-            gc.Logl("failed get org", true)
+            gc.logl("failed get org", true)
             return
         }
-        gc.csvList()!!.readFromPrivate(fn, '#')
-
         binding.ytvcurSpruchFile.text = fn
         gc.appVals().valueWriteString("eCurDataFile", fn)
+        if (!gc.csvList()!!.readFromPrivate(fn, '#'))
+            gc.toast("failed to load: $fn") else//should never be...
+                ybtNextDataClick()
     }
 
-    fun ybtshareDataClick() {
+    fun ybtShareDataClick() {
         gc.dateien().shareFile(gc.spruchFileName(), requireContext())
     }
 
     fun ybtSaveAsClick() {
-        val fileDlg = FileDlg(
-            gc.mainActivity!!,
+        val fileDlg = FileDlg(requireContext(),
             "FileSave",  //or FileSave or FileSave..  ..= chosenDir with dir | or FileOpen
             ".csv"
         ) { chosenDir: String? ->
@@ -313,7 +311,7 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
 
     fun ybtOpenClick() {
         val fileDlg = FileDlg(
-            gc.mainActivity!!,
+            requireContext() ,// no: gc.mainActivity!! = no theme...
             "FileOpen",  //or FileSave or FileSave..  ..= chosenDir with dir | or FileOpen
             ".csv"
         ) { chosenDir: String? ->
@@ -326,31 +324,22 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
         fileDlg.chooseFileOrDir(gc.filesDir.absolutePath)
     }
 
-    private val PICKFILE_RESULT_CODE = 123
-    fun ybtChooserClickOld() { //import out use share
-        if (!gc.checkPermissions(true, Manifest.permission.READ_EXTERNAL_STORAGE)) return
-        val intent: Intent?
-        //https://developer.android.com/training/data-storage/shared/documents-files?hl=de
-        val chooseFile = Intent(Intent.ACTION_GET_CONTENT) //ACTION_OPEN_DOCUMENT
-        chooseFile.addCategory(Intent.CATEGORY_OPENABLE)
-        chooseFile.type = "text/plain"
-        //ne chooseFile.setType("*/*"); = alle or text/*  = all text like rtf, html jons
+    /*
+        private val PICKFILE_RESULT_CODE = 123
+
+        fun ybtChooserClick() {//import out use share
+            if (!gc.checkPermissions(true, Manifest.permission.READ_EXTERNAL_STORAGE)) return
+            val intent: Intent?
+            //https://developer.android.com/training/data-storage/shared/documents-files?hl=de
+            val chooseFile = Intent(Intent.ACTION_GET_CONTENT) //ACTION_OPEN_DOCUMENT
+            chooseFile.addCategory(Intent.CATEGORY_OPENABLE)
+            chooseFile.type = "text/plain"
+
         intent = Intent.createChooser(chooseFile, "Choose a file")
         gc.mainActivity!!.startActivityForResult(intent, PICKFILE_RESULT_CODE)
     }
 
-    fun ybtChooserClick() {//import out use share
-        if (!gc.checkPermissions(true, Manifest.permission.READ_EXTERNAL_STORAGE)) return
-        val intent: Intent?
-        //https://developer.android.com/training/data-storage/shared/documents-files?hl=de
-        val chooseFile = Intent(Intent.ACTION_GET_CONTENT) //ACTION_OPEN_DOCUMENT
-        chooseFile.addCategory(Intent.CATEGORY_OPENABLE)
-        chooseFile.type = "text/plain"
-        //ne chooseFile.setType("*/*"); = alle or text/*  = all text like rtf, html jons
-        intent = Intent.createChooser(chooseFile, "Choose a file")
-        gc.mainActivity!!.startActivityForResult(intent, PICKFILE_RESULT_CODE)
-    }
-
+ */
     //private String displayName = null;
 
 
@@ -373,6 +362,10 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
             "%d",
             gc.csvList()!!.dataList.size - 1
         )
+        binding.ytvDataVers.text = curDataItem.vers
+        binding.ytvGlobeVers.text = gc.lernItem.vers
+        doVersionsListPopup()
+        gc.csvList()?.doThemesList(binding.yedBereich.text.toString())
     }
 
 
@@ -503,7 +496,7 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
             val translationEd = binding.yedTranslation.text.toString()//gc.bolls()!!.bibelVersionShort(binding.yedTranslation.text.toString())
             val bs = binding.yedBibelstelle.text.toString()
             crashcnt=2
-            val bibleVerse = gc.bBlparseBook()!!.parseBibelStelle(bs)
+            val bibleVerse = gc.bBlparseBook()!!.parseBiblePassage(bs)
             val bookNum = gc.bBlparseBook()!!.bookNumber(bibleVerse.bookName)
             fetchBollsBibleVerses (translationEd, bookNum.toString(), bibleVerse.chapter,
                 bibleVerse.startVerse, bibleVerse.endVerse   )
@@ -512,7 +505,7 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
             //fetchSupiBibleVerse(bvShort, bs)
                // bibelvers.chapter.toString(), bibelvers.startVerse.toString())
         } catch (e: Exception) {
-            gc.Logl("MA_Crash Nr: " + crashcnt + " Msg " + e.message, true)
+            gc.logl("MA_Crash Nr: " + crashcnt + " Msg " + e.message, true)
             binding.sedVersTxt.setText(e.message)
         }
     }
@@ -545,12 +538,12 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
             crashcnt=2
             //binding.sedVersTxt.setText(bvShort) bibelVersionShort
             val bibelvers = gc.bBlparseBook()!!.parse(bs)//binding.yedBibelstelle.text.toString()
-            gc.Logl(bibelvers.toString(), false)
-            gc.lernItem.numVers = bibelvers.startVerse
+            gc.logl(bibelvers.toString(), false)
+            gc.lernItem.numVersStart = bibelvers.startVerse
             fetchBibleChapter(bvShort, bibelvers.bookNumber.toString(),
                 bibelvers.chapter.toString())
         } catch (e: Exception) {
-            gc.Logl("MA_Crash Nr: " + crashcnt + " Msg " + e.message, true)
+            gc.logl("MA_Crash Nr: " + crashcnt + " Msg " + e.message, true)
             binding.sedVersTxt.setText(e.message)
         }
     }
@@ -571,7 +564,7 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
 
                             gc.lernItem.numBook = bookNum.toInt()
                             gc.lernItem.numChapter = chapter.toInt()*/
-                            gc.startBibleActivity(gc.lernItem.numVers)
+                            gc.startBibleActivity(gc.lernItem.numVersStart)
                         }
                     }
             } catch (e: Exception) {
@@ -592,7 +585,7 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
     override fun onClick(p0: View?) {
         when (p0!!.id) {
             R.id.tvBereich -> doPopUpClick()
-            R.id.ybtspeakObt -> ttsSettingsClick()
+            //R.id.ybtspeakObt -> ttsSettingsClick()
             R.id.ybtspeak -> ybtdoSpeakClick()
             R.id.ybtClear -> ybtclearFieldsClick()
             R.id.ybtprevdat -> ybtPrevDataClick()
@@ -602,14 +595,14 @@ class EntriesFrag: BaseFragment(), View.OnClickListener, OnItemClickListener {
             R.id.ybtdele -> ybtDeleDataClick()
             R.id.ybtchange -> ybtChangeDataClick()
             R.id.ybtsearch -> ybtSearchClick()
-            R.id.ybtshareData -> ybtshareDataClick()
-            R.id.ybtloadOrg -> ybtloadOrgDataClick()
+            R.id.ybtshareData -> ybtShareDataClick()
+            R.id.ybtloadOrg -> ybtLoadOrgDataClick()
             R.id.ybtopen -> ybtOpenClick()
             R.id.ybtsaveAs -> ybtSaveAsClick()
-            R.id.ybcheese -> ybtChooserClick()
-            R.id.entriesGetVers -> ybtGetVersTextClick()
-            R.id.ybtVersions -> ybtVersionsClick()
-            R.id.btBible -> btBibleClick()
+            //R.id.ybcheese -> ybtChooserClick()
+            //R.id.entriesGetVers -> ybtGetVersTextClick()
+            //R.id.ybtVersions -> ybtVersionsClick()
+            //R.id.btBible -> btBibleClick()
             R.id.ybttoLearn -> ybttoLearnClick()
         }
     }

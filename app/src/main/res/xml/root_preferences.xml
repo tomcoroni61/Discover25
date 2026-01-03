@@ -26,19 +26,19 @@ app:title="@string/preference_category_bible_version_title"
             app:defaultValue="nt"
             app:entries="@array/rand_where_entries"
             app:entryValues="@array/rand_where_value"
-            app:title="Select Random Range"
+            app:title="@string/select_random_range"
             app:summary="%s"
             app:useSimpleSummaryProvider="false" />
 
         <SwitchPreferenceCompat
             app:key="one_book_only"
-            app:title="one book only" />
+            app:title="@string/one_book_only" />
 
         <EditTextPreference
             app:allowDividerBelow="true"
             app:dependency="one_book_only"
             app:key="rand_bookname"
-            app:title="Book Name (short)"
+            app:title="@string/book_name_short"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
@@ -65,7 +65,7 @@ app:title="@string/preference_category_bible_version_title"
             app:defaultValue="nt"
             app:entries="@array/search_where_entries"
             app:entryValues="@array/search_where_value"
-            app:title="Select Search Range"
+            app:title="@string/select_search_range"
             app:summary="%s"
             app:useSimpleSummaryProvider="false" />
 
@@ -75,7 +75,7 @@ app:title="@string/preference_category_bible_version_title"
 
         <SwitchPreferenceCompat
             app:key="match_whole"
-            app:title="match whole word" />
+            app:title="@string/match_whole_word" />
 
         <EditTextPreference
             app:key="search_word"

@@ -8,7 +8,6 @@ import android.widget.TextView
 import trust.jesus.discover.R
 import trust.jesus.discover.dlg_data.LvAdapt
 import trust.jesus.discover.dlg_data.SuErItem
-import trust.jesus.discover.little.Globus
 
 class SuerAdapter(context: Context) : LvAdapt<SuErItem?>(context, android.R.layout.simple_list_item_2) {
     private val mInflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -37,9 +36,9 @@ class SuerAdapter(context: Context) : LvAdapt<SuErItem?>(context, android.R.layo
         }
         if (item != null) {
             holder.tvSuch?.text = item.suche
-            holder.tvSuch?.setBackgroundColor(item.ItemBakColor)
+            holder.tvSuch?.setBackgroundColor(item.itemBakColor)
             holder.tvErsetz?.text = item.ersetze
-            holder.tvErsetz?.setBackgroundColor(item.ItemBakColor)
+            holder.tvErsetz?.setBackgroundColor(item.itemBakColor)
         }
         return view
     }
@@ -49,7 +48,7 @@ class SuerAdapter(context: Context) : LvAdapt<SuErItem?>(context, android.R.layo
         this.clear()
         while (gc.dateien().readLine()) {
             val item = SuErItem()
-            item.ItemBakColor
+            item.itemBakColor
             item.suche = gc.dateien().rLine
             if (!gc.dateien().readLine()) break
             item.ersetze = gc.dateien().rLine

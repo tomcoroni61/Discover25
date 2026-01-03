@@ -6,6 +6,8 @@ import android.os.Looper
 import android.os.PowerManager
 import android.view.View
 import android.widget.AbsListView
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +21,7 @@ import trust.jesus.discover.bible.BblChapters
 import trust.jesus.discover.bible.dataclasses.VersItem
 import trust.jesus.discover.databinding.ActivityBibleAyBinding
 import trust.jesus.discover.dlg_data.ChooserBcvDlg
+import trust.jesus.discover.dlg_data.TtsDlg
 import trust.jesus.discover.little.Globus
 
 
@@ -29,6 +32,7 @@ class BibleAy : AppCompatActivity(), AbsListView.OnScrollListener {
     private var bookNum: Int = 1;    private var chapter: Int = 1;  private var verseNum: Int = 1
     private var lastIndex: Int = -1
     private var goPrev = false
+    private var speakVersPause = 0;     private var repeatVerses = 0;   private var repeatVersesCnt = 0
     private var adapter: VersViewAdapter? = null
     private val timhandl = Handler(Looper.getMainLooper())
 
@@ -59,8 +63,8 @@ class BibleAy : AppCompatActivity(), AbsListView.OnScrollListener {
     }
     private fun doTitelLine(visiLine: Int) {
         val difi = 1
-        val item = adapter!!.getItem(visiLine + difi)
-        if (item == null ) return //item.nVers==-1 = no vers
+        val item = adapter!!.getItem(visiLine + difi) ?: return
+        //item.nVers==-1 = no vers
         if (item.nBook == bookNum && item.nChapter == chapter && item.nVers == verseNum) return
         bookNum = item.nBook;        chapter = item.nChapter
         verseNum = item.nVers
@@ -75,6 +79,7 @@ class BibleAy : AppCompatActivity(), AbsListView.OnScrollListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         gc.mainActivity?.setBibleTheme(this)
         super.onCreate(savedInstanceState)
+        ErrorHandler.toCatch(this)
         binding = ActivityBibleAyBinding.inflate(layoutInflater)
         gc.mainActivity?.setBibleTheme(this, true)
         setContentView(binding.root)
@@ -97,16 +102,47 @@ class BibleAy : AppCompatActivity(), AbsListView.OnScrollListener {
         viewAsBook = gc.appVals().valueReadBool( "viewAsBook", true)
         binding.switchChapterView.isChecked = viewAsBook
 
+        val ari = arrayOf("0","1", "2", "3", "4", "5", "6", "7", "8", "9")
+        val adapter = ArrayAdapter(this,
+            android.R.layout.simple_spinner_dropdown_item,ari
+        )
+        speakVersPause = gc.appVals().valueReadInt("speakVersPause", speakVersPause)
+        binding.srSpeakVersPause.adapter = adapter
+        binding.srSpeakVersPause.setSelection(speakVersPause)
+        binding.srSpeakVersPause.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                if (speakVersPause != position)
+                    gc.appVals().valueWriteInt("speakVersPause", position)
+                //if (xIgnoreWords != position) dialog.dismiss()
+
+                speakVersPause = position
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {  }
+        }
+
+        repeatVerses = gc.appVals().valueReadInt("repeatVerses", repeatVerses)
+        binding.srRepeatVerses.adapter = adapter
+        binding.srRepeatVerses.setSelection(repeatVerses)
+        binding.srRepeatVerses.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                if (repeatVerses != position)
+                    gc.appVals().valueWriteInt("repeatVerses", position)
+                //if (xIgnoreWords != position) dialog.dismiss()
+
+                repeatVerses = position
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {  }
+        }
         val intent = getIntent()
         //binding.tvCChapter.text = gc.lernItem.chapter
         if (gc.lernItem.chapter.isEmpty()) {
             if (!intent.hasExtra("startVers"))
-                intent!!.putExtra("startVers", gc.lernItem.numVers)
+                intent!!.putExtra("startVers", gc.lernItem.numVersStart)
             fetchBibleChapter(gc.lernItem.translation, bookNum.toString(), chapter.toString())
         }
             else {
                 doVersView()
-                setVersCaps(gc.lernItem.numVers)
+                setVersCaps(gc.lernItem.numVersStart)
             }
 
     }
@@ -381,8 +417,7 @@ class BibleAy : AppCompatActivity(), AbsListView.OnScrollListener {
         if (chapter < 1) return
         speakList.clear()
         for (i in 0..<adapter!!.count) {
-            val item = adapter!!.getItem(i)
-            if (item == null ) return
+            val item = adapter!!.getItem(i) ?: return
             if (item.nBook == bookNum && item.nChapter == chapter) {
                 speakList.add(item)
                 item.positon = i
@@ -391,6 +426,7 @@ class BibleAy : AppCompatActivity(), AbsListView.OnScrollListener {
         //if (txt.isNotEmpty()) gc.ttSgl()?.speak(txt)
         if (speakList.isEmpty()) return
         someFetch = true  //must else "autofetch"
+        repeatVersesCnt = repeatVerses
         timhandl.postDelayed(runSpeaki, 111)
     }
     private val runEndSpeaking: Runnable = Runnable {
@@ -409,15 +445,21 @@ class BibleAy : AppCompatActivity(), AbsListView.OnScrollListener {
             return@Runnable
         }
         if (!gc.isScreenOn()) {
-            var resttext = speakList.joinToString("\n") { it.vers }
-            resttext = gc.doSpeaktext(resttext)
-            gc.ttSgl()?.speak(resttext)
-            timhandl.postDelayed(runEndSpeaking, 3111)
+            gc.ttSgl()?.speakVersList(speakList)
+            timhandl.postDelayed(runEndSpeaking, 6111)
             return@Runnable
         }
 
         speakItem = speakList[0]
-        speakList.removeAt(0)
+        if (repeatVerses > 0) {
+            if (repeatVersesCnt == 0) {
+                speakList.removeAt(0)
+                repeatVersesCnt = repeatVerses + 1
+            }
+            if (repeatVersesCnt > 0) repeatVersesCnt--
+        } else speakList.removeAt(0)
+
+
         val spkText = gc.doSpeaktext( speakItem!!.vers)
 
         gc.ttSgl()?.speak(spkText)
@@ -442,12 +484,15 @@ class BibleAy : AppCompatActivity(), AbsListView.OnScrollListener {
             timhandl.postDelayed(runIsSpeaking, 511)
             return@Runnable
         }
-        timhandl.postDelayed(runSpeaki, 111)
+        timhandl.postDelayed(runSpeaki, ((speakVersPause*1000) + 111).toLong())
     }
     fun btnSpeakSelectedClick(view: View) { // !keep view else crash!
-        val txt = adapter!!.selectedText(true)
-
-        if (txt.isNotEmpty()) gc.ttSgl()?.speak(txt)
+        adapter?.selectedLines(speakList)
+        //if (txt.isNotEmpty()) gc.ttSgl()?.speak(txt)
+        if (speakList.isEmpty()) return
+        someFetch = true  //must else "autofetch"
+        repeatVersesCnt = repeatVerses
+        timhandl.postDelayed(runSpeaki, 311)
         adapter?.unSelectAll()
     }
     fun btnStopSpeakClick(view: View) {
@@ -478,6 +523,17 @@ class BibleAy : AppCompatActivity(), AbsListView.OnScrollListener {
     fun btnChapterViewClick(view: View) {
         viewAsBook = binding.switchChapterView.isChecked
         gc.appVals().valueWriteBool( "viewAsBook", viewAsBook)
+    }
+
+    fun btnSheetSmalerClick(view: View) {
+        binding.nsvSheet.layoutParams.height -= 20
+    }
+    fun btnSheetLargerClick(view: View) {
+        binding.nsvSheet.layoutParams.height += 20
+    }
+    fun btnVoiceSelectClick(view: View) {
+        val ttsDlg = TtsDlg(this, R.style.AlertDialogCustom)
+        ttsDlg.show()
     }
 
 

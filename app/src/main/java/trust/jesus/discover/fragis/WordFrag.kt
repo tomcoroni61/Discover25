@@ -5,33 +5,32 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.view.children
 import androidx.core.view.iterator
 import trust.jesus.discover.R
-import trust.jesus.discover.databinding.FragmentWordBinding
+import trust.jesus.discover.databinding.FragWordBinding
 import androidx.core.view.size
 
 class WordFrag : BaseFragment(), View.OnClickListener {
 
-    private lateinit var binding: FragmentWordBinding
+    private lateinit var binding: FragWordBinding
     private val okList: MutableList<String?> = ArrayList()
-    private val viewList: MutableList<View?> = ArrayList()
-    private var mischCount = 0;    private var userMoves = 0;   private var okiCount = 0
+    private val okListBak: MutableList<String?> = ArrayList()
+    private val viewStartList: MutableList<View?> = ArrayList()
+    private val viewMixList: MutableList<View?> = ArrayList()
+    private var mischCount: Int = 0;    private var userMoves = 0;   private var okiCount = 0
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?  ): View {
         // Inflate the binding.flowLayout for this fragment
         //return inflater.inflate(R.binding.flowLayout.fragment_word, container, false)
-        binding = FragmentWordBinding.inflate(layoutInflater)
+        binding = FragWordBinding.inflate(layoutInflater)
         val rootView: View = binding.getRoot()
 
         binding.wtvSpeak.setOnClickListener(this)
         binding.ayheaderTextView.setOnClickListener(this)
-        binding.etvTxtShow.setOnClickListener(this)
         binding.tvMischen.setOnClickListener(this)
         binding.tvrepeat.setOnClickListener(this)
-
         loadText()
         return rootView
     }
@@ -44,26 +43,27 @@ class WordFrag : BaseFragment(), View.OnClickListener {
 
     fun loadText() {
         //gc.Logl("STARTText: $curVers", true)
-        gc.setVersTitel(curVers)
+        gc.lernItem.setVersTitel() //gc.setVersTitel(curVers)
         if (curVers == gc.lernItem.vers) return
         curVers = gc.lernItem.vers
-        gc.setVersTitel(curVers)
+        gc.lernItem.setVersTitel() //gc.setVersTitel(curVers)
         //gc.Logl("loadText: $curVers", true)
         var text: String = gc.lernItem.text
         if (gc.lernItem.partText.length>9)
             text = gc.lernItem.partText
 
         if (text.length < 5) return
+        viewStartList.clear();      viewMixList.clear()
         binding.flowLayout.removeAllViews()
-        okList.clear()
+        okList.clear();     okListBak.clear()
         text = gc.formatTextUpper(text)
-        gc.Logl(text, false)
+        gc.logl(text, false)
         var wort = StringBuilder()
         var cnt = 0
         for (i in 0..<text.length) {
             val c = text[i]
             if (c == ' ') {
-                addWort(wort.toString(), cnt)
+                addWort(wort.toString(), cnt)//with okList.add(wd)
                 //addWort(" ");
                 wort = StringBuilder()
                 cnt++
@@ -72,6 +72,9 @@ class WordFrag : BaseFragment(), View.OnClickListener {
         if (wort.isNotEmpty()) {
             addWort(wort.toString(), cnt) //addWort(" ");
         }
+        //doBackList()
+        okListBak.addAll(okList)
+        viewStartList.addAll(binding.flowLayout.children)
         mischViews()
         //binding.ayheaderTextView.text = gc.lernItem.vers
     }
@@ -80,7 +83,6 @@ class WordFrag : BaseFragment(), View.OnClickListener {
         val txt = "moves: $userMoves || $mischCount"
         binding.ayheaderTextView.text = txt
     }
-    fun txtClick() {  gc.globDlg().showPopupWin(gc.lernItem.text)    }
 
     fun tvSpeackClick() {
         if (okList.size > 11) {
@@ -93,13 +95,21 @@ class WordFrag : BaseFragment(), View.OnClickListener {
                 gc.ttSgl()?.speak(txt.lowercase())
 
         } else
-            gc.ttSgl()!!.speak(gc.lernItem.text)
+            gc.ttSgl()!!.cleanSpeak(gc.lernItem.text)
     }
 
+    private var mcLast = 0
     fun mischViews() {
+
+        //okList.clear();     okList.addAll(okListBak)
         val cnt: Int = binding.flowLayout.size
         if (cnt < 5) return
         var mc = 5 + random.nextInt(cnt/5)
+        for (i in 0..21) {
+            if (mcLast>0 && mc==mcLast)
+                mc = 5 + random.nextInt(cnt/5)
+        }
+        mcLast = mc
         var idx: Int
         var idx2: Int //textView.setBackgroundResource(R.drawable.rounded_corner)
         mischCount = 0
@@ -120,10 +130,12 @@ class WordFrag : BaseFragment(), View.OnClickListener {
             }
             mc--
         }
+        //for (item in binding.flowLayout)
+          //  (item as TextView).setOnClickListener { view1: View? -> this.wordClick(view1)  }
         removeView = null
         userMoves = 0
-        doCountThing()
-        doBackList()
+        //doCountThing()
+        doBackList(viewMixList)
         doCountThing()
     }
 
@@ -133,33 +145,33 @@ class WordFrag : BaseFragment(), View.OnClickListener {
         val vText = (view as TextView).text.toString()
         val riPl = vText == okList[idx]
 
-        if (riPl) view.setBackgroundResource(R.drawable.richtigplaz) else view.setBackgroundResource(
-            R.drawable.rounded_corner
-        )
+        if (riPl) view.setBackgroundResource(R.drawable.richtigplaz) else
+            view.setBackgroundResource( R.drawable.rounded_corner  )
     }
 
     private fun wordClick(view1: View?) {
         val tv = view1 as TextView
         val txt = tv.text.toString()
         val viewIdx: Int = getViewIdx(tv)
+        if (viewIdx < 0 || viewIdx >=okList.size)
+            return
         if (removeView != null) {
             if (removeView === tv) {
                 removeView!!.setBackgroundResource(R.drawable.rounded_corner)
                 removeView = null
             } else {
-                if (viewIdx > -1) {
-                    binding.flowLayout.removeView(removeView)
-                    binding.flowLayout.addView(removeView, viewIdx)
-                    checkNewPlatz(viewIdx, removeView!!)
-                    userMoves++
-                    doCountThing()
-                    okCheck()
-                }
+                binding.flowLayout.removeView(removeView)
+                binding.flowLayout.addView(removeView, viewIdx)
+                checkNewPlatz(viewIdx, removeView!!)
+                userMoves++
+                doCountThing()
+                okCheck()
 
                 removeView = null
             }
         } else {
-            if (txt == okList.get(viewIdx)) tv.setBackgroundResource(R.drawable.richtigplaz)
+            if (txt == okList[viewIdx])
+                tv.setBackgroundResource(R.drawable.richtigplaz)
             else {
                 val rid = isNext(view1)
                 if (rid > -1) {
@@ -185,31 +197,35 @@ class WordFrag : BaseFragment(), View.OnClickListener {
         for (i in 0..<cnt) {
             val v = binding.flowLayout.getChildAt(i) as TextView
             val txt = v.text.toString()
-            if (txt == okList.get(i)) okcnt++ else {
-                if (viewtxt == okList.get(i)) return i
-                else return -1
+            if (txt == okList[i]) okcnt++ else {
+                return if (viewtxt == okList[i]) i
+                else -1
             }
         }
         return -1
     }
 
-    private fun doBackList() {
-        viewList.clear()
+    private fun doBackList(aList: MutableList<View?>) {
+        aList.clear();   //okListBak.clear()
         val cnt: Int = binding.flowLayout.size
         for (i in 0..< cnt) {
             val v = binding.flowLayout.getChildAt(i)
-            viewList.add(v)
+            aList.add(v)
         }
+        //okListBak.addAll(okList)
     }
-    private fun loadBackList() {
-        if (viewList.isEmpty()) return
+    private fun loadBackList(aList: MutableList<View?>) {
+        if (aList.isEmpty()) return
+        okList.clear();     okList.addAll(okListBak)
         binding.flowLayout.removeAllViews()
-        for (view in viewList)
+        for (view in aList)
             binding.flowLayout.addView(view)
-        userMoves = 0
-        for (item in binding.flowLayout)
+        userMoves = 0;
+        for (item in binding.flowLayout) {
             item.setBackgroundResource(R.drawable.rounded_corner)
-        doCountThing()
+            item.setOnClickListener { view1: View? -> this.wordClick(view1) }
+        }
+         doCountThing()
     }
 
     private fun okCheck() {
@@ -270,10 +286,12 @@ class WordFrag : BaseFragment(), View.OnClickListener {
 
         when (p0?.id) { //mischViews()
             R.id.ayheaderTextView -> newVers()
-            R.id.etvTxtShow -> txtClick()
             R.id.wtvSpeak -> tvSpeackClick()
-            R.id.tvMischen  -> mischViews()
-            R.id.tvrepeat -> loadBackList()
+            R.id.tvMischen  -> {
+                loadBackList(viewStartList)
+                mischViews()
+            }
+            R.id.tvrepeat -> loadBackList(viewMixList)
         }
 
     }

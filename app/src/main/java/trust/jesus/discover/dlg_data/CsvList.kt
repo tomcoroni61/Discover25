@@ -3,24 +3,70 @@ package trust.jesus.discover.dlg_data
 import android.content.Context
 import trust.jesus.discover.little.FixStuff.Filenames.Companion.lineBreak
 import trust.jesus.discover.little.Globus
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStream
-import java.io.InputStreamReader
-import java.nio.charset.StandardCharsets
 import java.util.Locale
 import java.util.Random
-import java.util.StringTokenizer
 
 //private val mContext: Context
 class CsvList() {
     var dataList: ArrayList<CsvData> = ArrayList()
-    var filename: String? = null
 
     private val random = Random()
     private val gc: Globus = Globus.getAppContext() as Globus
     private var brandi = false
+    val themesList: MutableList<String> = ArrayList()
 
+    fun doThemesList(ignore: String) {
+        themesList.clear()
+        val cnt = dataList.size
+        if (cnt > 2) for (i in 1..<cnt) {
+            val csvData = dataList[i]
+            val curTh = csvData.bereich.trim()
+            if (curTh.length > 3 && !themesList.contains(curTh) &&
+                ( ignore.length < 3 || !curTh.contains(ignore, true)) )
+                themesList.add(csvData.bereich)
+        }
+        themesList.sort()
+    }
+    /*
+    fun doBereichListPopup() {
+        themesList.clear()
+        val cnt = gc.csvList()!!.dataList.size
+        if (cnt > 2) for (i in 1..<cnt) {
+            val csvData = gc.csvList()!!.dataList[i]
+            csvData.bereich = csvData.bereich.trim()
+            if (!themesList.contains(csvData.bereich)) themesList.add(csvData.bereich)
+        }
+        themesList.sort()
+
+        if (listBereichPopupWindow != null) return
+
+        listBereichPopupWindow = ListPopupWindow(
+            gc
+        )
+        listBereichPopupWindow!!.setAdapter(
+            ArrayAdapter(
+                gc,
+                R.layout.lpw_item, themesList
+            )
+        )
+        listBereichPopupWindow!!.anchorView = binding.yedBereich
+        listBereichPopupWindow!!.width = 300
+        listBereichPopupWindow!!.height = 400
+        val drawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.back_dyn)
+        listBereichPopupWindow?.setBackgroundDrawable( drawable)
+        //ne listBereichPopupWindow?.background = drawable falschplatz back_dyn richtig
+        listBereichPopupWindow!!.isModal = false
+        listBereichPopupWindow!!.setOnItemClickListener(this) //setOnClickListener
+
+
+        binding.yedBereich.onFocusChangeListener = OnFocusChangeListener { view: View?, b: Boolean ->
+            //if (binding.yedBereich == null) return @setOnFocusChangeListener
+            if (view?.isFocused == true) {
+                Timhandl.postDelayed(runPopupList, 1111)
+            }
+        }
+    }
+    */
     fun readFromPrivate(csvFile: String?, delim: Char): Boolean {
         if (!gc.dateien().openInputStream(csvFile)) return false
 
@@ -51,42 +97,59 @@ class CsvList() {
             .replace(paragraphSeparator, "")
             .trim()
     }
-    fun saveToPrivate(csvFile: String?, delim: Char) {
+    private val sepRepString = "SeparatorInTextReplaceHolder"
+    private fun sepToHolder(value: String, separator: Char): String {
+        return value.replace(separator.toString(), sepRepString)
+    }
+
+    private fun holderToSep(value: String): String {
+        return value.replace(sepRepString, lineBreak)
+    }
+    fun saveToPrivate(csvFile: String?, separator: Char) {
         if (!gc.dateien().openOutputStream(csvFile, Context.MODE_PRIVATE)) return
         var line: String? //Thema # Vers # Translation # Res1 # Res2 # Text
         for (item in dataList) {
-            line = item.bereich + delim + item.vers + delim + item.translation + delim +
-                    item.partText + delim + item.Res2 + delim + //item.Text
-                    removeLineEndings(item.Text)
+            line = sepToHolder(item.bereich, separator) + separator + sepToHolder(item.vers, separator) +
+                    separator + sepToHolder(item.translation, separator) + separator +
+                    sepToHolder(item.partText, separator) + separator + item.Res2 + separator + //item.Text
+                    removeLineEndings(sepToHolder(item.Text, separator))
             if (!gc.dateien().writeLine(line)) break
         }
         gc.dateien().closeOutputStream()
     }
 
-    private fun buildList(delim: Char) { //readFromPrivate
+    //var seperator = '|'
+    private fun buildList(separatorChar: Char) { //readFromPrivate
         //BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         //gc.Logl("alive readAndInsert: ", true);
         dataList.clear()
-        var line: String?
+        var line = ""
         var block = " "
-        var tblnum: Int
-        var crashcnt = 0
+        var tblnum: Int;        var crashcnt = 0;   //var lineCount=0 seperator = delim
 
-        //no gc.dateien().readLine(); //ignore Header for save needed
+        /* 12.25  data mismatch android-windows edit -android new user
+        !! used two different buildList !!
+        lineCount++
+                when (lineCount) {
+                    1 -> if (line.length == 1) seperator = line[0]
+                }
+         */
         try {
             while (gc.dateien().readLine()) {
-                line = gc.dateien().rLine
+                line = gc.dateien().rLine.toString();
                 block = ""
                 tblnum = 1
                 crashcnt = 6
-                if (line != null && line.length > 5) {
+                if (line.length > 5) {
 
                     val obj = CsvData()
                     crashcnt = 1
                     for (i in 0..<line.length) {
-                        val c = line.get(i)
+                        val c = line[i]
                         crashcnt = 8
-                        if (c == delim) {
+                        if (c == separatorChar) {
+                            block = holderToSep(block)
+                            crashcnt = 9
                             when (tblnum) {
                                 1 -> obj.bereich = block
                                 2 -> obj.vers = block
@@ -98,7 +161,7 @@ class CsvList() {
                             tblnum++
                             block = ""
                             crashcnt = 4
-                        } else block = block + c
+                        } else block += c
                     } //for
                     if (tblnum==6) obj.Text = insertLineEndings(block) //added 2025.08
                     crashcnt = 11
@@ -106,37 +169,11 @@ class CsvList() {
                 }
             }
         } catch (e: Exception) {
-            gc.Logl("BL nr " + crashcnt + " Msg: " + e.message, true)
+            gc.crashLog("BL nr " + crashcnt + " Msg: " + e.message, 120)
         }
     }
 
 
-    fun readFromAssets(csvFile: String, delim: String?) {
-        val assetManager = gc.assets
-        val `is`: InputStream?
-        if (assetManager == null) {
-            gc.Logl(" assetManager = Null!!", true)
-            return
-        }
-        try {
-            val files = assetManager.list("")
-            gc.Logl( "Files: " + files.contentToString(), false)
-
-            //files = assetManager.getLocales();
-            // Log.d(LOG_TAG, "Files: " + Arrays.toString(files));
-            //AssetFileDescriptor afd = assetManager.open(csvFile);
-            `is` = assetManager.open(csvFile)
-        } catch (e: IOException) {
-            // TODO Auto-generated catch block
-            // e.printStackTrace();
-            gc.Logl("openCrash File " + csvFile + "  Err: " + e.message, true)
-            return
-        }
-        filename = csvFile
-        buildList2(`is`, delim)
-
-
-    }
 
     fun doLearnDataIdx(minus: Boolean) {
         //gc.LernData_Idx = LeIdx;
@@ -207,43 +244,6 @@ class CsvList() {
         return str
     }
 
-    private fun buildList2(inputStream: InputStream, delim: String?) {
-        val reader = BufferedReader(InputStreamReader(inputStream, StandardCharsets.UTF_8))
-        //gc.Logl("alive readAndInsert: ", true);
-        var line: String?
-        var st: StringTokenizer?
-        dataList.clear()
-        //gc.Logl("alive 22222  readAndInsert: ", true);
-        try {
-            reader.readLine() //first Header...
-            // Bereich # Vers # Translation # Res1 #  Res2 # Text
-            while ((reader.readLine().also { line = it }) != null) {
-                st = StringTokenizer(line, delim)
-                //st.countTokens();
-                val obj = CsvData()
-                obj.bereich = st.nextToken()
-                obj.vers = st.nextToken()
-                obj.translation = st.nextToken()
-                if (st.hasMoreTokens()) obj.partText = st.nextToken()
-                if (st.hasMoreTokens()) obj.Res2 = st.nextToken() //2x Res
-
-                if (st.hasMoreTokens()) obj.Text = st.nextToken() else gc.Logl(
-                    "No Text Zeile: " + dataList.size + " Vers " + obj.vers,
-                    true
-                )
-                // gc.Logl( "Inhalt Text: " + obj.Text , false);
-                dataList.add(obj)
-            }
-            reader.close()
-            inputStream.close()
-        } catch (e: Exception) {
-            //e.printStackTrace();
-            gc.Logl("readline err Zeile: " + dataList.size + " err " + e.message, true)
-        }
-
-
-        // gc.Logl("Ok Zeilen: "+dataList.size(), true);
-    }
 
     private fun isInData(sw: String?, Dataidx: Int): Boolean {
         val data = dataList.get(Dataidx)
@@ -280,7 +280,12 @@ class CsvList() {
         return idx
     }
 
-
+    fun hasDataText(aText: String): Boolean {
+        for (item in dataList) {
+            if (item.Text == aText) return true
+        }
+        return false
+    }
 
 }
 

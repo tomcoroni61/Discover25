@@ -81,16 +81,30 @@ class SpToTx (
                 timhandl.postDelayed(runTimeOutCheck, 1111)
         }
     }
+
+    /*
+    <!--suppress AndroidElementNotAllowed -->
+<queries>
+    <intent>
+        <action android:name="android.speech.RecognitionService" />
+    </intent>
+</queries>
+for Android 11 needs in Manifest...  SpeechRecognizer.isRecognitionAvailable ...
+     */
     fun createRecognizer() {//startRecognition() runStartRecognition
-        destroyRecognizer()
-        speech = SpeechRecognizer.createSpeechRecognizer(context)
-        if (SpeechRecognizer.isRecognitionAvailable(context)) {
+        if (firstInit) destroyRecognizer()
+
+        if (SpeechRecognizer.isRecognitionAvailable(gc)) {//gc or context okay
+
+            speech = SpeechRecognizer.createSpeechRecognizer(gc)
             speech?.setRecognitionListener(this)
             callback?.onPrepared(RecognitionStatus.SUCCESS)
         } else {
+            //gc.log("xxtry failed") //on ando 11 with Otter no chance
             callback?.onPrepared(RecognitionStatus.UNAVAILABLE)
         }
     }
+
 
     fun destroyRecognizer() {
         if (speech == null) return
@@ -100,18 +114,23 @@ class SpToTx (
     }
 
     fun canRecordAudio(): Boolean {
-        if (!firstInit) {
-            if (ContextCompat.checkSelfPermission(gc,
+        if (!firstInit) {//=when class is created
+            gc.log("canRecordAudio 1")
+            if (ContextCompat.checkSelfPermission(context,
                     Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(gc.mainActivity!!, arrayOf(Manifest.permission.RECORD_AUDIO),
                     123)
                 callback?.onPrepared(RecognitionStatus.Err_RECORD_AUDIO_Permission)
                 return false
             }
+            gc.log("canRecordAudio now createRecognizer")
             createRecognizer()
             firstInit = true
         }
-        return true
+        val canRecord = (ContextCompat.checkSelfPermission(context,
+            Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)
+        if (!canRecord) gc.logl("no permission to record audio", true)
+        return canRecord
         //return context.packageManager.hasSystemFeature(PackageManager.FEATURE_MICROPHONE)
     } //context.checkSelfPermission(Manifest.permission.RECORD_AUDIO) == 0
 

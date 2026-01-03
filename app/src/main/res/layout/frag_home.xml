@@ -8,38 +8,51 @@
 
     >
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            >
+            android:orientation="vertical">
 
-            <CheckBox
-                android:id="@+id/cbShowTex"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="7dp"
-                android:checked="true"
-                android:text="@string/show_text" />
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/nsv"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:fillViewport="true"
+                android:layout_margin="11dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/ybtspeakObt"
-                android:layout_width="80dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="9dp"
-                android:layout_toEndOf="@+id/cbShowTex"
-                android:text="@string/opt"
+                    <TextView
+                        android:id="@+id/matvVersText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="5dp"
+                        android:layout_marginBottom="11dp"
+                        android:gravity="center"
+                        android:textIsSelectable="true"
+                        android:textSize="18sp" />
 
-                />
+                </LinearLayout>
 
-            <trust.jesus.discover.little.ShButton
+            </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+            <trust.jesus.discover.little.ShImageButton
                 android:id="@+id/sbtSpeak"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
+                android:layout_width="53dp"
+                android:layout_height="53dp"
                 android:layout_marginStart="9dp"
-                android:layout_toEndOf="@+id/ybtspeakObt"
+                android:src="@drawable/text_to_speech"
                 android:background="@drawable/btn_dyn_back"
-                android:text="@string/speak"
-
                 android:textAllCaps="false"
                  />
             <!-- android:background="@drawable/box"
@@ -47,271 +60,171 @@
             </androidx.core.widget.NestedScrollView>
           android:background="@color/blue_background"
 -->
-            <androidx.core.widget.NestedScrollView
-                android:id="@+id/nsv"
-                android:layout_width="360dp"
-                android:layout_height="180dp"
-                android:layout_below="@+id/sbtSpeak"
-                android:layout_centerHorizontal="true"
-                >
-            <TextView
-                android:id="@+id/matvVersText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                android:textIsSelectable="true"
-                android:textSize="18sp" />
 
-        </androidx.core.widget.NestedScrollView>
-
-            <Button
-                android:id="@+id/sbtprevdat"
-                android:layout_width="60dp"
+            <ImageButton
+                android:id="@+id/sbtPrevDat"
+                android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_below="@+id/nsv"
                 android:layout_marginStart="9dp"
-                android:layout_toStartOf="@+id/mabtmischdat"
-                android:text="@string/prevData"
+                android:contentDescription="@string/prevData"
+                android:src="@drawable/arrow_left_24"
+                android:background="@drawable/btn_dyn_back"
                 android:visibility="visible" />
 
-            <Button
-                android:id="@+id/mabtmischdat"
-                android:layout_width="60dp"
+            <ImageButton
+                android:id="@+id/mabtMischDat"
+                android:layout_width="55dp"
                 android:layout_height="50dp"
-                android:layout_below="@+id/nsv"
-                android:layout_centerHorizontal="true"
                 android:layout_marginStart="9dp"
-                app:drawableEndCompat="@drawable/refresh_btn"
+                android:contentDescription="@string/shuffle"
+                android:src="@drawable/arrows_shuffle"
+                android:background="@drawable/btn_dyn_back"
+                />
+
+            <ImageButton
+                android:id="@+id/sbtNextDat"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="9dp"
+                android:contentDescription="@string/nextData"
+                android:src="@drawable/arrow_right_24"
+                android:background="@drawable/btn_dyn_back"
 
                 />
 
-            <Button
-                android:id="@+id/sbtnextdat"
-                android:layout_width="60dp"
-                android:layout_height="50dp"
-                android:layout_below="@+id/nsv"
-                android:layout_marginStart="9dp"
-                android:layout_toEndOf="@+id/mabtmischdat"
-                android:text="@string/nextData"
 
-                />
 
+    </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-3dp"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:id="@+id/ytvCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="9dp"
+                    android:layout_marginTop="1dp"
+                    android:textSize="14sp" />
+
+
+            </LinearLayout>
             <!--  new Line android:background="@drawable/box"  -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/llSearch"
+                android:layout_marginTop="-11dp"
+                android:gravity="center_horizontal">
+
+
+                <Button
+                    android:id="@+id/sbtSearch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="@string/search"
+                    android:textSize="13sp"
+
+                    />
+
+                <EditText
+                    android:id="@+id/sedSeek"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/search_list_of_verses"
+                    android:importantForAutofill="no"
+                    android:inputType="textMultiLine" />
+
+
+            </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:gravity="center_horizontal">
+
+        <Button
+            android:id="@+id/sbtSearchBollsApi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="@string/list_search_whole_bible"
+            android:textSize="13sp"
+
+            />
+
+    </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:id="@+id/tvBolls"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:linksClickable="true"
+
+                    android:textColorLink="?attr/tabSelected_colour"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+<!-- android:autoLink="web" ne..
+android:textIsSelectable="true"
+android:linksClickable="true"
+
+-->
             <Button
-                android:id="@+id/sbtSearch"
+                android:id="@+id/sbtCrash"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/sbtnextdat"
-                android:layout_alignParentStart="true"
 
-                android:layout_marginStart="11dp"
-                android:layout_marginTop="11dp"
-                android:text="@string/search"
+                android:text="@string/show_send_last_error"
                 android:textSize="13sp"
 
-                />
-
-            <EditText
-                android:id="@+id/sedSeek"
-                android:layout_width="230dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/sbtnextdat"
+                android:visibility="gone" />
+    <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="199dp"
                 android:layout_marginTop="11dp"
-                android:layout_toEndOf="@id/sbtSearch"
-                android:importantForAutofill="no" android:inputType="textMultiLine" />
+                android:gravity="center_horizontal">
 
-            <Button
-                android:id="@+id/gbtsetLvers"
-                android:layout_width="wrap_content"
-                android:layout_height="45dp"
-                android:layout_below="@+id/sedSeek"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="11dp"
-                android:layout_marginTop="11dp"
-                android:text="@string/set"
-                android:textSize="18sp"
+        <TextView
+            android:id="@+id/HtmlView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:linksClickable="true"
+            android:textColorLink="?attr/tabSelected_colour"
+            android:textIsSelectable="true"
+            android:textSize="18sp" />
 
-                />
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/matvLerni"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/sedSeek"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="19dp"
-                android:layout_marginBottom="5dp"
-                android:layout_toEndOf="@+id/gbtsetLvers"
-                android:text="@string/lernvers" />
-
-            <TextView
-                android:id="@+id/matvMerkVers"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/sedSeek"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="19dp"
-                android:layout_marginBottom="5dp"
-                android:layout_toEndOf="@+id/matvLerni" />
-
-            <Button
-                android:id="@+id/gbtgetLvers"
-                android:layout_width="wrap_content"
-                android:layout_height="45dp"
-                android:layout_below="@+id/sedSeek"
-                android:layout_marginStart="11dp"
-                android:layout_marginTop="11dp"
-                android:layout_toEndOf="@+id/matvMerkVers"
-                android:text="@string/set"
-                android:textSize="18sp"
-
-                />
-
-            <org.apmem.tools.layouts.FlowLayout
-                android:id="@+id/maflowLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-
-                android:layout_below="@+id/gbtgetLvers"
-
-                android:layout_margin="25dp"
-                android:orientation="horizontal"> <!--
-        android:gravity="bottom" android:gravity="top"
-        android:layout_alignParentBottom="true"
-        android:paddingBottom="22dp" .. ok Bottom space
-            android:layout_below="@+id/ctvText" -->
-
-                <Button
-                    android:id="@+id/pwwordclck"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/popbtn"
-                    android:text="@string/word_click_lz" />
-
-                <Button
-                    android:id="@+id/pwwordmix"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/popbtn"
-                    android:text="@string/word_mix"
-                    android:textSize="14sp"
-                    android:visibility="visible" />
-
-
-
-
-
-                <Button
-                    android:id="@+id/pwLetters"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/popbtn"
-                    android:text="@string/letters" />
-
-                <Button
-                    android:id="@+id/pwsaylck"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/popbtn"
-                    android:text="@string/recite" />
-
-
-                <Button
-                    android:id="@+id/pwThemes"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/popbtn"
-                    android:text="@string/themes" />
-
-                <Button
-                    android:id="@+id/pwEditclk"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/popbtn"
-                    android:text="@string/edit" />
-
-            </org.apmem.tools.layouts.FlowLayout>
-
-            <!--   Bottom Line:   -->
-            <TextView
-                android:id="@+id/tvbottomLeft"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/maflowLayout"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="5dp"
-                android:layout_marginBottom="5dp"
-                android:text=""
-                android:textSize="18sp"
-                app:drawableEndCompat="@drawable/refresh_tv" />
-
-            <trust.jesus.discover.little.ShTextView
-                android:id="@+id/tvbottomLefttw"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/maflowLayout"
-                android:layout_marginStart="5dp"
-                android:layout_marginBottom="5dp"
-                android:layout_toEndOf="@id/tvbottomLeft"
-                android:text="@string/s"
-                android:textSize="18sp" />
-
-
-            <TextView
-                android:id="@+id/headerTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/maflowLayout"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="5dp"
-                android:text=""
-                android:textSize="18sp" />
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginEnd="9dp"
-                android:layout_marginBottom="1dp"
-                android:gravity="center_vertical"
-                android:text="@string/app_name"
-                android:textSize="16sp"
-                android:visibility="invisible"
-                app:drawableEndCompat="@drawable/ic_menu_white_24dp" />
-
-
-            <Button
-                android:id="@+id/mabtWelcome"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/headerTextView"
-                android:layout_centerHorizontal="true"
-                android:layout_marginStart="11dp"
-                android:layout_marginTop="11dp"
-                android:text="@string/welcome"
-                android:textSize="13sp"
-
-                />
-
+            <!--   Bottom Line:
+            android:id="@+id/llSearch"
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipLog"
                 style="@style/Widget.MaterialComponents.Chip.Filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/mabtWelcome"
                 android:layout_marginStart="11dp"
                 android:layout_marginTop="22dp"
                 android:checked="true"
                 android:text="Log things"
                 android:visibility="invisible" />
 
-        </RelativeLayout>
+
+            -->
+
+
+
+
+        </LinearLayout>
     </ScrollView>

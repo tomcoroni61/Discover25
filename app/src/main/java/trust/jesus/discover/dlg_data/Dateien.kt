@@ -2,7 +2,6 @@ package trust.jesus.discover.dlg_data
 
 import android.content.Context
 import android.content.Intent
-import android.database.Cursor
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.widget.Toast
@@ -10,6 +9,7 @@ import androidx.core.content.FileProvider
 import trust.jesus.discover.BuildConfig
 import trust.jesus.discover.little.Globus
 import java.io.BufferedReader
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -35,6 +35,13 @@ open class Dateien {
         return true
     }
 
+    fun getAssetText(filename: String): String {
+        if (!openAssetInputStream(filename)) return ""
+        var ret = ""
+        while (readLine()) ret += rLine
+        closeInputStream()
+        return ret
+    }
     fun copyFileToPrivate(uri: Uri, saveName: String?) {
         /*File yourFile = ...; ContentResolver contentResolver  String filePath = uri.getPath();
 FileOutputStream outputStream = (FileOutputStream) contentResolver.openOutputStream(destination);
@@ -61,9 +68,9 @@ FileOutputStream outputStream = (FileOutputStream) contentResolver.openOutputStr
                 outputStream.close()
                 inputStream.close()
             }
-            gc.Logl("copy file done", true)
+            gc.logl("copy file done", true)
         } catch (e: IOException) {
-            gc.Logl("failed: " + e.message, true)
+            gc.logl("failed: " + e.message, true)
         }
     }
 
@@ -80,6 +87,15 @@ FileOutputStream outputStream = (FileOutputStream) contentResolver.openOutputStr
             val file = File(privateRootDir, aFileName)
             file.writeText(aText)
         } catch (e: IOException) {}
+    }
+    fun readPrivateFile(aFileName: String): String {
+        try {
+            val privateRootDir = aContext.filesDir
+            val file = File(privateRootDir, aFileName)
+            val aText = file.readText()
+            return aText
+        } catch (e: IOException) {}
+        return ""
     }
     fun backUpPrivateTextFile(aFileName: String, backUpName: String) {
         val privateRootDir = aContext.filesDir
@@ -159,7 +175,7 @@ FileOutputStream outputStream = (FileOutputStream) contentResolver.openOutputStr
             outputStream = null
         } catch (e: Exception) {
             //e.printStackTrace();
-            gc.Logl("failed to close ", false)
+            gc.logl("failed to close ", false)
         }
     }
 
@@ -209,8 +225,7 @@ FileOutputStream outputStream = (FileOutputStream) contentResolver.openOutputStr
 
 
         if (uriString.startsWith("content://")) {
-            val cursor: Cursor?
-            cursor = gc.contentResolver.query(uri, null, null, null, null)
+            val cursor = gc.contentResolver.query(uri, null, null, null, null)
             if (cursor != null && cursor.moveToFirst()) {
                 val cidx = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
                 if (cidx > -1) displayName = cursor.getString(cidx)
@@ -250,9 +265,9 @@ FileOutputStream outputStream = (FileOutputStream) contentResolver.openOutputStr
                 share.putExtra(Intent.EXTRA_STREAM, uri)
                 //gc.Logl(" shareFile startActivity ", true);
                 context.startActivity(Intent.createChooser(share, "Share table"))
-            } else gc.Logl("$filePath not found", true)
+            } else gc.logl("$filePath not found", true)
         } catch (e: Exception) {
-            gc.Logl("ShareFile_Crash: " + e.message, true)
+            gc.logl("ShareFile_Crash: " + e.message, true)
         }
     } /*
     public void toDownloadFolder(String url) {

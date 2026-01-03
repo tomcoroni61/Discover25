@@ -18,7 +18,6 @@ import kotlin.Int
 
 import trust.jesus.discover.fragis.LettersFrag
 import trust.jesus.discover.little.Celli
-import trust.jesus.discover.little.Globus
 
 class ItemAr(context: Context, gridView: GridView, activity: LettersFrag) :
     LvAdapt<Celli>  (context, android.R.layout.simple_list_item_2) {
@@ -111,7 +110,7 @@ class ItemAr(context: Context, gridView: GridView, activity: LettersFrag) :
             //Log.d(LOG_TAG, "moved: " + movecnt);
         } catch (e: Exception) {
             //e.printStackTrace();
-            gc.Logl("ItemArCrash: " + e.message + chrashCnt, true)
+            gc.logl("ItemArCrash: " + e.message + chrashCnt, true)
             // Toast.makeText(getContext(), "Crash: "+e.getMessage()  + chrashCnt, Toast.LENGTH_LONG).show();
         }
     }

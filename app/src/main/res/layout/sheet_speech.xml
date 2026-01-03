@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/root_wo"
     android:orientation="vertical"
     android:background="@drawable/systembars"
     android:gravity="center_horizontal"
@@ -76,6 +75,20 @@
     <!--
      make SwitchCompat look like SwitchPreferenceCompat
     android:background="@color/dark_background"
+
+    <com.google.android.material.chip.Chip
+                android:id="@+id/chipLog"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/mabtWelcome"
+                android:layout_marginStart="11dp"
+                android:layout_marginTop="22dp"
+                android:checked="true"
+                android:text="Log things"
+                android:visibility="invisible" />
+
+
 <RadioGroup
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -312,7 +312,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$PROJECT_DIR$/../../../../WinProgs/Android/SDK/icons/material/materialsymbolsoutlined/arrow_back_2/outline_arrow_back_2_24.xml" />
+                                      <entry key="url" value="file:/$PROJECT_DIR$/../../../../WinProgs/Android/SDK/icons/material/materialsymbolsoutlined/bookmark_star/outline_bookmark_star_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -322,9 +322,10 @@
                         </option>
                         <option name="values">
                           <map>
+                            <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="b7a953" />
-                            <entry key="outputName" value="arrow_back_24" />
-                            <entry key="sourceFile" value="C:\Rock\faith\develop\Android\Discover" />
+                            <entry key="outputName" value="voice_selection" />
+                            <entry key="sourceFile" value="C:\Rock\mDownloads\Images\voice_selection.svg" />
                           </map>
                         </option>
                       </PersistentState>

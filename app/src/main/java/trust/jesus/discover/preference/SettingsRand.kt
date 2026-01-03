@@ -1,15 +1,9 @@
 package trust.jesus.discover.preference
 
-import android.graphics.Color
 import android.os.Bundle
-import android.view.View
-import android.view.ViewParent
-import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.preference.DialogPreference
 import androidx.preference.PreferenceFragmentCompat
 import trust.jesus.discover.R
 import trust.jesus.discover.little.Globus
@@ -19,22 +13,28 @@ class SettingsRand : AppCompatActivity() {
     private val gc: Globus = Globus.getAppContext() as Globus
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        gc.mainActivity!!.setActivityTheme(this)
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.settings_activity)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        try {
+            gc.mainActivity!!.setActivityTheme(this)
+            super.onCreate(savedInstanceState)
+            setContentView(R.layout.settings_activity)
+            ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+                insets
+            }
+            gc.mainActivity!!.setActivityTheme(this)
+            if (savedInstanceState == null) {
+                supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.settings, SettingsFragment())
+                    .commit()
+            }
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        } catch (ex: Exception) {
+            // ex.printStackTrace();
+            gc.crashLog("ex: " + ex.message, 267)
+            gc.globDlg().messageBox("Sorry critical error", this)
         }
-        gc.mainActivity!!.setActivityTheme(this)
-        if (savedInstanceState == null) {
-            supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.settings, SettingsFragment())
-                .commit()
-        }
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
     override fun onSupportNavigateUp(): Boolean {
         finish()

@@ -19,7 +19,6 @@ class LettersFrag: BaseFragment(), View.OnClickListener {
         binding = FragLetterBinding.inflate(layoutInflater)
         // Inflate the layout for this fragment
         binding.tvbottomLeft.setOnClickListener(this) //alRetryClick
-        binding.tvFragezeichen.setOnClickListener(this) //letxtClick
         binding.tvMoves.setOnClickListener(this) //letxtClick
         binding.tvbottomLefttw.setOnClickListener(this) //letxtClick
 
@@ -34,8 +33,8 @@ class LettersFrag: BaseFragment(), View.OnClickListener {
 
     fun updateClickLabel() { //oki by online
         // csvList.RandomItem = csvList.dataList[csvList.RandomText_Idx]
-        val ht = gc.lernItem.vers + "  ${adapter?.usermoves} | ${adapter?.movecnt} "
-        //tvHeader.text = gc.LernItem.Vers
+        val ht =  "  ${adapter?.usermoves} | ${adapter?.movecnt} "
+        //tvHeader.text = gc.LernItem.Vers gc.lernItem.vers +
         binding.tvMoves.text = ht
     }
     /*fun updateClickLabel() { wrong by Studio
@@ -50,13 +49,13 @@ class LettersFrag: BaseFragment(), View.OnClickListener {
         val ht = " Done " + adapter?.usermoves + " <> " + adapter?.movecnt
         //tvHeader.setText(csvData.Vers)
         binding.tvMoves.text = ht
-        gc.globDlg().showPopupWin(gc.lernItem.text)
+        // gc.globDlg().showPopupWin(gc.lernItem.text)
         //gc.showPopupWin(binding.basiGridView, csvData.Text, { newText(true) })
     }
 
     private var curVers = ""
     fun checkVers() {
-        gc.setVersTitel(curVers)
+        gc.lernItem.setVersTitel() //gc.setVersTitel(curVers)
         if (curVers == gc.lernItem.vers) return
         curVers = gc.lernItem.vers
         newText(true)
@@ -75,7 +74,7 @@ class LettersFrag: BaseFragment(), View.OnClickListener {
             if (gc.lernItem.partText.length>9)
                 str = gc.lernItem.partText
             str = gc.formatTextUpper(str)
-            gc.setVersTitel(gc.lernItem.vers)
+            gc.lernItem.setVersTitel()
             binding.basiGridView.adapter = null
             if (adapter != null) {
                 adapter!!.clearme()
@@ -90,13 +89,13 @@ class LettersFrag: BaseFragment(), View.OnClickListener {
             adapter?.loadLetters(letters)
             adapter?.mischen()
             crashcnt = 9
-            if (adapter?.count != letters.size) gc.Logl(
+            if (adapter?.count != letters.size) gc.logl(
                 "Error load TextLen: " + letters.size + " ListLen: " + adapter?.count,
                 true
             )
             updateClickLabel()
         } catch (e: Exception) {
-            gc.Logl("MA_Crash Nr: " + crashcnt + " Msg: " + e.message, true)
+            gc.logl("MA_Crash Nr: " + crashcnt + " Msg: " + e.message, true)
         }
     }
 
@@ -112,12 +111,11 @@ class LettersFrag: BaseFragment(), View.OnClickListener {
     }
 
     fun speackClick() {
-        gc.ttSgl()!!.speak(gc.lernItem.text)
+        gc.ttSgl()!!.cleanSpeak(gc.lernItem.text)
     }
     override fun onClick(p0: View?) {
         when (p0?.id) {
             R.id.tvbottomLefttw ->  speackClick()
-            R.id.tvFragezeichen -> letxtClick()
             R.id.tvbottomLeft -> alRetryClick()
 
             R.id.tvMoves -> newText(false)

@@ -10,20 +10,20 @@ android {
 
     defaultConfig {
         applicationId = "trust.jesus.discover"
-        minSdk = 28
-        targetSdk = 36
-        versionName = "V2 11.25"
-        versionCode = 2
+        minSdk = 26
+        targetSdk = 36 //36 |  35=Min for playstore at 12.25
+        versionName = "V16 12.25"
+        versionCode = 16  //Playstore will immer "höheren"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     flavorDimensions += "app"
-    productFlavors {
+    productFlavors { // neuer Release 1. versionCode +1  2. versionName 2x change here  3. click ignore changes
         val subDir = "BibleLearn"
         create(subDir) {
-            dimension = "app"
-            versionName = "V2 11.25"//muss doppelt sonst null Versmemorize.apk
-            val compileNum = 2
+            dimension = "app"  //versionName 2x here is enough .. // 1x welcome.kt 1x thanks.de = "simple control
+            versionName = "V16 12.25"//!!auch .aab  muss doppelt sonst null Versmemorize.apk
+            val compileNum = 0
             val appName = "Bible_learn"
             val apkName = "${appName}_${versionName}_$compileNum.apk"
             //val apkName = "Bible learn.apk"
@@ -34,7 +34,7 @@ android {
             }
         }
     }
-/*
+/* AGP 8.12.0
  productFlavors {
         create("free") {
             dimension = "app"
@@ -58,18 +58,19 @@ android {
 
     buildTypes {
         release {
-            //isMinifyEnabled = true
-            //isShrinkResources = true
+            isMinifyEnabled = true  //Themes partly ko?! over app store
+            isShrinkResources = true
             //neversionNameSuffix = "-MyNiceDebugModeName"
-
-            proguardFiles(
+            //isMinifyEnabled = false
+            //isShrinkResources = false
+                proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
 
         }
         debug {
-            //isMinifyEnabled = false
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -100,16 +101,29 @@ https://developer.android.com/topic/performance/app-optimization/enable-app-opti
             isMinifyEnabled = true  bei true unter 4MB aber crash
             isShrinkResources = true
 mit Anpassung geht bei 6.2MB statt 25.8MB 09.25 auf Vivo geht
+ne:
+    implementation(libs.html.textview)
+    implementation(libs.htmlspanner)
+    implementation(libs.htmlcleaner)
+    implementation(libs.sakacyber.html.textview)
 
+------------------
     implementation(libs.layouts)  //!!!!!!! =FlowLayout  !!!!!!!!!!!
     implementation(libs.gson)
     implementation(libs.okhttp) ne
 implementation("com.squareup.okhttp3:okhttp:4.11.0")
+implementation("com.github.sakacyber:html-textview:1.0.15")
+implementation(libs.htmlspanner)
+    implementation(libs.htmlcleaner)
+    implementation("org.jsoup:jsoup:1.21.2")
 
  */
+
+
+
     implementation(libs.gson)
     implementation(libs.okhttp.v4110)
-    implementation(libs.layouts)  //!!!!!!! =FlowLayout  !!!!!!!!!!!
+    implementation(libs.layouts)  //!!!!!!! =FlowLayout  !!!!!!!!!!! import org.apmem.tools.layouts.FlowLayout
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -134,6 +148,7 @@ implementation("com.squareup.okhttp3:okhttp:4.11.0")
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
 
 
 }

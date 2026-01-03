@@ -63,16 +63,16 @@ class Kbolls {
 https://bolls.life/v2/find/MB?search=Gnade&match_case=false&match_whole=true&limit=3000&page=1
      */
 
-    fun fetchBibleVerse(version: String, bookNum: String, chapter: String, vers: String): Flow< Result <BollsVers> > = flow {
+    fun fetchBibleVerse(version: String, bookNum: String, chapter: String, vers: String): Flow< Result <BollsSR> > = flow {
         val version = getNearBollsVersion(version)
         val apiUrl = "https://bolls.life/get-verse/$version/$bookNum/$chapter/$vers/"
         //"https://bolls.life/get-text/MB/22/8/" NKJV
-        //gc.Logl(apiUrl, true)
+        //gc.Logl(apiUrl, true) BollsSR BollsVers
         val request = Request.Builder()
             .url(apiUrl)
             .get()
             .build()
-        gc.Logl("fetchBibleVerse: $version, $bookNum, $chapter:$vers", true)
+        //gc.Logl("fetchBibleVerse: $version, $bookNum, $chapter:$vers", true)
 
         val response = try {
             client.newCall(request).await()
@@ -84,7 +84,10 @@ https://bolls.life/v2/find/MB?search=Gnade&match_case=false&match_whole=true&lim
             lastVersion = version
             val json = response.body?.string()
             try {
-                emit( Result.success( parseJsonToBibleVerse(json) ))
+                val bv = parseJsonToBibleVerse(json)
+                val bs = BollsSR(bv.pk, version, bookNum.toInt(),
+                    chapter.toInt(), bv.verse, bv.text)
+                emit( Result.success( bs ))
                 //emit(Result.success(json) as Result<String>)
             } catch ( e: IllegalArgumentException  ) {
                 emit(Result.failure(e))
@@ -335,12 +338,12 @@ bible gateway
             }
         if (retVersionName.isEmpty()) {//
             //step = 5
-            retVersionName = bibelVersionShort(versionName)
+            retVersionName = bibelVersionNameLongToShort(versionName)
         }
         //gc.log("END getNearBollsVersion: $retVersionName  step $step")
         return retVersionName
     }
-    fun bibelVersionShort(versionName: String) = when (versionName) {
+    fun bibelVersionNameLongToShort(versionName: String) = when (versionName) {
         //bolls all en 38!
         "New King James Version, 1982" -> "NKJV"
         "New International Version, 1984" -> "NIV"
@@ -368,6 +371,11 @@ bible gateway
         else -> versionName //throw Exception("Bibelversion '$VersionName' not found in list")
     }
 
+    fun bibelVersionNameToShort(versionName: String): String {
+        if (versionName.isEmpty()) return ""
+        if (hasBibleVersionShortName(versionName)) return versionName
+        return bibelVersionNameLongToShort(versionName)
+    }
     fun bibelVersionShortToLong(versionName: String) = when (versionName) {
         //bolls all en 38!   !!NKJV changed to KJV no Strongs for now 10.25
         "NKJV" -> "New King James Version, 1982"
@@ -402,7 +410,7 @@ bible gateway
     "ELB", "SCH", "MB", "S00", "LUT", "HFA" -> "DE"
     else -> "DE" // throw Exception("Bibelversion '$VersionName' not found in list")
 }
-    fun hasBibleVersionShortName(versionName: String) = when (versionName) {
+    fun hasBibleVersionShortName(versionName: String) = when (versionName.uppercase()) {
         //bolls all en 38!
         "NKJV", "NIV", "NASB", "LSV", "RSV", "YLT", "LSB", "WEB", "CJB",
         "TS2009", "LXXE", "TLV", "GNV", "DRB", "AMP", "BSB", "KJV", "ELB", "SCH", "MB", "S00", "LUT", "HFA" -> true
@@ -422,7 +430,7 @@ bible gateway
             networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
             else -> false
         }
-        if (!ret) gc.Logl("no Internet!!", true)
+        if (!ret) gc.logl("no Internet!!", true)
         return ret
     }
 }

@@ -25,7 +25,7 @@ class Bss {
                 "$chapter:$versStart-$versEnd"
         // https://api.biblesupersearch.com/api?bible=kjv&reference=Rom%204:1-10
         //data_format https://api.biblesupersearch.com/api?data_format&bible=kjv&reference=Rom%204:1-10
-        gc.Logl(apiUrl, true)
+        gc.logl(apiUrl, true)
         gc.bolls()?.hasInternet()?.let {
             if (!it) {
                 emit(Result.failure(Error("No internet connection")))

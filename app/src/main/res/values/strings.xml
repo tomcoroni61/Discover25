@@ -2,7 +2,7 @@
 <resources>
     <string name="CrashReportEmailTo" translatable="false">thomasfr2024@outlook.com</string>
 
-    <string name="CrashReport_MailBody" translatable="false">Hello, \nSorry found crash</string>
+    <string name="CrashReport_MailBody" translatable="false">Hello, Sorry found crash</string>
     <string name="CrashReport_MailSubject" translatable="false">Crashreport from </string>
 
     <string name="add">add</string>
@@ -10,8 +10,6 @@
     <string name="again">again</string>
 
     <string name="app_name">Bible learn</string>
-
-    <string name="auto_hide">auto hide</string>
 
     <string name="change">change</string>
 
@@ -41,8 +39,6 @@
 
     <string name="prevData" translatable="false"><![CDATA[<]]></string>
 
-    <string name="range">Where to get a random verse</string>
-
     <string name="recite">recite</string>
 
     <string name="replace">Replace</string>
@@ -51,7 +47,7 @@
 
     <string name="search">Search</string>
 
-    <string name="send_me_email" translatable="false">Choose mailer</string>
+    <string name="send_me_email">Choose mailer</string>
 
     <string name="show_text">show Text</string>
 
@@ -64,32 +60,30 @@
     <string name="translation">Translation</string>
 
     <string name="up">up</string>
+    <string name="welcome">Welcome</string>
+    <string name="introduction">Introduction</string>
+    <string name="thank_you">Thank you</string>
 
     <string name="vers">Vers</string>
 
-    <string name="word_click">word click</string>
+    <string name="word_click">click word</string>
     <string name="word_mix">word mix</string>
 
     <string name="words">words</string>
 
     <string name="yes">Yes</string>
-    <string name="word_click_lz">" word click "</string>
-    <string name="spruch_csv">spruch_en.csv</string>
+    <string name="word_clicklz">"word click"</string>
+    <string name="spruch_csv">sayings.csv</string>
     <string name="save_as">Save as</string>
     <string name="import_from_downloads" translatable="false">import from downloads</string>
     <string name="overwrite">"Overwrite: "</string>
-    <string name="set" translatable="false"><![CDATA[-->]]></string>
+    <string name="set" >set</string>
     <string name="lernvers">to learn:</string>
     <string name="add_to_your_bibleverses">Add to your Bibleverses?</string>
     <string name="copy_to_app_file_dir">"Copy to app file dir? "</string>
     <string name="question_mark" translatable="false">  \? </string>
-    <string name="welcome">Welcome</string>
-    <string name="introduction">Introduction</string>
-    <string name="thank_you">Thank you</string>
     <string name="returni">Return</string>
-    <string name="speak_vers">speak vers</string>
     <string name="please_enter_some_text">Please enter some text</string>
-    <string name="part_text">part text</string>
     <string name="check_it">check it</string>
     <string name="tap_me">tap me to record using keybord</string>
     <string name="themes">Themes</string>
@@ -98,7 +92,6 @@
     <string name="title_activity_settings_rand">SettingsRand</string>
 
     <!-- Preference Titles -->
-    <string name="preference_category_bible_version_title">Bible Version</string>
     <string name="preference_listPreference_bible_version_title">Select Bible Version</string>
     <string name="preference_listPreference_bible_version_default_value" translatable="false">NLT</string>
 
@@ -115,7 +108,7 @@
     <string name="Title_letters">Letters</string>
     <string name="title_edit">Edit</string>
     <string name="new_vers">new vers</string>
-    <string name="verslist">Verslist</string>
+    <string name="verslist">Word search list</string>
     <string name="discover">discover</string>
     <string name="title_activity_ay_welcome">Welcome</string>
     <string name="no_text_to_speak">no text to speak</string>
@@ -138,11 +131,9 @@
     <string name="ocher">Ocher</string>
     <string name="okay_verry_nice">excellently</string>
     <string name="seek_rand">word list</string>
-    <string name="nav">nav</string>
-    <string name="to_learn">to learn</string>
+    <string name="to_learn">to global vers</string>
     <string name="add_cur_vers" translatable="false">add cur vers</string>
     <string name="show_next">show next</string>
-    <string name="allow">allow</string>
     <string name="wrong_words">wrong words</string>
     <string name="allow_partword">allow partword</string>
     <string name="record_language">record language</string>
@@ -166,7 +157,7 @@
     <string name="manage">manage..</string>
     <string name="supi_all_words_right_spoken">supi, ALL words right spoken!!</string>
     <string name="chapter">Chapter</string>
-    <string name="selected">selected</string>
+    <string name="selectedi">selected</string>
     <string name="search_one_or_more_words">search one or more words</string>
     <string name="match_case">match case</string>
     <string name="record_stopped">record stopped</string>
@@ -174,5 +165,35 @@
     <string name="error_words">errors</string>
     <string name="restart_when_wrong_clicked">restart when wrong clicked</string>
     <string name="vers_of_the_day">vers of the day</string>
+    <string name="as_book">as Book</string>
+    <string name="chapter_change">Chapter change</string>
+    <string name="speak_options">Speak Options</string>
+    <string name="pause_after_biblevers">Pause after biblevers</string>
+    <string name="seconds">Seconds</string>
+    <string name="repeat_bibleverses">Repeat Bibleverses</string>
+    <string name="Title_speech2">recite</string>
+    <string name="clear_all_fields">Clear all fields</string>
+    <string name="further_word">further</string>
+    <string name="speak_word">speak</string>
+    <string name="search_list_of_verses">in list of verses</string>
+    <string name="list_search_whole_bible">List-search whole Bible ..</string>
+    <string name="select_random_range">Select Random Range</string>
+    <string name="one_book_only">one book only</string>
+    <string name="book_name_short">Book Name (short)</string>
+    <string name="select_search_range">Select Search Range</string>
+    <string name="match_whole_word">match whole word</string>
+    <string name="app_range">App range</string>
+    <string name="base">Simple</string>
+    <string name="more">More</string>
+    <string name="all">All</string>
+    <string name="global">Global</string>
+    <string name="vers_history">Vers History</string>
+    <string name="joh_3_16">Joh 3:16</string>
+    <string name="show_send_last_error">show / send last ERROR</string>
+    <string name="add_info">Add info</string>
+    <string name="plus">+</string>
+    <string name="current">Current</string>
+    <string name="name">Name</string>
+    <string name="label">Label</string>
 
 </resources>

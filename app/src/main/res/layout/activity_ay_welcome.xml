@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    tools:context=".actis.AyWelcome"
     android:background="#57B35B">
 
     <TextView
@@ -27,17 +28,79 @@
         android:layout_marginBottom="5dp"
         android:fillViewport="true">
 
-        <TextView
-            android:id="@+id/HtmlView"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+
+            >
+
+
+            <TextView
+                android:id="@+id/HtmlView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:linksClickable="true"
+                android:textColorLink="?attr/tabSelected_colour"
+                android:textIsSelectable="true"
+                android:textSize="18sp" />
+
+<!-- ?attr/sysbar_colour
+
+<TextView
+                android:id="@+id/HtmlView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:linksClickable="true"
+                android:autoLink="web"
+                android:textColorLink="?attr/tabSelected_colour"
+                android:textIsSelectable="true"
+                android:textSize="18sp" />
+
+android:textColorLink="?attr/selectableItemBackground"
+-->
+
+            <WebView
+                android:id="@+id/wbHtmlView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#43A047"
+                android:backgroundTint="#C72121"
+                android:backgroundTintMode="screen"
+                android:contextClickable="true"
+                android:linksClickable="true"
+                android:textColorLink="?attr/tabSelected_colour"
+                android:textIsSelectable="true"
+                android:textSize="18sp"
+                android:visibility="gone"
+                />
+
+        </LinearLayout>
+<!--
+android:contextClickable="true"
             android:linksClickable="true"
-            android:textColorLink="?attr/tabSelected_colour"
-            android:textIsSelectable="true"
-            android:textSize="16sp" />
+            -->
+
+
 
     </ScrollView>
 <!--android:textColorLink="#1E88E5"
+
+<WebView
+            android:id="@+id/wbHtmlView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#43A047"
+            android:backgroundTint="#C72121"
+            android:backgroundTintMode="screen"
+            android:contextClickable="true"
+            android:linksClickable="true"
+            android:textColorLink="?attr/tabSelected_colour"
+            android:textIsSelectable="true"
+            android:textSize="18sp"
+            android:visibility="gone"
+             />
+
 android:textColorLink="?attr/selectableItemBackground" = crashes with
 tabSelected_colour = oki
 border_colour no good colour
@@ -67,15 +130,27 @@ border_colour no good colour
         android:textSize="12sp"
         app:hideTime="1600" />
     <trust.jesus.discover.little.ShButton
-        android:id="@+id/sbtThanks"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/sbtThanks"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="8dp"
         android:layout_toEndOf="@+id/sbtsimpleHelp"
         android:background="@drawable/btn_dyn_back"
         android:onClick="wThanksClick"
         android:text="@string/thank_you"
+        android:textSize="12sp"
+        app:hideTime="1600" />
+
+    <trust.jesus.discover.little.ShButton
+        android:layout_width="44dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="8dp"
+        android:layout_toEndOf="@+id/sbtThanks"
+        android:background="@drawable/btn_dyn_back"
+        android:onClick="wwwClick"
+        android:text="www"
         android:textSize="12sp"
         app:hideTime="1600" />
 

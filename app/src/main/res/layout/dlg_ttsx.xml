@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/rounded_corner"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <ListView
+        android:id="@+id/lvTtsEngines"
+        android:layout_width="match_parent"
+        android:layout_height="270dp"
+        android:layout_margin="19dp"
+         />
+<!--
+android:background="?attr/tabTabs_colour"
+-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/chipLog"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="11dp"
+            android:layout_marginTop="2dp"
+            android:background="?attr/button_colour"
+            android:text="restart"
+            android:visibility="visible" />
+
+        <trust.jesus.discover.little.ShButton
+            android:id="@+id/btnChangeTts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="11dp"
+            android:background="@drawable/rounded_corner"
+            android:paddingStart="9dp"
+            android:paddingEnd="9dp"
+            android:text="Set as default" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:text="@string/current"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvCurrent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:importantForAutofill="no"
+            android:textSize="7pt" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/sedVersTxt"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:layout_toStartOf="@id/btnSpeak"
+            android:autofillHints=""
+            android:ems="10"
+            android:inputType="textMultiLine"
+
+            tools:ignore="LabelFor" />
+
+        <trust.jesus.discover.little.ShImageButton
+            android:id="@+id/btnSpeak"
+            android:layout_width="53dp"
+            android:layout_height="53dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="1dp"
+            android:layout_marginEnd="19dp"
+            android:background="@drawable/btn_dyn_back"
+            android:src="@drawable/text_to_speech"
+            android:visibility="visible" />
+
+    </RelativeLayout>
+
+    <trust.jesus.discover.little.ShButton
+        android:id="@+id/btnTest"
+        android:text="some Test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>
+
+<!--
+<RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+    <ListView
+        android:id="@+id/lvTtsEngines"
+        android:layout_width="160dp"
+        android:layout_height="270dp"
+        android:background="?attr/tabTabs_colour"
+        android:layout_marginStart="19dp"
+         />
+
+        <TextView
+            android:text="@string/name"
+            android:id="@+id/tvNameN"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+
+            android:layout_toEndOf="@+id/lvTtsEngines"
+            android:layout_marginStart="9dp"
+            />
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:importantForAutofill="no"
+            android:textSize="7pt"
+            android:layout_below="@+id/tvNameN"
+            android:layout_toEndOf="@+id/lvTtsEngines"
+            android:layout_marginStart="9dp"
+            />
+
+        <TextView
+            android:id="@+id/tvLabelN"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvNameN"
+            android:layout_marginStart="9dp"
+            android:layout_marginTop="16dp"
+            android:layout_toEndOf="@+id/lvTtsEngines"
+            android:text="@string/label"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvLabel"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:importantForAutofill="no"
+            android:textSize="7pt"
+            android:layout_below="@+id/tvLabelN"
+            android:layout_toEndOf="@+id/lvTtsEngines"
+            android:layout_marginStart="9dp"
+            />
+
+    </RelativeLayout>
+
+-->

@@ -16,37 +16,50 @@ class GlobVers {
     val chapter = mutableListOf<VersItem?>() // bssArray = bssArray.plus(bssR)
     //var chapter = ""
     var text: String = "null"
-    var numVers: Int = 0
-    var numBook: Int = 1
-    var numChapter: Int = 1
-
+    var numVersStart: Int = 0;    var numBook: Int = 1;    var numChapter: Int = 1
+    var numVersEnd = 0
     private var gs: Globus? = null
+    private var bookNameFound = true
 
     fun globi(): Globus {
         if (gs == null) gs = Globus.getAppContext() as Globus
         return gs!!
     }
-    
+
+    fun setVersTitel() {
+        var versTitel = vers
+        if (bookNameFound) {
+            versTitel = globi().bBlparseBook()!!.versShortName(numBook, numChapter, numVersStart)
+            if (numVersEnd>0)
+                versTitel += "-$numVersEnd"
+            versTitel += "  " + globi().bolls()!!.bibelVersionNameToShort(translation)
+        }
+        globi().mainActivity!!.binding.tvVersTop.text = versTitel
+    }
     fun setLernData(idx: Int, csvData: CsvData) {
         bereich = csvData.bereich
         vers = csvData.vers
         translation = csvData.translation
         partText = csvData.partText
         text = csvData.Text
+        numVersEnd = 0
         //globi().log("setLernData: $text")
 
         globi().lernDataIdx = idx
-
+        bookNameFound = true
         partText = "";        chapter.clear()
         val vp = globi().bBlparseBook()!!.parse(vers)
         if (vp.bookNumber == 0) {
             vp.bookNumber = 17
-            vp.chapter = 1
-            vp.startVerse = 1
+            bookNameFound = false
+            if (vp.chapter==0) vp.chapter = 1
+            if (vp.startVerse==0) vp.startVerse = 1
         }
         numBook = vp.bookNumber
         numChapter = vp.chapter
-        numVers = vp.startVerse
+        numVersStart = vp.startVerse
+        if (vp.endVerse !=null)
+            numVersEnd = vp.endVerse
         val version = translation.uppercase().trim()//Locale.getDefault()
         //log("checkLernItemForBolls: $version")
         bollsVersion = globi().bolls()!!.getNearBollsVersion(version)
@@ -65,7 +78,7 @@ class GlobVers {
         }
 
         this.text = text;        translation = version;        bollsVersion = version
-        numVers = nVers;        numBook = nBook;        numChapter = nChapter
+        numVersStart = nVers;        numBook = nBook;        numChapter = nChapter
 
         vers = globi().bBlparseBook()!!.versShortName(nBook, nChapter, nVers)
         partText = "ne"
@@ -80,7 +93,7 @@ class GlobVers {
         //cdata.Chapter = chapter
         cdata.NumBook = numBook
         cdata.NumChapter = numChapter
-        cdata.NumVers = numVers
+        cdata.NumVers = numVersStart
 
         globi().versHistory.addVers(cdata)
     }
@@ -88,7 +101,8 @@ class GlobVers {
         val vers = globi().versHistory.currentVers()
         if (vers != null) {
             setLernData(-1, vers)
-            globi().setVersTitel(vers.vers)
+            //globi().setVersTitel(vers.vers)
+            setVersTitel()
             return true
         } else return false
     }
@@ -97,21 +111,23 @@ class GlobVers {
         vers =
             globi().bBlparseBook()!!.versShortName(jvers.book, jvers.chapter, jvers.verse)
         translation = jvers.translation
-        numVers = jvers.verse
+        numVersStart = jvers.verse
         numBook = jvers.book
         numChapter = jvers.chapter
         text = jvers.text
-    }
+    }//BollsVers
+    //fun setBollsVers(jvers: BollsVers) use setBollsSrVers
+
     fun setSeekVers(vers: SeekList.SeekData?) {
         if (vers == null) return
-
         this.vers = globi().bBlparseBook()!!.versShortName(vers.numBook, vers.numChapter, vers.numVers)
         translation = vers.translation
-        numVers = vers.numVers
+        numVersStart = vers.numVers
         numBook = vers.numBook
         numChapter = vers.numChapter
         text = vers.text
         partText = "ne"
+        chapter.clear()
     }
     fun tocsvData(): CsvData {
         val csvData = CsvData()
@@ -123,7 +139,7 @@ class GlobVers {
         //csvData.Chapter = chapter
         csvData.NumBook = numBook
         csvData.NumChapter = numChapter
-        csvData.NumVers = numVers
+        csvData.NumVers = numVersStart
         return csvData
     }
 }

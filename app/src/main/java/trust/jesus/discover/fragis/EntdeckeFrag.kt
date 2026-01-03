@@ -13,7 +13,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
 import trust.jesus.discover.R
 import trust.jesus.discover.bible.BblParseBook.VersStrings
-import trust.jesus.discover.databinding.FragmentEntdeckeBinding
+import trust.jesus.discover.databinding.FragEntdeckeBinding
 import trust.jesus.discover.databinding.SheetDiscoverBinding
 import trust.jesus.discover.dlg_data.FileDlg
 import trust.jesus.discover.little.FixStuff.Filenames.Companion.seekFileExtn
@@ -27,7 +27,7 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
     private var showMixed = true
     private var txtSize = 18
 
-    private lateinit var binding: FragmentEntdeckeBinding
+    private lateinit var binding: FragEntdeckeBinding
 
 
     override fun onCreateView(
@@ -36,13 +36,12 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
         // gc.Logl("onCreateView  " + (paramSearch!= null), false)
 
         // Inflate the layout for this fragment
-        binding = FragmentEntdeckeBinding.inflate(layoutInflater)
+        binding = FragEntdeckeBinding.inflate(layoutInflater)
         // Inflate the layout for this fragment
         val rootView: View = binding.getRoot()
         binding.wtvSpeak.setOnClickListener(this)
         binding.btnRandomvers.setOnClickListener(this)
         binding.ayheaderTextView.setOnClickListener(this)
-        binding.etvTxtShow.setOnClickListener(this)
         binding.btnRandObst.setOnClickListener(this)
         binding.btnBible.setOnClickListener(this)
         binding.btnseekplay.setOnClickListener(this)
@@ -50,7 +49,7 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
         binding.tvMischen.setOnClickListener(this)
         binding.btnseekrund.setOnClickListener(this)
         binding.btnSeekFileDlg.setOnClickListener(this)
-
+        binding.btnSheetUp.setOnClickListener(this)
 
         showMixed = gc.appVals().valueReadBool("discover_showMixed", false)
         txtSize = gc.appVals().valueReadInt("txt.size", 18)
@@ -117,7 +116,7 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
         if (wort.isNotEmpty()) {
             addWort(wort.toString(), cnt, doMischen) //addWort(" ");
         }
-        binding.ayheaderTextView.text = gc.lernItem.vers
+        //binding.ayheaderTextView.text = gc.lernItem.vers
         if (doMischen) shuffleViews()
     }
 
@@ -226,12 +225,18 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
         val range = getRandRange(requireContext())
         val verse =  gc.bBlparseBook()?.randomBookAndChapter(range )
         binding.tvVerstext.text = "wait"
-        binding.ayheaderTextView.text = "??"
+        binding.ayheaderTextView.text = ""
         val version = getVersion( requireContext() )
         //gc.log( "btnRandomversClick: $version, $range  book: ${verse?.bookNumber}, chapter: ${verse?.chapter}")
         //fetchBibleVerse("NKJV", "1", "1", "1") //
         fetchBibleChapter(version, verse?.bookNumber.toString(), verse?.chapter.toString() )
     }
+    private var randomSpeak=false
+    private fun btnRandomSpeakClick() {
+        randomSpeak = true
+        btnRandomversClick()
+    }
+
 
 
     fun fetchBibleChapter(version: String, bookNum: String, chapter: String) {
@@ -248,9 +253,11 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
                             gc.lernItem.setBollsSearchResult( verses,
                                 txt.toString(), version,vers+1, bookNum.toInt(), chapter.toInt())
                             gc.lernItem.addToHistory()
-                            gc.setVersTitel(gc.lernItem.vers)
+                            gc.lernItem.setVersTitel()
                             binding.tvVerstext.text = ""
                             textToFlowlayout(gc.lernItem.text, showMixed)
+                            if (randomSpeak)
+                                tvSpeakClick()
                             //mischViews()
                         }
                     }
@@ -260,19 +267,20 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
         }
     }
 
-    private fun btnrandObstClick() {
-        gc.activityStart(activity, SettingsRand::class.java)
+    fun btnRandomObstClick() {
+        try {
+            gc.activityStart(activity, SettingsRand::class.java)
+        } catch (ex: Exception) {
+            // ex.printStackTrace();
+            gc.crashLog("ex: " + ex.message, 267)
+            gc.globDlg().messageBox("Sorry critical error", requireContext())
+        }
     }
 
-    private fun btnBibleClick() {
-        gc.startBibleActivity()
-
-    }
-
-    fun tvSpeackClick() {
+    fun tvSpeakClick() {
         // gc.ttSgl()?.setLanguageAndVoice(Locale.UK, 0)//GERMAN
 
-        gc.ttSgl()?.speak(gc.lernItem.text)
+        gc.ttSgl()?.cleanSpeak(gc.lernItem.text)
     }
 
     fun txtClick() {
@@ -303,10 +311,8 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
         binding.tvVerstext.text = ""
         binding.ayheaderTextView.text = ""
 
-
-        gc.lernItem.chapter.clear()
         gc.lernItem.addToHistory()
-        gc.setVersTitel(gc.lernItem.vers)
+        gc.lernItem.setVersTitel()
         checkSeekList()
         textToFlowlayout(gc.lernItem.text, showMixed)
         //mischViews()
@@ -314,22 +320,31 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
 
     fun btnRandSeekAndSpeakClick() {
         btnRandSeekClick()
-        tvSpeackClick()
+        tvSpeakClick()
     }
     private fun fetchBibleVerse(vers: VersStrings) {
         lifecycleScope.launch {
             try { //Date(),
                 //gc.Logl("fetch start", true) fetchBibleVerse: LUT, revelation, 21:3
                 val bookNumber = gc.bBlparseBook()?.bookNumber(vers.bookName)
+                if (bookNumber == 0) {
+                    val xti = "${vers.bookName} not found"
+                    binding.tvVerstext.text = xti
+                    return@launch
+                }
                 gc.bolls()!!.fetchBibleVerse(
                     getVersion( requireContext() ),
                     bookNumber!!.toString(), vers.chapter, vers.startVerse)
                     .collect { result ->
                         if (result.isSuccess) {
                             val verses = result.getOrNull()  //verses?.forEach { verse ->
-                            textToFlowlayout(verses!!.text, false)
-                            gc.lernItem.text = verses.text
-                            gc.lernItem.vers = gc.bBlparseBook()?.versStringsToBibelStelle(vers).toString()
+                            gc.lernItem.setBollsSrVers(verses)
+                            //gc.lernItem.text = verses.text
+                            //gc.lernItem.vers = gc.bBlparseBook()?.versStringsToBibelStelle(vers).toString()
+
+                            gc.lernItem.addToHistory()
+                            gc.lernItem.setVersTitel()
+                            textToFlowlayout(verses!!.text,  showMixed)
 
                             //binding.tvVerstext.text = vers
                             //textToFlowlayout(gc.lernItem.text, showMixed)
@@ -342,11 +357,11 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
         }
     }
 
-    private fun fetchvotd() {
+    private fun fetchLabsOrg() {
         lifecycleScope.launch {
             try { //Date(),
                 //gc.Logl("fetch start", true)
-                gc.vtdo()!!.fetchLabsBibleVerse()
+                gc.vtdo()!!.fetchVotdUrl("https://labs.bible.org/api/?passage=votd")
                     .collect { result ->
                         if (result.isSuccess) {
                             val verses = result.getOrNull()  //verses?.forEach { verse ->
@@ -357,7 +372,72 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
                             var vers = "error"
                             if (start >= 0 && end > 0) {
                                 vers = verses.substring(start + 3, end)
-                                val verse =  gc.bBlparseBook()?.parseBibelStelle(vers)
+                                val verse =  gc.bBlparseBook()?.parseBiblePassage(vers)
+                                fetchBibleVerse(verse!!)
+                                return@collect
+                            }
+                            gc.log("start: $start, end: $end")
+                            gc.log(vers)
+                            binding.tvVerstext.text = vers
+                            //textToFlowlayout(gc.lernItem.text, showMixed)
+                            //mischViews() val version = getVersion( requireContext() )
+                        }
+                    }
+            } catch (e: Exception) {
+                binding.tvVerstext.text=e.message
+            }
+        }
+    }
+
+    private fun fetchDailyverses() {
+        lifecycleScope.launch {
+            try { //Date(),
+                //gc.Logl("fetch start", true)
+                gc.vtdo()!!.fetchVotdUrl("https://dailyverses.net/get/verse.js?language=niv")
+                    .collect { result ->
+                        if (result.isSuccess) {
+                            val verses = result.getOrNull()  //verses?.forEach { verse ->
+                            textToFlowlayout(verses, false)
+                            //..target=\"_blank\"\u003eActs 3:26\u003c/a\u003e\u003c/div\u003e';
+                            val start = verses!!.indexOf("_blank\\\"\\u003e")
+                            val end = verses.indexOf("\\u003c/a")
+
+                            var vers = "error"
+                            if (start >= 14 && end > start) {
+                                vers = verses.substring(start + 14, end)
+                                val verse =  gc.bBlparseBook()?.parseBiblePassage(vers)
+                                fetchBibleVerse(verse!!)
+                                return@collect
+                            }
+                            gc.log("start: $start, end: $end")
+                            gc.log(vers)
+                            binding.tvVerstext.text = vers
+                            //textToFlowlayout(gc.lernItem.text, showMixed)
+                            //mischViews() val version = getVersion( requireContext() )
+                        }
+                    }
+            } catch (e: Exception) {
+                binding.tvVerstext.text=e.message
+            }
+        }
+    }
+    private fun fetchourmanna() {
+        lifecycleScope.launch {
+            try { //Date(),
+                //gc.Logl("fetch start", true)
+                gc.vtdo()!!.fetchVotdUrl("https://beta.ourmanna.com/api/v1/get")
+                    .collect { result ->
+                        if (result.isSuccess) {
+                            val verses = result.getOrNull()  //verses?.forEach { verse ->
+                            textToFlowlayout(verses, false)
+                            //..bring me victory; - Psalm 44:6 (NIV)
+                            val start = verses!!.indexOf(" - ")
+                            val end = verses.indexOf(" (NIV)")
+
+                            var vers = "error"
+                            if (start >= 1 && end > start) {
+                                vers = verses.substring(start + 3, end)
+                                val verse =  gc.bBlparseBook()?.parseBiblePassage(vers)
                                 fetchBibleVerse(verse!!)
                                 return@collect
                             }
@@ -375,7 +455,7 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
     }
 
     private lateinit var dlgBinding: SheetDiscoverBinding
-    fun doButtonSheet() {
+    fun btnButtonSheet() {
         val dialog = BottomSheetDialog(requireContext())
         val inflater = LayoutInflater.from(requireContext())
         dlgBinding = SheetDiscoverBinding.inflate(inflater)
@@ -401,9 +481,31 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
             setTextSizes(txtSize)
             gc.appVals().valueWriteInt("txt.size", txtSize)
         }
+        val msDay = 60*60*24*1000
+        val days = (System.currentTimeMillis()/ msDay)
+        var voDays = gc.appVals().valueReadLong("btnVersOfDay", 0)
+        if (days == voDays)
+            dlgBinding.btnVersOfDay.visibility = View.GONE
         dlgBinding.btnVersOfDay.setOnClickListener {
-            fetchvotd()
-
+            gc.appVals().valueWriteLong("btnVersOfDay", days)
+            fetchLabsOrg()
+            dialog.dismiss()
+        }
+        voDays = gc.appVals().valueReadLong("btndailyverses", 0)
+        if (days == voDays)
+            dlgBinding.btndailyverses.visibility = View.GONE
+        dlgBinding.btndailyverses.setOnClickListener {
+            gc.appVals().valueWriteLong("btndailyverses", days)
+            fetchDailyverses()
+            dialog.dismiss()
+        }
+        voDays = gc.appVals().valueReadLong("btnourmanna", 0)
+        if (days == voDays)
+            dlgBinding.btnourmanna.visibility = View.GONE
+        dlgBinding.btnourmanna.setOnClickListener {
+            gc.appVals().valueWriteLong("btnourmanna", days)
+            fetchourmanna()
+            dialog.dismiss()
         }
         // set content view to our view.
         dialog.setContentView(dlgBinding.root)
@@ -415,16 +517,15 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
             R.id.btn_randomvers ->  btnRandomversClick()
             R.id.ayheaderTextView -> btnRandomversClick()
             R.id.tvMischen -> mischViews()
-            R.id.tvMoves -> doButtonSheet()
-            R.id.etvTxtShow -> txtClick()
-
-            R.id.btnRandObst -> btnrandObstClick()
-            R.id.btnBible -> btnBibleClick()
-            R.id.wtvSpeak -> tvSpeackClick()
+            R.id.tvMoves -> btnButtonSheet()
+            R.id.btnRandObst -> btnRandomObstClick()
+            R.id.btnBible -> btnRandomSpeakClick()
+            R.id.wtvSpeak -> tvSpeakClick()
             R.id.btnseekrund -> btnRandSeekClick()
             R.id.btnseekplay -> btnRandSeekAndSpeakClick()
             R.id.tvVerstext -> txtClick()
             R.id.btnSeekFileDlg -> doSeekFileDlg()
+            R.id.btnSheetUp -> btnButtonSheet()
 
         }
 
@@ -432,7 +533,7 @@ class EntdeckeFrag : BaseFragment(), View.OnClickListener {
 
     private fun doSeekFileDlg() {
         val fileDlg = FileDlg(
-            gc.mainActivity!!,
+            requireContext(),
             "FileOpen",  //or FileSave or FileSave..  ..= chosenDir with dir | or FileOpen
             seekFileExtn
         ) { chosenDir: String? ->

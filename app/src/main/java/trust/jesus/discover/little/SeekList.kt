@@ -17,7 +17,6 @@ class SeekList {
     //private val random: Random = Random()
     private var dataList: ArrayList<SeekData> = ArrayList()
     class SeekData { //= SearchResult
-        var pk: Int = 0
         var numVers: Int = 0
         var numBook: Int = 0
         var numChapter: Int = 0
@@ -64,7 +63,7 @@ class SeekList {
             vers = dataList[idx]
             for (item in dataList)
                 item.gotit = false
-            gc.Logl("all viewed reset done", true)
+            gc.logl("all viewed reset done", true)
         }
         writeList()
         return vers
@@ -137,7 +136,7 @@ class SeekList {
 
         } catch (e: Exception) {
             //showNetworkError(requireContext())
-            gc.Logl("crash  $crashcnt  msg: " +e.toString().substring(0, 33), true)
+            gc.logl("crash  $crashcnt  msg: " +e.toString().substring(0, 33), true)
             //file.delete()
         }
     }
@@ -219,7 +218,7 @@ class SeekList {
                 }
             }
         } catch (e: Exception) {
-            gc.Logl("BL nr " + crashcnt + " Msg: " + e.message, true)
+            gc.logl("BL nr " + crashcnt + " Msg: " + e.message, true)
         }
     }
 

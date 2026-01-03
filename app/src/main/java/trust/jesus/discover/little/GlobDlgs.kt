@@ -1,13 +1,17 @@
 package trust.jesus.discover.little
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context.CLIPBOARD_SERVICE
+import android.content.Context
 import android.content.Context.LAYOUT_INFLATER_SERVICE
+import android.content.DialogInterface
+import android.os.Build
+import android.util.DisplayMetrics
 import android.view.Gravity
 import android.view.LayoutInflater
 import org.apmem.tools.layouts.FlowLayout
 import android.view.View
+import android.view.ViewGroup
+import android.view.WindowInsets
+import android.view.WindowMetrics
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.PopupWindow
@@ -20,14 +24,11 @@ import trust.jesus.discover.little.Globus.Companion.getHeight
 
 class GlobDlgs {
 
-    val gc: Globus = Globus.Companion.getAppContext() as Globus
+    val gc: Globus = Globus.getAppContext() as Globus
 
-    fun interface ResultListener {
-        fun onChosenString(result: String?)
-    }
     fun showPopupWin( txt: String?) {
         //val wid = gc.popUpWidth
-        var (wid, screenHeight) = gc.getScreenDimensions()
+        var (wid, screenHeight) = getScreenDimensions()
         wid -= wid/15
         if (wid < 22) return
         val inflater = gc.getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -42,8 +43,7 @@ class GlobDlgs {
         )
         //final PopupWindow pup = new PopupWindow(pupLayout, android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
 // android.view.ViewGroup.LayoutParams.WRAP_CONTENT); tv_calc
-        val textView = popupView.findViewById<TextView?>(R.id.tv_popup)
-        if (textView == null) return
+        val textView = popupView.findViewById<TextView?>(R.id.tv_popup) ?: return
         textView.text = txt
         val tvcalc = popupView.findViewById<TextView?>(R.id.tv_calc)
         tvcalc?.text = txt
@@ -85,13 +85,13 @@ class GlobDlgs {
         bt.setOnClickListener { view1: View? ->
             // Toast.makeText(this, " clicked", Toast.LENGTH_LONG).show();
             pw.dismiss()
-            gc.ttSgl()?.andoSetttings()
+            gc.ttSgl()?.andoSettings()
             //activityStart(mainActi, AyWords::class.java)
         }
 
         bt = popupView.findViewById(R.id.pwspeakclck)
         bt.setOnClickListener { view1: View? ->
-            gc.ttSgl()?.speak(textView.text.toString() )
+            gc.ttSgl()?.cleanSpeak(textView.text.toString() )
         }
 
         val bti = popupView.findViewById<ImageButton>(R.id.pwCopy)
@@ -100,18 +100,8 @@ class GlobDlgs {
             gc.toast("copy done")
         }
 
-
-        /*
-                bt = popupView.findViewById(R.id.pwCopy)
-                bt.setOnClickListener { view1: View? ->
-                    val clipData = ClipData.newPlainText("text", txt.toString())
-                    val clipboard: ClipboardManager? =
-                        gc.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?
-
-                    clipboard!!.setPrimaryClip(clipData)
-                }
-
-         */
+        val adapter = gc.mainActivity!!.sectionsPagerAdapter
+        if (adapter==null) return
         bt = popupView.findViewById(R.id.pwBible)
         bt.setOnClickListener { view1: View? ->
             gc.lernItem.chapter.clear()
@@ -120,53 +110,53 @@ class GlobDlgs {
         }
 
         bt = popupView.findViewById(R.id.pwMain)
-        if (gc.curFragment_idx == 0) flowLayout.removeView(bt) else
+        if (gc.curFragment_idx == adapter.pIdxHome) flowLayout.removeView(bt) else
             bt.setOnClickListener { view1: View? ->
                 pw.dismiss()
-                gc.mainActivity!!.viewPager!!.setCurrentItem(0, false)
+                gc.mainActivity!!.viewPager!!.setCurrentItem(adapter.pIdxHome, false)
             }
 
         bt = popupView.findViewById(R.id.pwwordclck)
-        if (gc.curFragment_idx == 1) flowLayout.removeView(bt) else
+        if (gc.curFragment_idx == adapter.pIdxClickW) flowLayout.removeView(bt) else
             bt.setOnClickListener { view1: View? ->
                 pw.dismiss()
-                gc.mainActivity!!.viewPager!!.setCurrentItem(1, false)
+                gc.mainActivity!!.viewPager!!.setCurrentItem(adapter.pIdxClickW, false)
             }
 
         bt = popupView.findViewById(R.id.pwwordmix)
-        if (gc.curFragment_idx == 2) flowLayout.removeView(bt) else
+        if (gc.curFragment_idx == adapter.pIdxWords) flowLayout.removeView(bt) else
             bt.setOnClickListener { view1: View? ->
                 pw.dismiss()
-                gc.mainActivity!!.viewPager!!.setCurrentItem(2, false)
+                gc.mainActivity!!.viewPager!!.setCurrentItem(adapter.pIdxWords, false)
             }
 
         bt = popupView.findViewById(R.id.pwletters)
-        if (gc.curFragment_idx == 3) flowLayout.removeView(bt) else
+        if (gc.curFragment_idx == adapter.pIdxLetters || adapter.pIdxLetters >= adapter.pageCount) flowLayout.removeView(bt) else
             bt.setOnClickListener { view1: View? ->
                 pw.dismiss()
-                gc.mainActivity!!.viewPager!!.setCurrentItem(3, false)
+                gc.mainActivity!!.viewPager!!.setCurrentItem(adapter.pIdxLetters, false)
             }
 
         bt = popupView.findViewById(R.id.pwsaylck)
-        if (gc.curFragment_idx == 4) flowLayout.removeView(bt) else
+        if (gc.curFragment_idx == adapter.pIdxSpeech || adapter.pIdxSpeech >= adapter.pageCount) flowLayout.removeView(bt) else
             bt.setOnClickListener { view1: View? ->
                 pw.dismiss()
-                gc.mainActivity!!.viewPager!!.setCurrentItem(4, false)
+                gc.mainActivity!!.viewPager!!.setCurrentItem(adapter.pIdxSpeech, false)
             }
 
 
         bt = popupView.findViewById(R.id.pwDiscover)
-        if (gc.curFragment_idx == 5) flowLayout.removeView(bt) else
+        if (gc.curFragment_idx == adapter.pIdxDiscover || adapter.pIdxDiscover >= adapter.pageCount) flowLayout.removeView(bt) else
             bt.setOnClickListener { view1: View? ->
                 pw.dismiss()
-                gc.mainActivity!!.viewPager!!.setCurrentItem(5, false)
+                gc.mainActivity!!.viewPager!!.setCurrentItem(adapter.pIdxDiscover, false)
             }
 
         bt = popupView.findViewById(R.id.pwEditclk)
-        if (gc.curFragment_idx == 6) flowLayout.removeView(bt) else
+        if (gc.curFragment_idx == adapter.pIdxEntries || adapter.pIdxEntries >= adapter.pageCount) flowLayout.removeView(bt) else
             bt.setOnClickListener { view1: View? ->
                 pw.dismiss()
-                gc.mainActivity!!.viewPager!!.setCurrentItem(6, false)
+                gc.mainActivity!!.viewPager!!.setCurrentItem(adapter.pIdxEntries, false)
             }
 
         bt = popupView.findViewById(R.id.pwretry) //
@@ -204,9 +194,9 @@ class GlobDlgs {
         pw.showAtLocation(gc.mainActivity?.viewPager, Gravity.CENTER, 0, 0)
     }
 
-    fun messageBox(txt: String) {
-        val builder = AlertDialog.Builder(gc.applicationContext)
-        //builder.setTitle("Title")
+    fun messageBox(txt: String, context: Context) {
+        val builder = AlertDialog.Builder(context, R.style.AlertDialogCustom)
+        builder.setTitle(gc.getString(R.string.app_name)) //AlertDialogTheme  R.style.AlertDialogCustom
         builder.setMessage(txt)
 
         builder.setPositiveButton(android.R.string.ok) { dialog, which ->
@@ -223,4 +213,68 @@ class GlobDlgs {
         val dialog = builder.create()
         dialog.show()
     }
+
+    fun interface AskDlgOkEve {
+        fun onOkClick()
+    }
+
+    fun askDlg(ask: String?, context: Context, askDlgOkEve: AskDlgOkEve?) {
+        askDlg(gc.getString(R.string.app_name), ask, context, askDlgOkEve)
+    }
+
+    fun askDlg(title: String?, ask: String?, context: Context, askDlgOkEve: AskDlgOkEve?) {
+        var ask = ask
+        val tv = TextView(context)
+        ask = "\n" + ask
+        tv.text = ask
+        tv.layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        tv.gravity = Gravity.CENTER
+        AlertDialog.Builder(context, R.style.AlertDialogCustom)
+            .setTitle(title)
+            .setView(tv)
+            .setPositiveButton(
+                "Ok"
+            ) { dialog: DialogInterface?, id: Int ->
+                //finish();
+                askDlgOkEve!!.onOkClick()
+            }
+            .setNegativeButton("No", null).show()
+        //d.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        //alertDialog.show();
+    }
+
+    val popUpWidth: Int
+        get() {
+            var (wid, screenHeight) = getScreenDimensions()
+            wid -= (wid / 15)
+            return wid
+        }
+    fun getScreenDimensions(): Pair<Int, Int> {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // For Android 11 and above
+            // Get the window metrics
+            val windowMetrics: WindowMetrics = gc.mainActivity!!.windowManager.currentWindowMetrics
+            // Get the insets and bounds of the window
+            val insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            // Calculate the width and height of the screen
+            val bounds = windowMetrics.bounds
+            val width = bounds.width() - insets.left - insets.right
+            val height = bounds.height() - insets.top - insets.bottom
+            // Return the width and height
+            Pair(width, height)
+        } else {
+            // For Android 10 and below
+            // Get the display metrics
+            val displayMetrics = DisplayMetrics()
+            @Suppress("DEPRECATION")
+            // Get the default display metrics
+            gc.mainActivity!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
+            // Return the width and height
+            Pair(displayMetrics.widthPixels, displayMetrics.heightPixels)
+        }
+    }
+
 }

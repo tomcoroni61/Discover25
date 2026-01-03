@@ -2,12 +2,12 @@
 <resources>
 
     <!--  dark theme  -->
-    <color name="dark_background">#303030</color>
+    <color name="dark_background">#1B1701</color>
     <color name="dark_action_bar">#2d3d72</color>
-    <color name="dark_key_normal">#77B3B4C1</color>
-    <color name="dark_key_pressed">#444444</color>
+    <color name="dark_key_normal">#504F49</color>
+    <color name="dark_key_pressed">#231D01</color>
     <color name="dark_box_background">@android:color/transparent</color>
-    <color name="dark_box_border">@color/dark_action_bar</color>
+    <color name="dark_box_border">#3A3108</color>
 
     <!--  light theme  -->
     <color name="light_background">#D0D1BD</color>
@@ -15,7 +15,6 @@
     <color name="light_key_normal">#96B1AC</color>
     <color name="light_key_pressed">#95C8C8</color>
     <color name="light_box_background">@color/md_theme_dark_onBackground</color>
-    <color name="light_box_border">#C6EB5E</color>
 
     <!--  night theme  -->
     <color name="night_background">#090000</color>
@@ -37,9 +36,9 @@
     <color name="red_background">#761212</color>
     <color name="red_action_bar">#470515</color>
     <color name="red_key_normal">#781431</color>
-    <color name="red_key_pressed">#cc2353</color>
-    <color name="red_box_background">#ed4e2e</color>
-    <color name="red_tab_selected">#20E60A</color>
+    <color name="red_key_pressed">#801735</color>
+    <color name="red_box_background">#B60A47</color>
+    <color name="red_tab_selected">#0A83E6</color>
 
     <!--  orange theme  -->
     <color name="orange_background">#E4764A</color>
@@ -55,16 +54,15 @@
     <color name="cyan_key_normal">#1b555f</color>
     <color name="cyan_key_pressed">#3e97a6</color>
     <color name="cyan_box_background">#8ED3D2</color>
-    <color name="cyan_box_border">#4c4dc7</color>
-    <color name="cyan_tab_selected">#C2C50C</color>
+    <color name="cyan_box_border">#066492</color>
+    <color name="cyan_tab_selected">#264341</color>
 
     <!--  purple theme  -->
     <color name="purple_background">#a42ee5</color>
     <color name="purple_action_bar">#8a3ab5</color>
     <color name="purple_key_normal">#331643</color>
     <color name="purple_key_pressed">#5c058c</color>
-    <color name="purple_box_background">#9d79b1</color>
-    <color name="purple_tab_selected">#B7EB50</color>
+    <color name="purple_tab_selected">#7CB342</color>
 
 
     <!-- gray theme -->
@@ -73,7 +71,7 @@
     <color name="gray_box_background">#999786</color>
     <color name="gray_background">#535454</color>
     <color name="gray_action_bar">#555A75</color>
-    <color name="gray_tab_selected">@color/cyan_background</color>
+    <color name="gray_tab_selected">#c2cbca</color>
 
     <!-- green theme -->
     <color name="green_background">#207C22</color>
@@ -92,40 +90,17 @@
     <color name="ocher_tab_selected">#E6DC70</color>
 
     <!-- yellow theme -->
-    <color name="yellow_background">#ECF00C</color>
-    <color name="yellow_action_bar">#FDD835</color>
+    <color name="yellow_background">#EBD378</color>
+    <color name="yellow_action_bar">#EFC407</color>
     <color name="yellow_key_normal">#A4A88B</color>
     <color name="yellow_key_pressed">#F8F4A1</color>
-    <color name="yellow_box_background">#B6B260</color>
+    <color name="yellow_box_background">#F8EC04</color>
     <color name="yellow_tab_selected">#069FA8</color>
-    <color name="yellow_textColor">#95936A</color>
+    <color name="yellow_textColor">#4D4A1F</color>
 
-    <color name="md_theme_light_primary">#705D00</color>
     <color name="md_theme_light_onPrimary">#FFFFFF</color>
-    <color name="md_theme_light_primaryContainer">#FFE16D</color>
-    <color name="md_theme_light_onPrimaryContainer">#221B00</color>
-    <color name="md_theme_light_secondary">#675E40</color>
     <color name="md_theme_light_onSecondary">#FFFFFF</color>
-    <color name="md_theme_light_secondaryContainer">#EFE2BC</color>
-    <color name="md_theme_light_onSecondaryContainer">#211B04</color>
-    <color name="md_theme_light_tertiary">#44664E</color>
-    <color name="md_theme_light_onTertiary">#FFFFFF</color>
     <color name="md_theme_light_tertiaryContainer">#C6ECCD</color>
-    <color name="md_theme_light_onTertiaryContainer">#00210E</color>
-    <color name="md_theme_light_error">#BA1A1A</color>
-    <color name="md_theme_light_errorContainer">#FFDAD6</color>
-    <color name="md_theme_light_onError">#FFFFFF</color>
-    <color name="md_theme_light_onErrorContainer">#410002</color>
-    <color name="md_theme_light_background">#FFFBFF</color>
-    <color name="md_theme_light_onBackground">#1D1B16</color>
-    <color name="md_theme_light_surface">#FFFBFF</color>
-    <color name="md_theme_light_onSurface">#1D1B16</color>
-    <color name="md_theme_light_surfaceVariant">#EAE2CF</color>
-    <color name="md_theme_light_onSurfaceVariant">#4B4739</color>
-    <color name="md_theme_light_outline">#7C7767</color>
-    <color name="md_theme_light_inverseOnSurface">#F6F0E7</color>
-    <color name="md_theme_light_inverseSurface">#33302A</color>
-    <color name="md_theme_light_inversePrimary">#E9C400</color>
     <color name="md_theme_dark_primary">#E9C400</color>
     <color name="md_theme_dark_onPrimary">#3A3000</color>
     <color name="md_theme_dark_primaryContainer">#544600</color>
@@ -154,7 +129,5 @@
     <color name="md_theme_dark_inversePrimary">#705D00</color>
     <color name="md_theme_dark_surfaceTint">#E9C400</color>
     <color name="light_blue_200">#FF81D4FA</color>
-
-    <color name="draw_able">#FFE1F5FE</color>
 
 </resources>

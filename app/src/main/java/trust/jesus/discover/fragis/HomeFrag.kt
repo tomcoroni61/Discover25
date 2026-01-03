@@ -1,32 +1,33 @@
 package trust.jesus.discover.fragis
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.TypedValue
+import android.text.Html
+import android.text.method.LinkMovementMethod
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.CheckBox
-import android.widget.ListView
-import androidx.core.content.ContextCompat
-import androidx.core.view.get
-import com.google.android.material.sidesheet.SideSheetDialog
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
+//import androidx.appcompat.app.AlertDialog
 import com.google.gson.Gson
 import org.json.JSONObject
 import trust.jesus.discover.R
 import trust.jesus.discover.actis.AyWelcome
+import trust.jesus.discover.actis.Reportus
 import trust.jesus.discover.bible.dataclasses.SsBibel
-import trust.jesus.discover.bible.online.BssSR
 import trust.jesus.discover.databinding.FragHomeBinding
-import trust.jesus.discover.dlg_data.ChooserBcvDlg
-import trust.jesus.discover.little.FixStuff.Filenames.Companion.merkVers
+import trust.jesus.discover.little.FixStuff.Filenames.Companion.crashLogName
+import java.io.ByteArrayOutputStream
+import java.io.IOException
 
 class HomeFrag: BaseFragment(), View.OnClickListener {
 
     private lateinit var binding: FragHomeBinding
-    private var bshowText = true
+    //private var bshowText = true
 
 
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?,
@@ -34,33 +35,36 @@ class HomeFrag: BaseFragment(), View.OnClickListener {
         // Inflate the layout for this fragment
         binding = FragHomeBinding.inflate(layoutInflater)
         // Inflate the layout for this fragment
-        binding.cbShowTex.setOnClickListener(this)
-        binding.ybtspeakObt.setOnClickListener(this)
+        //binding.cbShowTex.setOnClickListener(this)
         binding.sbtSpeak.setOnClickListener(this)
-        binding.sbtprevdat.setOnClickListener(this)
-        binding.mabtmischdat.setOnClickListener(this)
-        binding.sbtnextdat.setOnClickListener(this)
+        binding.sbtPrevDat.setOnClickListener(this)
+        binding.mabtMischDat.setOnClickListener(this)
+        binding.sbtNextDat.setOnClickListener(this)
         binding.sbtSearch.setOnClickListener(this)
-        binding.gbtsetLvers.setOnClickListener(this)
-        binding.matvLerni.setOnClickListener(this)
-        binding.matvMerkVers.setOnClickListener(this)
-        binding.gbtgetLvers.setOnClickListener(this)
-        binding.pwwordmix.setOnClickListener(this)
-        binding.pwwordclck.setOnClickListener(this)
-        binding.pwEditclk.setOnClickListener(this)
-        binding.pwsaylck.setOnClickListener(this)
-        binding.pwLetters.setOnClickListener(this)
-        binding.pwThemes.setOnClickListener(this)
-        binding.tvbottomLefttw.setOnClickListener(this)
-        binding.mabtWelcome.setOnClickListener(this)
-        binding.chipLog.setOnClickListener(this)
-
-        readMerkvers()
+        binding.sbtCrash.setOnClickListener(this)
+        binding.sbtSearchBollsApi.setOnClickListener(this)
+        val text = "Bible search by <a href='https://bolls.life/api/'>Boll's api </a>"
+        //val text = "<a href='http://www.google.com'> Google </a>"
+        binding.tvBolls.text = Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT)
+        binding.tvBolls.movementMethod = LinkMovementMethod.getInstance()
+        //neLinkify.addLinks(binding.tvBolls, Linkify.WEB_URLS)
+        //Linkify.addLinks(textView, Linkify.PHONE_NUMBERS|LINKIFY.WEB_URLS);
         if (!gc.appVals().valueReadBool("welcome", false)) {
             gc.appVals().valueWriteBool("welcome", true)
             gc.activityStart(context, AyWelcome::class.java)
         }
-        gc.log("HomeFrag onCreateView")
+        if (gc.dateien().hasPrivateFile(crashLogName)) {
+            var cc = gc.appVals().valueReadInt("showCrashBtn", 0)
+            if (cc==0) cc=4
+            cc--
+            if (cc>1) binding.sbtCrash.visibility = View.VISIBLE
+            if (cc==1) {
+                gc.appVals().valueWriteInt("showCrashBtn", 0)
+                gc.dateien().deletePrivateFile(crashLogName)
+            }
+        }
+        // gc.log("HomeFrag onCreateView")
+        // loadHtml()
         return binding.root
     }
 
@@ -74,30 +78,53 @@ class HomeFrag: BaseFragment(), View.OnClickListener {
         setFields()
     }
 
+    private fun getHtmlText(resId: Int): String {
+        val inputStream = getResources().openRawResource(resId)
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        var i: Int
+        try {
+            i = inputStream.read()
+            while (i != -1) {
+                byteArrayOutputStream.write(i)
+                i = inputStream.read()
+            }
+            inputStream.close()
+        } catch (e: IOException) {
+            // TODO Auto-generated catch block
+            e.printStackTrace()
+        }
+        return byteArrayOutputStream.toString()
+    }
+
+    private fun loadHtml() {
+        binding.HtmlView.movementMethod = LinkMovementMethod.getInstance()
+
+        var htm = getHtmlText( R.raw.thankyou)
+        binding.HtmlView.text = Html.fromHtml(htm, Html.FROM_HTML_MODE_COMPACT)
+    }
     private fun setFields() {
-        if (bshowText) binding.matvVersText.text = gc.lernItem.text
-        else binding.matvVersText.text = ""
+        binding.matvVersText.text = gc.lernItem.text
+        val params = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        val lp = binding.matvVersText.layoutParams
+        if (lp is RelativeLayout.LayoutParams) {
+            if (binding.matvVersText.height < binding.nsv.height)
+                params.gravity = Gravity.CENTER else
+                params.gravity = Gravity.NO_GRAVITY
+            binding.matvVersText.layoutParams = params
+        }
         //gc.log("setFields: ${gc.lernItem.text}")
-        binding.headerTextView.text = gc.lernItem.vers
-        gc.setVersTitel(gc.lernItem.vers)
+        gc.lernItem.setVersTitel()
+        val txt: String = gc.lernDataIdx.toString() + "/" + gc.csvList()?.dataList?.size
+        binding.ytvCount.text = txt
         //binding.matvVersTop.setText(gc.LernItem.Vers)
     }
 
 
-
-    fun matxtClick() {
-        gc.globDlg().showPopupWin(gc.lernItem.text)
-    }
-
-    fun mattsSettingsClick() {
-        gc.ttSgl()?.andoSetttings() //gc.mainActivity!! = binding.ybtspeakObt.context
-        /*val chooserBcvDlg = ChooserBcvDlg(requireContext()) {
-                book: Int, chapter: Int, verse: Int ->
-        }
-        chooserBcvDlg.showDialog()*/
-    }
-
     fun mabtPrevDataClick() {
+//        throw IllegalArgumentException("Testing crash")
         doCurDataIdx(true)
     }
 
@@ -105,15 +132,9 @@ class HomeFrag: BaseFragment(), View.OnClickListener {
         doCurDataIdx(false)
     }
 
-    fun maShowTextClick(view: View?) {
-        val cb = view as CheckBox
-        bshowText = cb.isChecked
-        setFields()
-    }
-
 
     fun maspeackClick() {
-        gc.ttSgl()?.speak(gc.lernItem.text)
+        gc.ttSgl()?.cleanSpeak(gc.lernItem.text)
     }
 
     fun maSpeakRecClick() {
@@ -137,98 +158,44 @@ class HomeFrag: BaseFragment(), View.OnClickListener {
         setFields()
     }
 
-    fun maLettersClick() {
-        gc.mainActivity!!.viewPager!!.setCurrentItem(3, false)
+
+    private fun showErry() {
+        val intent = Intent(requireContext(), Reportus::class.java)
+        intent.putExtra("ErrMsg", "sw.toString()\n Many Errors found\n never ending") //or..Intent.EXTRA_TEXT
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
+
     }
 
     fun mabtSearchClick() {
-        val idx = gc.csvList()!!.findText(binding.sedSeek.text.toString(), gc.lernDataIdx + 1)
-        if (idx < 0) return
+        // showErry()
+        val sText = binding.sedSeek.text.toString()
+        if (sText.isEmpty()) {
+            gc.globDlg().messageBox("No text to search!", requireContext())
+            return
+        }
+        val idx = gc.csvList()!!.findText(sText, gc.lernDataIdx + 1)
+        if (idx < 0) {
+            gc.globDlg().messageBox("Nothing found", requireContext())
+            return
+        }
         gc.csvList()!!.getLernData(idx)
         setFields()
     }
 
-    private fun readMerkvers() {
-        val vers = gc.appVals().valueReadString(merkVers, "joh 3:16")
-        binding.matvMerkVers.text = vers
-    }
 
-    fun gSetLernVersClick() {
-        gc.appVals().valueWriteString(merkVers, gc.lernItem.vers)
-        readMerkvers()
-        //
-    }
 
-    fun gMerktoLernVersClick() {
-        val vers = binding.matvMerkVers.text.toString()
-        val idx: Int = gc.csvList()!!.hasBibleVers(vers)
-        if (idx < 0) {//matvLerni
-            val txt = "$vers nicht gefunden"
-            binding.matvVersText.text = txt
-            return
-        }
+    fun merkToLearnVersClick(idx: Int) {
         gc.csvList()!!.getLernData(idx) //=gc.lernItem
         setFields()
     }
 
-    fun maThemesClick() {
-        // gc.activityStart(this, AyThemes::class.java)
-        gc.mainActivity!!.viewPager!!.setCurrentItem(5, false)
-    }
 
-    fun mabtWelcomeClick() {
-        gc.activityStart(this.activity, AyWelcome::class.java)
-    }
-
-    fun chipLogClick() {
-        gc.appVals().valueWriteBool("dolog", binding.chipLog.isChecked)
-        gc.mainActivity!!.doPageCount()
-    }
-    fun doThemeSheet() {
-        val themeNames: Array<String> = arrayOf(
-            getString(R.string.default_light_theme),
-            getString(R.string.grey),
-            getString(R.string.dark),
-            getString(R.string.blue),
-            getString(R.string.cyan),
-            getString(R.string.green),
-            getString(R.string.ocher),
-            getString(R.string.orange),
-            getString(R.string.purple),
-            getString(R.string.red),
-            getString(R.string.yellow),
-            getString(R.string.default_night_theme),
-
-
-
-            )
-        val dialog = SideSheetDialog(requireContext())
-        val view = layoutInflater.inflate(R.layout.sheet_themes, null)
-        val list: ListView = view.findViewById(R.id.listView)
-        val arr: ArrayAdapter<String> =
-            ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, themeNames)
-        list.adapter = arr
-
-        list.setOnItemClickListener { parent, view, position, id ->
-            gc.appVals().valueWriteInt("theme", position)
-            view.setBackgroundColor(android.graphics.Color.GREEN)
-            gc.mainActivity?.setAppTheme(true)
-            // dialog.dismiss()
-        }
-
-        dialog.setContentView(view)
-        //ne list.setItemChecked(gc.appVals().valueReadInt("theme", 0), true)
-        //list.setSelection( gc.appVals().valueReadInt("theme", 0))
-        dialog.show()
-        //list.setSelection( gc.appVals().valueReadInt("theme", 0))
-
-        Handler(Looper.getMainLooper()).postDelayed({
-            val item = list[gc.appVals().valueReadInt("theme", 0)]
-            val typedValue = TypedValue()
-            gc.mainActivity!!.theme.resolveAttribute(R.attr.tabSelected_colour, typedValue, true)
-            val color = ContextCompat.getColor(requireContext(), typedValue.resourceId)
-            item.setBackgroundColor(color)
-        }, 100)
+    fun searchBollsApi() {
+        //gc.appVals().valueWriteBool("dolog", binding.chipLog.isChecked) discover
+        gc.mainActivity!!.viewPager?.currentItem = gc.mainActivity!!.sectionsPagerAdapter!!.pIdxDiscover
+        Looper.myLooper()?.let { Handler(it).postDelayed({
+            gc.mainActivity!!.sectionsPagerAdapter!!.showBollsPrevActi() }, 1300) }
     }
 
     /*
@@ -288,29 +255,32 @@ class HomeFrag: BaseFragment(), View.OnClickListener {
     }
     override fun onClick(p0: View?) {
         when (p0?.id) {
-            R.id.cbShowTex -> maShowTextClick(p0)
-            R.id.ybtspeakObt -> mattsSettingsClick()
+            //R.id.cbShowTex -> maShowTextClick(p0)
+            //R.id.ybtspeakObt -> mattsSettingsClick()        //+ intern Tests
             R.id.sbtSpeak ->   maspeackClick() //bibleList()
-            R.id.sbtprevdat -> mabtPrevDataClick()
-            R.id.mabtmischdat -> mabtMischDataClick()
-            R.id.sbtnextdat -> mabtNextDataClick()
+            R.id.sbtPrevDat -> mabtPrevDataClick()
+            R.id.mabtMischDat -> mabtMischDataClick()
+            R.id.sbtNextDat -> mabtNextDataClick()
             R.id.sbtSearch -> mabtSearchClick()
-            R.id.gbtsetLvers -> gSetLernVersClick()
-            R.id.matvLerni -> matxtClick()
-            R.id.matvMerkVers -> matxtClick()
-            R.id.gbtgetLvers -> gMerktoLernVersClick()
 
-            R.id.pwLetters -> maLettersClick()
-            R.id.pwThemes -> maThemesClick()
             R.id.pwwordmix -> maWordMixClick()
             R.id.pwwordclck -> maWordClick()
             R.id.pwEditclk -> maEditClick()
 
             R.id.pwsaylck -> maSpeakRecClick()
             R.id.tvbottomLefttw -> maspeackClick()
-            R.id.mabtWelcome -> mabtWelcomeClick()
-            R.id.chipLog -> chipLogClick()
+            R.id.sbtSearchBollsApi -> searchBollsApi()
+            R.id.sbtCrash -> sbtCrashClick()
+        }
+    }
 
+    private fun sbtCrashClick() {
+        if (gc.dateien().hasPrivateFile(crashLogName)) {
+            val txt = gc.dateien().readPrivateFile(crashLogName).substring(250)
+            if (txt.length > 10) gc.startErrorReporter(txt)
+            gc.dateien().deletePrivateFile(crashLogName)
+            binding.sbtCrash.visibility = View.GONE
+            gc.appVals().valueWriteInt("showCrashBtn", 0)
         }
     }
 

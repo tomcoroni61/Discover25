@@ -1,7 +1,9 @@
 package trust.jesus.discover.dlg_data
 
-import android.app.AlertDialog
-import android.app.Dialog
+//import android.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDialog
+//import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
@@ -23,12 +25,10 @@ import java.io.IOException
 import java.util.Locale
 import java.util.Objects
 
-class FileDlg (
-    a: Context, fileselecttype: String, filefilter: String?,
-    simpleFileDialogListener: SimpleFileDialogListener?
-) : Dialog(a), View.OnClickListener {
+class FileDlg (a: Context, fileSelectType: String, fileFilter: String?,
+               simpleFileDialogListener: SimpleFileDialogListener?) : AppCompatDialog(a), View.OnClickListener {
     //var c: Activity?
-    var d: Dialog? = null
+    var d: AppCompatDialog? = null
     var yes: Button? = null
     var no: Button? = null
 
@@ -37,7 +37,7 @@ class FileDlg (
     private var m_goToUpper = false
     var ChoosenDir: String? = null
     var default_file_name: String = "BackUp.csv"
-    var selected_file_name: String = default_file_name
+    var selectedFileName: String = default_file_name
 
     // private static final int FolderChoose = 2;
     // TODO Auto-generated constructor stub tvTitel
@@ -52,9 +52,9 @@ class FileDlg (
     private var tvDir: TextView? = null
 
     init {
-        if (filefilter != null) m_fileFilter =
-            filefilter.lowercase(Locale.getDefault()) else m_fileFilter = ""
-        when (fileselecttype) {
+        if (fileFilter != null) m_fileFilter =
+            fileFilter.lowercase(Locale.getDefault()) else m_fileFilter = ""
+        when (fileSelectType) {
             "FileSave" -> Select_type = FileSave
             "FileOpen.." -> {
                 Select_type = FileOpen
@@ -78,7 +78,7 @@ class FileDlg (
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        //requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.filedlg)
         yes = findViewById(R.id.btn_yes)
         no = findViewById(R.id.btn_no)
@@ -88,17 +88,19 @@ class FileDlg (
         edFile = findViewById(R.id.edFileName)
         tvDir = findViewById(R.id.tvDirName)
         findViewById<View?>(R.id.btn_delete)?.setOnClickListener(this)
+        findViewById<View?>(R.id.ybtshareData)?.setOnClickListener(this)
 
         val mtitleView1 = findViewById<TextView>(R.id.tvTitel)
-        if (Select_type == FileOpen) mtitleView1.text = gc.getString(R.string.open)
-        if (Select_type == FileSave) mtitleView1.text = gc.getString(R.string.save_as)
-
+        //if (Select_type == FileOpen) mtitleView1!!.text = gc.getString(R.string.open)
+        //if (Select_type == FileSave) mtitleView1!!.text = gc.getString(R.string.save_as)
+        if (Select_type == FileOpen) setTitle(R.string.open)
+        if (Select_type == FileSave) setTitle(R.string.save_as)
         //if (Select_type == FolderChoose) m_titleView1.setText("Folder Select:");
 
         //fileList.removeAllViews();btn_delete
         // ((Button) findViewById(R.id.btn_delete)).setOnClickListener(this);
         //Ne: TextView wi = findViewById(R.id.tvBottom);        wi.setWidth(gc.getPopUpWidth()*2);
-        Objects.requireNonNull<Window>(window).setLayout(gc.popUpWidth, RelativeLayout.LayoutParams.WRAP_CONTENT)
+        Objects.requireNonNull<Window>(window).setLayout(gc.globDlg().popUpWidth, RelativeLayout.LayoutParams.WRAP_CONTENT)
     }
 
     override fun onClick(v: View) {
@@ -106,15 +108,22 @@ class FileDlg (
             R.id.btn_yes -> if (m_SimpleFileDialogListener != null) {
                 run {
                     if (Select_type == FileOpen || Select_type == FileSave) {
-                        selected_file_name = edFile!!.text.toString() + "" //m_dir + "/" +
+                        selectedFileName = edFile!!.text.toString() + "" //m_dir + "/" +
                         ChoosenDir = m_dir
-                        m_SimpleFileDialogListener!!.onChosenDir(selected_file_name)
+                        m_SimpleFileDialogListener!!.onChosenDir(selectedFileName)
                     } else {
                         m_SimpleFileDialogListener!!.onChosenDir(m_dir)
                     }
                 }
             }
-
+            R.id.ybtshareData -> {
+                val share = edFile!!.text.toString()
+                if (share.isEmpty() || !gc.dateien().hasPrivateFile(share)) {
+                    gc.globDlg().messageBox(share + "not found", m_context)
+                    return
+                }
+                gc.dateien().shareFile(share, m_context)
+            }
             R.id.btn_delete -> {
                 askDelete()
                 return
@@ -202,7 +211,7 @@ class FileDlg (
         val m_dir_old = m_dir
         val textView = view as TextView
         var sel = textView.text
-            .toString() // ((AlertDialog) dialog).getListView().getAdapter().getItem(item);
+            .toString()
         if (sel.get(sel.length - 1) == '/') sel = sel.substring(0, sel.length - 1)
 
         // Navigate into the sub-directory
@@ -214,12 +223,12 @@ class FileDlg (
         } else {
             m_dir += "/" + sel
         }
-        selected_file_name = default_file_name
+        selectedFileName = default_file_name
 
         if ((File(m_dir).isFile))  // If the selection is a regular file
         {
             m_dir = m_dir_old
-            selected_file_name = sel
+            selectedFileName = sel
         }
 
         updateDirectory()
@@ -244,7 +253,7 @@ class FileDlg (
         //m_listAdapter.notifyDataSetChanged();
         //#scorch
         if (Select_type == FileSave || Select_type == FileOpen) {
-            edFile!!.setText(selected_file_name)
+            edFile!!.setText(selectedFileName)
         }
         fillFileList()
     }
@@ -286,8 +295,8 @@ class FileDlg (
 
     private fun askDelete() {
         val input = EditText(m_context)
-        input.setText(selected_file_name)
-        AlertDialog.Builder(m_context).setTitle ("File to delete:").setView (input).setPositiveButton(
+        input.setText(selectedFileName)
+        AlertDialog.Builder(m_context, R.style.AlertDialogCustom).setTitle ("File to delete:").setView (input).setPositiveButton(
             "OK"
         ) { dialog: DialogInterface?, whichButton: Int ->
             val newDir = input.text
